@@ -1,0 +1,274 @@
+{% extends "base_mobile.html" %}
+
+{% block title %}عارضين {{ country }} - Arab Expo For Food{% endblock %}
+
+{% block content %}
+<!-- عنوان الصفحة -->
+<div style="background: linear-gradient(135deg, #205072 0%, #186687 100%); color: white; padding: 30px 15px; text-align: center; margin: -15px -15px 20px -15px;">
+    <h1 style="margin: 0 0 10px 0; font-size: 1.8rem; font-weight: 700;">
+        <i class="fas fa-building"></i> 
+        عارضين {{ country }}
+    </h1>
+    <p style="margin: 0; opacity: 0.9; font-size: 1rem;">
+        اكتشف الشركات والمنتجات من {{ country }}
+    </p>
+</div>
+
+<!-- إحصائيات الدولة -->
+<div class="section">
+    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 20px;">
+        <div class="card" style="text-align: center; padding: 20px; background: linear-gradient(135deg, #4caf50 0%, #8bc34a 100%); color: white;">
+            <i class="fas fa-building" style="font-size: 2rem; margin-bottom: 10px;"></i>
+            <h3 style="margin: 0; font-size: 1.5rem;">{{ country_stats.total_exhibitors }}</h3>
+            <p style="margin: 5px 0 0 0; opacity: 0.9;">عارض</p>
+        </div>
+        <div class="card" style="text-align: center; padding: 20px; background: linear-gradient(135deg, #2196f3 0%, #03a9f4 100%); color: white;">
+            <i class="fas fa-box" style="font-size: 2rem; margin-bottom: 10px;"></i>
+            <h3 style="margin: 0; font-size: 1.5rem;">{{ country_stats.total_products }}</h3>
+            <p style="margin: 5px 0 0 0; opacity: 0.9;">منتج</p>
+        </div>
+    </div>
+</div>
+
+<!-- الأقسام المتاحة -->
+{% if categories %}
+<div class="section">
+    <h2 style="color: #2c3e50; margin-bottom: 15px; font-size: 1.3rem;">
+        <i class="fas fa-tags"></i> الأقسام المتاحة
+    </h2>
+    <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px;">
+        {% for category, count in categories %}
+            <span style="background: #e3f2fd; color: #1565c0; padding: 8px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600;">
+                <i class="fas fa-tag"></i> {{ category.name_ar }} ({{ count }})
+            </span>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+<!-- قائمة العارضين -->
+<div class="section">
+    {% if exhibitors.items %}
+        <h2 style="color: #2c3e50; margin-bottom: 20px; font-size: 1.3rem;">
+            <i class="fas fa-list"></i> العارضين ({{ exhibitors.total }})
+        </h2>
+        
+        <div style="display: grid; gap: 15px;">
+            {% for exhibitor in exhibitors.items %}
+                <div class="card exhibitor-card" style="background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1); transition: all 0.3s;" onclick="location.href='{{ url_for('main.exhibitor_profile', exhibitor_id=exhibitor.id) }}'">
+                    <!-- رأس البطاقة -->
+                    <div style="position: relative; height: 120px; background: linear-gradient(135deg, #205072 0%, #186687 100%);">
+                        <div style="position: absolute; bottom: -30px; right: 20px;">
+                            {% if exhibitor.logo_image %}
+                                <img src="{{ url_for('static', filename='uploads/exhibitors/' + exhibitor.logo_image) }}" 
+                                     alt="{{ exhibitor.company_name }}" 
+                                     style="width: 60px; height: 60px; border-radius: 50%; border: 4px solid white; object-fit: cover; background: white;">
+                            {% else %}
+                                <div style="width: 60px; height: 60px; background: white; border-radius: 50%; border: 4px solid white; display: flex; align-items: center; justify-content: center; color: #205072; font-weight: 700; font-size: 1.2rem;">
+                                    {{ exhibitor.company_name[0] }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- شارة التحقق -->
+                        <div style="position: absolute; top: 15px; left: 15px; background: rgba(76, 175, 80, 0.9); color: white; padding: 5px 10px; border-radius: 15px; font-size: 0.7rem;">
+                            <i class="fas fa-check-circle"></i> معتمد
+                        </div>
+                        
+                        <!-- علم الدولة -->
+                        <div style="position: absolute; top: 15px; right: 15px; background: rgba(255,255,255,0.9); color: #205072; padding: 5px 10px; border-radius: 15px; font-size: 0.7rem; font-weight: 600;">
+                            <i class="fas fa-flag"></i> {{ exhibitor.country }}
+                        </div>
+                    </div>
+                    
+                    <!-- محتوى البطاقة -->
+                    <div style="padding: 40px 20px 20px 20px;">
+                        <!-- اسم الشركة -->
+                        <h3 style="color: #2c3e50; margin-bottom: 8px; font-size: 1.2rem; font-weight: 600;">
+                            {{ exhibitor.company_name }}
+                        </h3>
+                        
+                        <!-- وصف مختصر -->
+                        {% if exhibitor.company_description %}
+                            <p style="color: #666; font-size: 0.9rem; margin-bottom: 12px; line-height: 1.5;">
+                                {{ exhibitor.company_description[:120] }}{% if exhibitor.company_description|length > 120 %}...{% endif %}
+                            </p>
+                        {% endif %}
+                        
+                        <!-- معلومات إضافية -->
+                        <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 15px;">
+                            {% if exhibitor.category %}
+                                <span style="background: #e3f2fd; color: #1565c0; padding: 4px 8px; border-radius: 12px; font-size: 0.7rem;">
+                                    <i class="fas fa-tag"></i> {{ exhibitor.category.name_ar if exhibitor.category else 'غير محدد' }}
+                                </span>
+                            {% endif %}
+                            <span style="background: #e8f5e8; color: #2e7d32; padding: 4px 8px; border-radius: 12px; font-size: 0.7rem;">
+                                <i class="fas fa-globe"></i> {{ exhibitor.country }}
+                            </span>
+                        </div>
+                        
+                        <!-- إحصائيات سريعة -->
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding: 10px; background: #f8f9fa; border-radius: 8px;">
+                            <div style="text-align: center; flex: 1;">
+                                <div style="font-weight: 600; color: #2c3e50;">{{ exhibitor.get_total_products() if exhibitor.get_total_products else 0 }}</div>
+                                <div style="font-size: 0.7rem; color: #666;">منتج</div>
+                            </div>
+                            <div style="text-align: center; flex: 1;">
+                                <div style="font-weight: 600; color: #2c3e50;">{{ exhibitor.profile_views if exhibitor.profile_views else 0 }}</div>
+                                <div style="font-size: 0.7rem; color: #666;">مشاهدة</div>
+                            </div>
+                            <div style="text-align: center; flex: 1;">
+                                <div style="font-weight: 600; color: #2c3e50;">{{ exhibitor.created_at.strftime('%Y') }}</div>
+                                <div style="font-size: 0.7rem; color: #666;">عضو منذ</div>
+                            </div>
+                        </div>
+                        
+                        <!-- أزرار الإجراءات -->
+                        <div style="display: flex; gap: 8px;">
+                            <a href="{{ url_for('main.exhibitor_profile', exhibitor_id=exhibitor.id) }}" 
+                               style="flex: 1; background: linear-gradient(135deg, #205072 0%, #186687 100%); color: white; padding: 10px 15px; border-radius: 8px; text-decoration: none; text-align: center; font-size: 0.8rem; font-weight: 600;">
+                                <i class="fas fa-eye"></i> عرض الملف
+                            </a>
+                            {% if exhibitor.get_total_products() > 0 %}
+                                <a href="{{ url_for('main.products_list', exhibitor=exhibitor.id) }}" 
+                                   style="flex: 1; background: linear-gradient(135deg, #4caf50 0%, #8bc34a 100%); color: white; padding: 10px 15px; border-radius: 8px; text-decoration: none; text-align: center; font-size: 0.8rem; font-weight: 600;">
+                                    <i class="fas fa-box"></i> المنتجات
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        
+        <!-- التنقل بين الصفحات -->
+        {% if exhibitors.pages > 1 %}
+            <div style="display: flex; justify-content: center; gap: 10px; margin-top: 30px; flex-wrap: wrap;">
+                {% if exhibitors.has_prev %}
+                    <a href="{{ url_for('main.exhibitors_by_country', country=country, page=exhibitors.prev_num) }}" 
+                       style="padding: 8px 15px; background: #f8f9fa; color: #205072; border-radius: 8px; text-decoration: none; border: 1px solid #e0e0e0;">
+                        <i class="fas fa-chevron-right"></i> السابق
+                    </a>
+                {% endif %}
+                
+                <!-- أرقام الصفحات -->
+                {% for page_num in exhibitors.iter_pages() %}
+                    {% if page_num %}
+                        {% if page_num != exhibitors.page %}
+                            <a href="{{ url_for('main.exhibitors_by_country', country=country, page=page_num) }}" 
+                               style="padding: 8px 12px; background: #f8f9fa; color: #205072; border-radius: 8px; text-decoration: none; border: 1px solid #e0e0e0; min-width: 40px; text-align: center;">
+                                {{ page_num }}
+                            </a>
+                        {% else %}
+                            <span style="padding: 8px 12px; background: linear-gradient(135deg, #205072 0%, #186687 100%); color: white; border-radius: 8px; border: 1px solid #205072; min-width: 40px; text-align: center;">
+                                {{ page_num }}
+                            </span>
+                        {% endif %}
+                    {% else %}
+                        <span style="padding: 8px 12px; color: #666;">...</span>
+                    {% endif %}
+                {% endfor %}
+                
+                {% if exhibitors.has_next %}
+                    <a href="{{ url_for('main.exhibitors_by_country', country=country, page=exhibitors.next_num) }}" 
+                       style="padding: 8px 15px; background: #f8f9fa; color: #205072; border-radius: 8px; text-decoration: none; border: 1px solid #e0e0e0;">
+                        التالي <i class="fas fa-chevron-left"></i>
+                    </a>
+                {% endif %}
+            </div>
+        {% endif %}
+        
+    {% else %}
+        <!-- لا توجد عارضين -->
+        <div style="text-align: center; padding: 40px 20px; background: #f8f9fa; border-radius: 15px; margin: 20px 0;">
+            <i class="fas fa-exclamation-circle" style="font-size: 3rem; color: #ffc107; margin-bottom: 15px;"></i>
+            <h3 style="color: #2c3e50; margin-bottom: 10px;">لا توجد عارضين من {{ country }}</h3>
+            <p style="color: #666; margin-bottom: 20px;">
+                لم نجد أي عارضين معتمدين من {{ country }} حالياً
+            </p>
+            <a href="{{ url_for('main.exhibitors_list') }}" 
+               style="background: linear-gradient(135deg, #205072 0%, #186687 100%); color: white; padding: 12px 25px; border-radius: 25px; text-decoration: none; font-weight: 600;">
+                <i class="fas fa-list"></i> عرض جميع العارضين
+            </a>
+        </div>
+    {% endif %}
+</div>
+
+<!-- أزرار التنقل -->
+<div class="section" style="text-align: center; margin-top: 30px;">
+    <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+        <a href="{{ url_for('main.pavilions_flags') }}" 
+           style="background: #f8f9fa; color: #205072; padding: 12px 20px; border-radius: 25px; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; border: 1px solid #e0e0e0;">
+            <i class="fas fa-flag"></i> أعلام الدول
+        </a>
+        <a href="{{ url_for('main.exhibitors_list') }}" 
+           style="background: #f8f9fa; color: #205072; padding: 12px 20px; border-radius: 25px; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; border: 1px solid #e0e0e0;">
+            <i class="fas fa-list"></i> جميع العارضين
+        </a>
+        <a href="{{ url_for('main.index') }}" 
+           style="background: linear-gradient(135deg, #205072 0%, #186687 100%); color: white; padding: 12px 20px; border-radius: 25px; text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">
+            <i class="fas fa-home"></i> الصفحة الرئيسية
+        </a>
+    </div>
+</div>
+
+<style>
+.exhibitor-card {
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.exhibitor-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15) !important;
+}
+
+.exhibitor-card:active {
+    transform: translateY(-2px);
+}
+
+/* تحسينات للأجهزة الصغيرة */
+@media (max-width: 480px) {
+    .section {
+        margin-bottom: 15px;
+    }
+    
+    .exhibitor-card {
+        margin-bottom: 10px;
+    }
+    
+    .flag-card h3 {
+        font-size: 1rem;
+    }
+    
+    .flag-card p {
+        font-size: 0.8rem;
+    }
+}
+</style>
+
+<script>
+// تحسين تجربة المستخدم عند النقر
+document.addEventListener('DOMContentLoaded', function() {
+    const exhibitorCards = document.querySelectorAll('.exhibitor-card');
+    
+    exhibitorCards.forEach(card => {
+        // منع التنقل عند النقر على الأزرار
+        const buttons = card.querySelectorAll('a');
+        buttons.forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+        });
+        
+        // إضافة تأثير بصري عند النقر
+        card.addEventListener('click', function() {
+            this.style.transform = 'translateY(-2px)';
+            setTimeout(() => {
+                window.location.href = this.getAttribute('onclick').match(/'([^']+)'/)[1];
+            }, 100);
+        });
+    });
+});
+</script>
+{% endblock %}

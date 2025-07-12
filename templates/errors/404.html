@@ -1,0 +1,93 @@
+{% extends "base_mobile.html" %}
+
+{% block title %}الصفحة غير موجودة - 404{% endblock %}
+
+{% block content %}
+<div style="text-align: center; padding: 60px 20px; min-height: 50vh; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+    <div style="font-size: 8rem; font-weight: 900; color: #e3f2fd; margin-bottom: 20px; line-height: 1;">404</div>
+    
+    <div style="margin-bottom: 30px;">
+        <i class="fas fa-search" style="font-size: 4rem; color: #2196f3; margin-bottom: 20px;"></i>
+        <h1 style="color: #2c3e50; margin-bottom: 15px; font-size: 1.8rem;">الصفحة غير موجودة</h1>
+        <p style="color: #666; font-size: 1.1rem; max-width: 400px; margin: 0 auto 30px; line-height: 1.6;">
+            عذراً، الصفحة التي تبحث عنها غير متوفرة أو تم نقلها إلى موقع آخر
+        </p>
+    </div>
+    
+    <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+        <a href="{{ url_for('main.index') }}" class="btn-primary" style="text-decoration: none;">
+            <i class="fas fa-home"></i> العودة للرئيسية
+        </a>
+        
+        <button onclick="window.history.back()" class="btn-secondary">
+            <i class="fas fa-arrow-left"></i> العودة للخلف
+        </button>
+    </div>
+    
+    <!-- اقتراحات للمساعدة -->
+    <div style="margin-top: 50px; text-align: right; max-width: 500px;">
+        <h3 style="color: #2c3e50; margin-bottom: 20px; font-size: 1.2rem; text-align: center;">
+            <i class="fas fa-lightbulb"></i> يمكنك تجربة:
+        </h3>
+        
+        <div style="display: grid; gap: 12px;">
+            <div style="display: flex; align-items: center; gap: 12px; padding: 12px; background: #f8f9fa; border-radius: 8px;">
+                <i class="fas fa-store" style="color: #4caf50; font-size: 1.2rem;"></i>
+                <div>
+                    <div style="font-weight: 600; color: #2c3e50;">تصفح العارضين</div>
+                    <div style="font-size: 0.9rem; color: #666;">اكتشف الشركات المشاركة في المعرض</div>
+                </div>
+            </div>
+            
+            <div style="display: flex; align-items: center; gap: 12px; padding: 12px; background: #f8f9fa; border-radius: 8px;">
+                <i class="fas fa-box" style="color: #2196f3; font-size: 1.2rem;"></i>
+                <div>
+                    <div style="font-weight: 600; color: #2c3e50;">استعراض المنتجات</div>
+                    <div style="font-size: 0.9rem; color: #666;">اطلع على أحدث المنتجات المعروضة</div>
+                </div>
+            </div>
+            
+            <div style="display: flex; align-items: center; gap: 12px; padding: 12px; background: #f8f9fa; border-radius: 8px;">
+                <i class="fas fa-user-plus" style="color: #ff9800; font-size: 1.2rem;"></i>
+                <div>
+                    <div style="font-weight: 600; color: #2c3e50;">إنشاء حساب</div>
+                    <div style="font-size: 0.9rem; color: #666;">انضم للمعرض كعارض أو زائر</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+    }
+    40% {
+        transform: translateY(-10px);
+    }
+    60% {
+        transform: translateY(-5px);
+    }
+}
+
+.fas.fa-search {
+    animation: bounce 2s infinite;
+}
+
+.btn-primary:hover, .btn-secondary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    transition: all 0.3s ease;
+}
+</style>
+
+<script>
+// إحصائيات الخطأ (اختيارية)
+document.addEventListener('DOMContentLoaded', function() {
+    // يمكن إضافة تتبع للصفحات المفقودة
+    console.log('404 Error: Page not found - ' + window.location.pathname);
+});
+</script>
+
+{% endblock %}

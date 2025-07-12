@@ -1,0 +1,367 @@
+{% extends "base_mobile.html" %}
+
+{% block title %}المنتجات - Arab Expo For Food{% endblock %}
+
+{% block content %}
+<!-- عنوان الصفحة -->
+<div style="background: linear-gradient(135deg, #4caf50 0%, #8bc34a 100%); color: white; padding: 30px 15px; text-align: center; margin: -15px -15px 20px -15px;">
+    <h1 style="margin: 0 0 10px 0; font-size: 1.8rem; font-weight: 700;">
+        <i class="fas fa-boxes"></i> معرض المنتجات
+    </h1>
+    <p style="margin: 0; opacity: 0.9; font-size: 1rem;">
+        اكتشف أحدث وأفضل المنتجات الغذائية المعروضة
+    </p>
+</div>
+
+<!-- إحصائيات سريعة -->
+<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 20px 0;">
+    <div class="card" style="text-align: center; padding: 15px; background: linear-gradient(135deg, #2196f3 0%, #03a9f4 100%); color: white;">
+        <div style="font-size: 1.5rem; font-weight: 800; margin-bottom: 5px;">{{ products.total }}</div>
+        <div style="font-size: 0.8rem; opacity: 0.9;"><i class="fas fa-box"></i> منتج</div>
+    </div>
+    
+    <div class="card" style="text-align: center; padding: 15px; background: linear-gradient(135deg, #ff9800 0%, #ffc107 100%); color: white;">
+        <div style="font-size: 1.5rem; font-weight: 800; margin-bottom: 5px;">{{ featured_count }}</div>
+        <div style="font-size: 0.8rem; opacity: 0.9;"><i class="fas fa-star"></i> مميز</div>
+    </div>
+    
+    <div class="card" style="text-align: center; padding: 15px; background: linear-gradient(135deg, #e91e63 0%, #f06292 100%); color: white;">
+        <div style="font-size: 1.5rem; font-weight: 800; margin-bottom: 5px;">{{ categories_count }}</div>
+        <div style="font-size: 0.8rem; opacity: 0.9;"><i class="fas fa-tags"></i> فئة</div>
+    </div>
+</div>
+
+<!-- أدوات البحث والتصفية -->
+<div class="section">
+    <h3 style="color: #2c3e50; margin-bottom: 15px;">
+        <i class="fas fa-filter"></i> البحث والتصفية
+    </h3>
+    
+    <form method="GET" style="margin-bottom: 20px;">
+        <!-- البحث -->
+        <div style="margin-bottom: 15px;">
+            <input type="text" name="search" value="{{ search_term or '' }}" 
+                   style="width: 100%; padding: 12px 15px; border: 2px solid #e1e8ed; border-radius: 25px; font-size: 1rem; background: #f8f9fa;"
+                   placeholder="ابحث عن منتج...">
+        </div>
+        
+        <!-- فلتر الفئات -->
+        <div style="margin-bottom: 15px;">
+            <select name="category" style="width: 100%; padding: 12px 15px; border: 2px solid #e1e8ed; border-radius: 25px; font-size: 1rem; background: white;">
+                <option value="" {% if not current_category %}selected{% endif %}>جميع الفئات</option>
+                {% for category in product_categories %}
+                    <option value="{{ category }}" {% if current_category == category %}selected{% endif %}>
+                        {{ category }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <!-- فلتر السعر -->
+        <div style="margin-bottom: 15px;">
+            <select name="price_range" style="width: 100%; padding: 12px 15px; border: 2px solid #e1e8ed; border-radius: 25px; font-size: 1rem; background: white;">
+                <option value="" {% if not current_price_range %}selected{% endif %}>جميع الأسعار</option>
+                <option value="free" {% if current_price_range == 'free' %}selected{% endif %}>مجاني</option>
+                <option value="low" {% if current_price_range == 'low' %}selected{% endif %}>أقل من 100</option>
+                <option value="medium" {% if current_price_range == 'medium' %}selected{% endif %}>100 - 500</option>
+                <option value="high" {% if current_price_range == 'high' %}selected{% endif %}>أكثر من 500</option>
+            </select>
+        </div>
+        
+        <!-- أزرار -->
+        <div style="display: flex; gap: 10px;">
+            <button type="submit" class="btn-primary" style="flex: 1;">
+                <i class="fas fa-search"></i> بحث
+            </button>
+            <a href="{{ url_for('main.products_list') }}" class="btn-secondary" style="flex: 1; text-decoration: none; text-align: center;">
+                <i class="fas fa-refresh"></i> إعادة تعيين
+            </a>
+        </div>
+    </form>
+</div>
+
+<!-- فلتر سريع -->
+<div style="display: flex; gap: 8px; margin: 15px 0; overflow-x: auto; padding-bottom: 10px;">
+    <a href="{{ url_for('main.products_list') }}" 
+       class="filter-chip {% if not current_category and not search_term %}active{% endif %}">
+        <i class="fas fa-th"></i> الكل
+    </a>
+    <a href="{{ url_for('main.products_list', featured=1) }}" 
+       class="filter-chip {% if request.args.get('featured') %}active{% endif %}">
+        <i class="fas fa-star"></i> المميز
+    </a>
+    <a href="{{ url_for('main.products_list', recent=1) }}" 
+       class="filter-chip {% if request.args.get('recent') %}active{% endif %}">
+        <i class="fas fa-clock"></i> الأحدث
+    </a>
+</div>
+
+<!-- قائمة المنتجات -->
+{% if products.items %}
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 15px;">
+        {% for product in products.items %}
+            <div class="card product-card" style="background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1); transition: all 0.3s; position: relative;">
+                <!-- شارة المنتج المميز -->
+                {% if product.is_featured %}
+                    <div style="position: absolute; top: 12px; right: 12px; background: linear-gradient(45deg, #ff9800, #f57c00); color: white; padding: 6px 10px; border-radius: 15px; font-size: 0.7rem; z-index: 2;">
+                        <i class="fas fa-star"></i> مميز
+                    </div>
+                {% endif %}
+                
+                <!-- صورة المنتج -->
+                <div style="position: relative; height: 180px; background: #f5f5f5;">
+                    {% if product.main_image %}
+                        <img src="{{ url_for('static', filename='uploads/products/' + product.main_image) }}" 
+                             alt="{{ product.name }}" 
+                             style="width: 100%; height: 100%; object-fit: cover;">
+                    {% else %}
+                        <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);">
+                            <i class="fas fa-box" style="font-size: 3rem; color: #1565c0; opacity: 0.5;"></i>
+                        </div>
+                    {% endif %}
+                    
+                    <!-- تدرج سفلي -->
+                    <div style="position: absolute; bottom: 0; left: 0; right: 0; height: 50px; background: linear-gradient(transparent, rgba(0,0,0,0.3));"></div>
+                </div>
+                
+                <!-- محتوى البطاقة -->
+                <div style="padding: 20px;">
+                    <!-- اسم المنتج -->
+                    <h3 style="color: #2c3e50; margin-bottom: 8px; font-size: 1.1rem; font-weight: 600; line-height: 1.3;">
+                        {{ product.name }}
+                    </h3>
+                    
+                    <!-- وصف مختصر -->
+                    {% if product.description %}
+                        <p style="color: #666; font-size: 0.9rem; margin-bottom: 12px; line-height: 1.4; height: 40px; overflow: hidden;">
+                            {{ product.description[:80] }}{% if product.description|length > 80 %}...{% endif %}
+                        </p>
+                    {% endif %}
+                    
+                    <!-- معلومات العارض -->
+                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px; padding: 8px; background: #f8f9fa; border-radius: 8px;">
+                        {% if product.exhibitor.logo_image %}
+                            <img src="{{ url_for('static', filename='uploads/exhibitors/' + product.exhibitor.logo_image) }}" 
+                                 alt="{{ product.exhibitor.company_name }}" 
+                                 style="width: 25px; height: 25px; border-radius: 50%; object-fit: cover;">
+                        {% else %}
+                            <div style="width: 25px; height: 25px; background: #2196f3; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.7rem; font-weight: 600;">
+                                {{ product.exhibitor.company_name[0] }}
+                            </div>
+                        {% endif %}
+                        <span style="color: #666; font-size: 0.8rem;">{{ product.exhibitor.company_name }}</span>
+                    </div>
+                    
+                    <!-- معلومات إضافية -->
+                    <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 15px;">
+                        {% if product.category %}
+                            <span style="background: #e3f2fd; color: #1565c0; padding: 3px 8px; border-radius: 10px; font-size: 0.7rem;">
+                                {{ product.category }}
+                            </span>
+                        {% endif %}
+                        <span style="background: #e8f5e8; color: #2e7d32; padding: 3px 8px; border-radius: 10px; font-size: 0.7rem;">
+                            <i class="fas fa-eye"></i> {{ product.views_count }}
+                        </span>
+                    </div>
+                    
+                    <!-- السعر والإجراءات -->
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            {% if product.price %}
+                                <div style="color: #4caf50; font-weight: 700; font-size: 1.1rem;">
+                                    {{ product.price|currency(product.currency) }}
+                                </div>
+                            {% else %}
+                                <div style="color: #666; font-size: 0.9rem;">
+                                    <i class="fas fa-tag"></i> السعر عند الطلب
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <a href="{{ url_for('main.product_detail', product_id=product.id) }}" 
+                           class="btn-primary" style="text-decoration: none; padding: 8px 15px; font-size: 0.8rem;">
+                            <i class="fas fa-eye"></i> عرض
+                        </a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <!-- صفحات التنقل -->
+    {% if products.pages > 1 %}
+        <div style="display: flex; justify-content: center; gap: 8px; margin: 30px 0; flex-wrap: wrap;">
+            {% if products.has_prev %}
+                <a href="{{ url_for('main.products_list', page=products.prev_num, category=current_category, search=search_term, price_range=current_price_range) }}" 
+                   style="background: #f5f5f5; color: #333; padding: 8px 12px; border-radius: 8px; text-decoration: none; font-size: 0.9rem;">
+                    <i class="fas fa-chevron-right"></i> السابق
+                </a>
+            {% endif %}
+            
+            {% for page_num in products.iter_pages() %}
+                {% if page_num %}
+                    {% if page_num != products.page %}
+                        <a href="{{ url_for('main.products_list', page=page_num, category=current_category, search=search_term, price_range=current_price_range) }}" 
+                           style="background: #f5f5f5; color: #333; padding: 8px 12px; border-radius: 8px; text-decoration: none; min-width: 35px; text-align: center; font-size: 0.9rem;">
+                            {{ page_num }}
+                        </a>
+                    {% else %}
+                        <span style="background: #4caf50; color: white; padding: 8px 12px; border-radius: 8px; min-width: 35px; text-align: center; display: inline-block; font-size: 0.9rem;">
+                            {{ page_num }}
+                        </span>
+                    {% endif %}
+                {% else %}
+                    <span style="padding: 8px 12px; font-size: 0.9rem;">...</span>
+                {% endif %}
+            {% endfor %}
+            
+            {% if products.has_next %}
+                <a href="{{ url_for('main.products_list', page=products.next_num, category=current_category, search=search_term, price_range=current_price_range) }}" 
+                   style="background: #f5f5f5; color: #333; padding: 8px 12px; border-radius: 8px; text-decoration: none; font-size: 0.9rem;">
+                    التالي <i class="fas fa-chevron-left"></i>
+                </a>
+            {% endif %}
+        </div>
+    {% endif %}
+
+{% else %}
+    <!-- لا توجد نتائج -->
+    <div class="section" style="text-align: center; padding: 50px 20px; background: #f8f9fa; border-radius: 15px;">
+        <i class="fas fa-search" style="font-size: 3rem; color: #ddd; margin-bottom: 15px;"></i>
+        <h3 style="color: #666; margin-bottom: 10px;">لا توجد منتجات</h3>
+        {% if search_term or current_category or current_price_range %}
+            <p style="color: #999; margin-bottom: 20px;">لم يتم العثور على منتجات تطابق المعايير المحددة</p>
+            <a href="{{ url_for('main.products_list') }}" class="btn-primary">
+                <i class="fas fa-refresh"></i> عرض جميع المنتجات
+            </a>
+        {% else %}
+            <p style="color: #999;">لا توجد منتجات معروضة حتى الآن</p>
+        {% endif %}
+    </div>
+{% endif %}
+
+<!-- زر العودة للرئيسية -->
+<div style="text-align: center; margin: 30px 0;">
+    <a href="{{ url_for('main.index') }}" class="btn-secondary" style="text-decoration: none;">
+        <i class="fas fa-home"></i> العودة للصفحة الرئيسية
+    </a>
+</div>
+
+<style>
+/* فلتر سريع */
+.filter-chip {
+    background: #f5f5f5;
+    color: #666;
+    padding: 8px 15px;
+    border-radius: 20px;
+    text-decoration: none;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    transition: all 0.3s;
+    border: 2px solid transparent;
+}
+
+.filter-chip.active,
+.filter-chip:hover {
+    background: #4caf50;
+    color: white;
+    border-color: #4caf50;
+    transform: translateY(-1px);
+}
+
+/* تحسين البطاقات */
+.product-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+}
+
+/* تحسين الأزرار */
+.btn-primary:hover, .btn-secondary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+}
+
+/* تحسين النماذج */
+input:focus, select:focus {
+    border-color: #4caf50;
+    box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+    outline: none;
+}
+
+/* تحسين العرض للموبايل */
+@media (max-width: 480px) {
+    .product-card {
+        margin: 0 -5px;
+    }
+    
+    .section {
+        padding: 15px 10px;
+    }
+    
+    /* تحسين الشبكة للموبايل */
+    div[style*="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr))"] {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 10px;
+    }
+}
+
+/* تحسين التمرير الأفقي */
+div[style*="overflow-x: auto"] {
+    scrollbar-width: thin;
+    scrollbar-color: #ccc transparent;
+}
+
+div[style*="overflow-x: auto"]::-webkit-scrollbar {
+    height: 4px;
+}
+
+div[style*="overflow-x: auto"]::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+div[style*="overflow-x: auto"]::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 2px;
+}
+</style>
+
+<script>
+// تحسين تجربة المستخدم
+document.addEventListener('DOMContentLoaded', function() {
+    // تأثيرات الظهور التدريجي
+    const cards = document.querySelectorAll('.product-card');
+    cards.forEach((card, index) => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(20px)';
+        setTimeout(() => {
+            card.style.transition = 'all 0.6s ease';
+            card.style.opacity = '1';
+            card.style.transform = 'translateY(0)';
+        }, index * 50);
+    });
+    
+    // تحسين نموذج البحث
+    const searchInput = document.querySelector('input[name="search"]');
+    if (searchInput) {
+        let searchTimeout;
+        searchInput.addEventListener('input', function() {
+            clearTimeout(searchTimeout);
+            // يمكن إضافة بحث فوري هنا
+        });
+    }
+    
+    // تحسين الفلاتر السريعة
+    const filterChips = document.querySelectorAll('.filter-chip');
+    filterChips.forEach(chip => {
+        chip.addEventListener('click', function(e) {
+            // إضافة تأثير تحميل
+            this.style.opacity = '0.7';
+            setTimeout(() => {
+                this.style.opacity = '1';
+            }, 200);
+        });
+    });
+});
+</script>
+
+{% endblock %}

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الزوار - Arab Expo For Food</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="admin-container">
+        <div class="admin-header">
+            <h1>قائمة الزوار</h1>
+        </div>
+        
+        <div class="admin-nav">
+            <a href="{{ url_for('admin_dashboard') }}">لوحة التحكم</a>
+            <a href="{{ url_for('index') }}">الصفحة الرئيسية</a>
+            <a href="{{ url_for('admin_exhibitors') }}">العارضين</a>
+        </div>
+        
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>التاريخ</th>
+                    <th>الهاتف</th>
+                    <th>البريد الإلكتروني</th>
+                    <th>الاسم الكامل</th>
+                    <th>الرقم</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for visitor in visitors %}
+                <tr>
+                    <td>{{ visitor.registration_date.strftime('%Y-%m-%d %H:%M') }}</td>
+                    <td>{{ visitor.phone }}</td>
+                    <td>{{ visitor.email }}</td>
+                    <td>{{ visitor.full_name }}</td>
+                    <td>{{ visitor.id }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

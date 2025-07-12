@@ -1,0 +1,314 @@
+{% extends "base_mobile.html" %}
+
+{% block title %}إدارة المنتجات - {{ exhibitor.company_name }}{% endblock %}
+
+{% block content %}
+<!-- عنوان الصفحة -->
+<div class="section" style="background: linear-gradient(135deg, #4caf50 0%, #8bc34a 100%); color: white; text-align: center; padding: 20px 15px;">
+    <h1 style="margin: 0; font-size: 1.6rem;">
+        <i class="fas fa-box-open"></i> إدارة المنتجات
+    </h1>
+    <p style="margin: 10px 0 0 0; opacity: 0.9;">إضافة وتحرير منتجات شركتك</p>
+</div>
+
+<!-- إحصائيات سريعة -->
+<div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin: 20px 0;">
+    <div class="card" style="text-align: center; padding: 15px; background: linear-gradient(135deg, #2196f3 0%, #03a9f4 100%); color: white;">
+        <i class="fas fa-box" style="font-size: 1.5rem; margin-bottom: 8px;"></i>
+        <div style="font-size: 1.2rem; font-weight: 600;">{{ products.total }}</div>
+        <div style="font-size: 0.8rem; opacity: 0.9;">إجمالي المنتجات</div>
+    </div>
+    
+    <div class="card" style="text-align: center; padding: 15px; background: linear-gradient(135deg, #ff9800 0%, #ffc107 100%); color: white;">
+        <i class="fas fa-star" style="font-size: 1.5rem; margin-bottom: 8px;"></i>
+        <div style="font-size: 1.2rem; font-weight: 600;">{{ products.items|selectattr('is_featured')|list|length }}</div>
+        <div style="font-size: 0.8rem; opacity: 0.9;">منتجات مميزة</div>
+    </div>
+</div>
+
+<!-- أزرار الإجراءات -->
+<div class="section">
+    <h3 style="color: #2c3e50; margin-bottom: 15px;">
+        <i class="fas fa-plus-circle"></i> إجراءات سريعة
+    </h3>
+    
+    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
+        <a href="{{ url_for('exhibitor.add_product') }}" 
+           style="background: linear-gradient(135deg, #4caf50 0%, #8bc34a 100%); color: white; 
+                  padding: 15px; border-radius: 10px; text-decoration: none; text-align: center; font-weight: 600;">
+            <i class="fas fa-plus" style="margin-bottom: 8px; display: block; font-size: 1.2rem;"></i>
+            إضافة منتج جديد
+        </a>
+        
+        <a href="{{ url_for('exhibitor.dashboard') }}" 
+           style="background: linear-gradient(135deg, #6c757d 0%, #495057 100%); color: white; 
+                  padding: 15px; border-radius: 10px; text-decoration: none; text-align: center; font-weight: 600;">
+            <i class="fas fa-chart-bar" style="margin-bottom: 8px; display: block; font-size: 1.2rem;"></i>
+            لوحة التحكم
+        </a>
+    </div>
+</div>
+
+<!-- قائمة المنتجات -->
+{% if products.items %}
+<div class="section">
+    <h3 style="color: #2c3e50; margin-bottom: 15px;">
+        <i class="fas fa-list"></i> منتجاتك ({{ products.total }})
+    </h3>
+    
+    {% for product in products.items %}
+    <div class="card" style="margin-bottom: 15px; border-right: 4px solid {{ '#4caf50' if product.is_active else '#f44336' }};">
+        <div style="display: flex; gap: 15px;">
+            <!-- صورة المنتج -->
+            <div style="width: 80px; height: 80px; border-radius: 8px; overflow: hidden; flex-shrink: 0;">
+                {% if product.image %}
+                    <img src="{{ url_for('static', filename='uploads/products/' + product.image) }}" 
+                         style="width: 100%; height: 100%; object-fit: cover;">
+                {% else %}
+                    <div style="width: 100%; height: 100%; background: linear-gradient(135deg, #f0f0f0 0%, #e0e0e0 100%); 
+                                display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-image" style="color: #ccc; font-size: 1.5rem;"></i>
+                    </div>
+                {% endif %}
+            </div>
+            
+            <!-- معلومات المنتج -->
+            <div style="flex: 1;">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+                    <h4 style="margin: 0; color: #2c3e50; font-size: 1rem; line-height: 1.3;">{{ product.name }}</h4>
+                    
+                    <!-- حالة المنتج -->
+                    <span style="background: {{ '#4caf50' if product.is_active else '#f44336' }}; color: white; 
+                                 padding: 2px 8px; border-radius: 12px; font-size: 0.7rem; font-weight: 600;">
+                        {{ 'نشط' if product.is_active else 'معطل' }}
+                    </span>
+                </div>
+                
+                <!-- معلومات إضافية -->
+                <div style="display: flex; gap: 15px; margin-bottom: 10px; font-size: 0.85rem; color: #666;">
+                    {% if product.category %}
+                    <span><i class="fas fa-tag"></i> {{ product.category }}</span>
+                    {% endif %}
+                    
+                    {% if product.price %}
+                    <span style="color: #4caf50; font-weight: 600;">
+                        <i class="fas fa-money-bill"></i> {{ "%.2f"|format(product.price) }} جنيه
+                    </span>
+                    {% endif %}
+                </div>
+                
+                <!-- أزرار الإجراءات -->
+                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                    <a href="{{ url_for('main.product_detail', id=product.id) }}" 
+                       style="background: #2196f3; color: white; padding: 6px 12px; border-radius: 6px; 
+                              text-decoration: none; font-size: 0.8rem;">
+                        <i class="fas fa-eye"></i> عرض
+                    </a>
+                    
+                    <a href="{{ url_for('exhibitor.edit_product', id=product.id) }}" 
+                       style="background: #ff9800; color: white; padding: 6px 12px; border-radius: 6px; 
+                              text-decoration: none; font-size: 0.8rem;">
+                        <i class="fas fa-edit"></i> تحرير
+                    </a>
+                    
+                    <button onclick="toggleProductStatus({{ product.id }}, {{ 'true' if product.is_active else 'false' }})" 
+                            style="background: {{ '#f44336' if product.is_active else '#4caf50' }}; color: white; 
+                                   border: none; padding: 6px 12px; border-radius: 6px; font-size: 0.8rem; cursor: pointer;">
+                        <i class="fas fa-{{ 'pause' if product.is_active else 'play' }}"></i> 
+                        {{ 'إيقاف' if product.is_active else 'تفعيل' }}
+                    </button>
+                    
+                    {% if product.is_featured %}
+                    <span style="background: #ffeb3b; color: #795548; padding: 6px 12px; border-radius: 6px; font-size: 0.8rem;">
+                        <i class="fas fa-star"></i> مميز
+                    </span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- معلومات إضافية في سطر منفصل -->
+        <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid #f0f0f0; display: flex; justify-content: space-between; font-size: 0.8rem; color: #999;">
+            <span>تم الإنشاء: {{ product.created_at.strftime('%d/%m/%Y') }}</span>
+            <span>آخر تحديث: {{ product.updated_at.strftime('%d/%m/%Y') if product.updated_at else product.created_at.strftime('%d/%m/%Y') }}</span>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- صفحات التنقل -->
+{% if products.pages > 1 %}
+<div class="section">
+    <div style="display: flex; justify-content: center; gap: 10px;">
+        {% if products.has_prev %}
+        <a href="{{ url_for('exhibitor.products', page=products.prev_num) }}" 
+           style="background: #6c757d; color: white; padding: 8px 12px; border-radius: 6px; text-decoration: none;">
+            <i class="fas fa-chevron-right"></i> السابق
+        </a>
+        {% endif %}
+        
+        <span style="padding: 8px 12px; background: #f8f9fa; border-radius: 6px; color: #666;">
+            صفحة {{ products.page }} من {{ products.pages }}
+        </span>
+        
+        {% if products.has_next %}
+        <a href="{{ url_for('exhibitor.products', page=products.next_num) }}" 
+           style="background: #6c757d; color: white; padding: 8px 12px; border-radius: 6px; text-decoration: none;">
+            التالي <i class="fas fa-chevron-left"></i>
+        </a>
+        {% endif %}
+    </div>
+</div>
+{% endif %}
+
+{% else %}
+<!-- لا توجد منتجات -->
+<div class="section" style="text-align: center; background: linear-gradient(135deg, #fafafa 0%, #f0f0f0 100%); border: 2px dashed #ddd; padding: 40px 20px;">
+    <i class="fas fa-box-open" style="font-size: 4rem; color: #ccc; margin-bottom: 20px;"></i>
+    <h3 style="color: #666; margin-bottom: 15px;">لا توجد منتجات بعد</h3>
+    <p style="color: #999; margin-bottom: 25px; line-height: 1.6;">
+        ابدأ في عرض منتجاتك للزوار عبر إضافة أول منتج لك
+    </p>
+    
+    <a href="{{ url_for('exhibitor.add_product') }}" 
+       style="background: linear-gradient(135deg, #4caf50 0%, #8bc34a 100%); color: white; 
+              padding: 15px 30px; border-radius: 10px; text-decoration: none; font-weight: 600; 
+              display: inline-block;">
+        <i class="fas fa-plus"></i> إضافة منتج جديد
+    </a>
+</div>
+{% endif %}
+
+<!-- رسائل تأكيد -->
+<div id="notification" style="position: fixed; top: 20px; right: 20px; background: #4caf50; color: white; padding: 15px 20px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); transform: translateX(400px); transition: all 0.3s; z-index: 1000;">
+    تم بنجاح
+</div>
+
+<style>
+/* تحسينات إضافية للموبايل */
+@media (max-width: 480px) {
+    .card {
+        padding: 15px;
+    }
+    
+    .card > div:first-child {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .card > div:first-child > div:first-child {
+        width: 100%;
+        height: 120px;
+    }
+    
+    .card > div:first-child > div:last-child {
+        width: 100%;
+    }
+}
+
+/* تأثيرات التمرير */
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover,
+.btn-secondary:hover {
+    transform: translateY(-1px);
+    transition: all 0.3s ease;
+}
+
+/* تنسيق أزرار الإجراءات */
+.card button:hover,
+.card a:hover {
+    opacity: 0.9;
+    transform: scale(1.05);
+    transition: all 0.2s ease;
+}
+</style>
+
+<script>
+// إظهار الإشعارات
+function showNotification(message, type = 'success') {
+    const notification = document.getElementById('notification');
+    notification.textContent = message;
+    notification.style.background = type === 'success' ? '#4caf50' : '#f44336';
+    notification.style.transform = 'translateX(0)';
+    
+    setTimeout(() => {
+        notification.style.transform = 'translateX(400px)';
+    }, 3000);
+}
+
+// تغيير حالة المنتج (تفعيل/إيقاف)
+function toggleProductStatus(productId, currentStatus) {
+    const action = currentStatus ? 'deactivate' : 'activate';
+    
+    if (confirm(`هل أنت متأكد من ${currentStatus ? 'إيقاف' : 'تفعيل'} هذا المنتج؟`)) {
+        fetch(`/exhibitor/products/${productId}/toggle`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ action: action })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showNotification(data.message, 'success');
+                setTimeout(() => {
+                    location.reload();
+                }, 1500);
+            } else {
+                showNotification(data.message || 'حدث خطأ', 'error');
+            }
+        })
+        .catch(error => {
+            showNotification('حدث خطأ في الاتصال', 'error');
+            console.error('Error:', error);
+        });
+    }
+}
+
+// حذف المنتج
+function deleteProduct(productId) {
+    if (confirm('هل أنت متأكد من حذف هذا المنتج؟ لا يمكن التراجع عن هذا الإجراء.')) {
+        fetch(`/exhibitor/products/${productId}/delete`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showNotification('تم حذف المنتج بنجاح', 'success');
+                setTimeout(() => {
+                    location.reload();
+                }, 1500);
+            } else {
+                showNotification(data.message || 'حدث خطأ', 'error');
+            }
+        })
+        .catch(error => {
+            showNotification('حدث خطأ في الاتصال', 'error');
+            console.error('Error:', error);
+        });
+    }
+}
+
+// تحسين تجربة المستخدم
+document.addEventListener('DOMContentLoaded', function() {
+    // عرض رسائل Flash إذا وُجدت
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                showNotification('{{ message }}', '{{ "success" if category == "success" else "error" }}');
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+});
+</script>
+
+{% endblock %}

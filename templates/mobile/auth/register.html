@@ -1,0 +1,600 @@
+{% extends "base_mobile.html" %}
+
+{% block title %}إنشاء حساب جديد - Arab Expo For Food{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-header">
+        <div class="logo-section">
+            <img src="{{ url_for('static', filename='logo.png') }}" alt="Arab Expo Logo" class="auth-logo">
+            <h1>إنشاء حساب جديد</h1>
+            <p>انضم إلى المعرض العربي للأغذية</p>
+        </div>
+    </div>
+
+    <div class="auth-form">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">
+                    <i class="fas fa-{{ 'check-circle' if category == 'success' else 'exclamation-circle' }}"></i>
+                    {{ message }}
+                </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <!-- Account Type Selection -->
+        <div class="account-type-section">
+            <h3><i class="fas fa-user-cog"></i> نوع الحساب</h3>
+            <div class="account-types">
+                <div class="account-type active" data-type="visitor">
+                    <div class="type-icon">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <h4>زائر</h4>
+                    <p>استعراض المنتجات والعارضين</p>
+                </div>
+                <div class="account-type" data-type="exhibitor">
+                    <div class="type-icon">
+                        <i class="fas fa-store"></i>
+                    </div>
+                    <h4>عارض</h4>
+                    <p>عرض منتجاتك في المعرض</p>
+                </div>
+            </div>
+        </div>
+
+        <form method="POST" id="registerForm">
+            {{ form.hidden_tag() }}
+            
+            <!-- Hidden field for account type -->
+            <input type="hidden" id="accountType" name="account_type" value="visitor">
+
+            <!-- Basic Information -->
+            <div class="form-section">
+                <h3><i class="fas fa-user"></i> المعلومات الأساسية</h3>
+                
+                <div class="form-group">
+                    <label for="username">{{ form.username.label.text }}</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-user"></i>
+                        {{ form.username(class="form-control", placeholder="أدخل اسم المستخدم") }}
+                    </div>
+                    {% for error in form.username.errors %}
+                        <span class="error-message">{{ error }}</span>
+                    {% endfor %}
+                </div>
+
+                <div class="form-group">
+                    <label for="email">{{ form.email.label.text }}</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-envelope"></i>
+                        {{ form.email(class="form-control", placeholder="أدخل البريد الإلكتروني") }}
+                    </div>
+                    {% for error in form.email.errors %}
+                        <span class="error-message">{{ error }}</span>
+                    {% endfor %}
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="password">{{ form.password.label.text }}</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-lock"></i>
+                            {{ form.password(class="form-control", placeholder="أدخل كلمة المرور") }}
+                            <i class="fas fa-eye toggle-password" data-target="password"></i>
+                        </div>
+                        {% for error in form.password.errors %}
+                            <span class="error-message">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password2">{{ form.password2.label.text }}</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-lock"></i>
+                            {{ form.password2(class="form-control", placeholder="أعد إدخال كلمة المرور") }}
+                            <i class="fas fa-eye toggle-password" data-target="password2"></i>
+                        </div>
+                        {% for error in form.password2.errors %}
+                            <span class="error-message">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Visitor Fields -->
+            <div class="form-section visitor-fields">
+                <h3><i class="fas fa-user"></i> معلومات الزائر</h3>
+                
+                <div class="form-group">
+                    <label for="full_name">{{ form.full_name.label.text }}</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-id-card"></i>
+                        {{ form.full_name(class="form-control", placeholder="أدخل الاسم كاملاً") }}
+                    </div>
+                    {% for error in form.full_name.errors %}
+                        <span class="error-message">{{ error }}</span>
+                    {% endfor %}
+                </div>
+
+                <div class="form-group">
+                    <label for="phone">{{ form.phone.label.text }}</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-phone"></i>
+                        {{ form.phone(class="form-control", placeholder="أدخل رقم الهاتف") }}
+                    </div>
+                    {% for error in form.phone.errors %}
+                        <span class="error-message">{{ error }}</span>
+                    {% endfor %}
+                </div>
+
+                <div class="form-group">
+                    <label for="country">{{ form.country.label.text }}</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-globe"></i>
+                        {{ form.country(class="form-control", placeholder="أدخل البلد") }}
+                    </div>
+                    {% for error in form.country.errors %}
+                        <span class="error-message">{{ error }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Exhibitor Fields -->
+            <div class="form-section exhibitor-fields" style="display: none;">
+                <h3><i class="fas fa-store"></i> معلومات الشركة</h3>
+                
+                <div class="form-group">
+                    <label for="company_name">{{ form.company_name.label.text }}</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-building"></i>
+                        {{ form.company_name(class="form-control", placeholder="أدخل اسم الشركة") }}
+                    </div>
+                    {% for error in form.company_name.errors %}
+                        <span class="error-message">{{ error }}</span>
+                    {% endfor %}
+                </div>
+
+                <div class="form-group">
+                    <label for="company_description">{{ form.company_description.label.text }}</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-info-circle"></i>
+                        {{ form.company_description(class="form-control", rows="3", placeholder="وصف مختصر عن الشركة") }}
+                    </div>
+                    {% for error in form.company_description.errors %}
+                        <span class="error-message">{{ error }}</span>
+                    {% endfor %}
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="company_phone">{{ form.company_phone.label.text }}</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-phone-alt"></i>
+                            {{ form.company_phone(class="form-control", placeholder="هاتف الشركة") }}
+                        </div>
+                        {% for error in form.company_phone.errors %}
+                            <span class="error-message">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="company_country">{{ form.company_country.label.text }}</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-map-marker-alt"></i>
+                            {{ form.company_country(class="form-control", placeholder="بلد الشركة") }}
+                        </div>
+                        {% for error in form.company_country.errors %}
+                            <span class="error-message">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="website">{{ form.website.label.text }}</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-link"></i>
+                        {{ form.website(class="form-control", placeholder="موقع الشركة (اختياري)") }}
+                    </div>
+                    {% for error in form.website.errors %}
+                        <span class="error-message">{{ error }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary full-width" id="registerBtn">
+                <i class="fas fa-user-plus"></i>
+                <span>إنشاء الحساب</span>
+                <div class="spinner" style="display: none;"></div>
+            </button>
+        </form>
+
+        <div class="divider">
+            <span>أو</span>
+        </div>
+
+        <div class="login-section">
+            <p>لديك حساب بالفعل؟</p>
+            <a href="{{ url_for('auth.login') }}" class="btn btn-outline full-width">
+                <i class="fas fa-sign-in-alt"></i>
+                تسجيل الدخول
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+.auth-container {
+    max-width: 100%;
+    margin: 0;
+    padding: 20px 15px;
+}
+
+.auth-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.logo-section {
+    background: white;
+    padding: 30px 20px;
+    border-radius: 20px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+.auth-logo {
+    width: 80px;
+    height: 80px;
+    border-radius: 15px;
+    margin-bottom: 20px;
+}
+
+.auth-header h1 {
+    color: #205072;
+    font-size: 28px;
+    margin-bottom: 10px;
+}
+
+.auth-header p {
+    color: #666;
+    font-size: 16px;
+}
+
+.auth-form {
+    background: white;
+    padding: 30px 25px;
+    border-radius: 20px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+.account-type-section {
+    margin-bottom: 30px;
+}
+
+.account-type-section h3 {
+    color: #205072;
+    font-size: 18px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.account-types {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.account-type {
+    background: #f8f9fa;
+    border: 2px solid #e0e0e0;
+    border-radius: 15px;
+    padding: 20px 15px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.account-type.active {
+    background: #205072;
+    color: white;
+    border-color: #205072;
+}
+
+.type-icon {
+    font-size: 32px;
+    margin-bottom: 12px;
+}
+
+.account-type h4 {
+    font-size: 16px;
+    margin-bottom: 8px;
+}
+
+.account-type p {
+    font-size: 12px;
+    opacity: 0.8;
+    margin: 0;
+}
+
+.form-section {
+    margin-bottom: 30px;
+}
+
+.form-section h3 {
+    color: #205072;
+    font-size: 18px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: #205072;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.input-wrapper {
+    position: relative;
+}
+
+.input-wrapper i {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #666;
+    z-index: 2;
+}
+
+.toggle-password {
+    left: 15px !important;
+    right: auto !important;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.toggle-password:hover {
+    color: #205072;
+}
+
+.form-control {
+    width: 100%;
+    padding: 12px 50px 12px 15px;
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    background: #f8f9fa;
+}
+
+.form-control:focus {
+    border-color: #205072;
+    outline: none;
+    box-shadow: 0 0 10px rgba(32, 80, 114, 0.2);
+    background: white;
+}
+
+textarea.form-control {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.error-message {
+    color: #dc3545;
+    font-size: 12px;
+    margin-top: 5px;
+    display: block;
+}
+
+.alert {
+    padding: 15px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.alert-success {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.alert-error,
+.alert-danger {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.btn {
+    padding: 15px 25px;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    text-decoration: none;
+}
+
+.btn-primary {
+    background: linear-gradient(45deg, #205072, #186687);
+    color: white;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(32, 80, 114, 0.3);
+}
+
+.btn-outline {
+    background: transparent;
+    color: #205072;
+    border: 2px solid #205072;
+}
+
+.btn-outline:hover {
+    background: #205072;
+    color: white;
+}
+
+.full-width {
+    width: 100%;
+}
+
+.spinner {
+    width: 20px;
+    height: 20px;
+    border: 2px solid transparent;
+    border-top: 2px solid currentColor;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.divider {
+    text-align: center;
+    margin: 30px 0;
+    position: relative;
+}
+
+.divider::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: #e0e0e0;
+}
+
+.divider span {
+    background: white;
+    padding: 0 20px;
+    color: #666;
+    font-size: 14px;
+    position: relative;
+}
+
+.login-section {
+    text-align: center;
+}
+
+.login-section p {
+    margin-bottom: 15px;
+    color: #666;
+    font-size: 16px;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const accountTypes = document.querySelectorAll('.account-type');
+    const accountTypeInput = document.getElementById('accountType');
+    const visitorFields = document.querySelector('.visitor-fields');
+    const exhibitorFields = document.querySelector('.exhibitor-fields');
+    const registerForm = document.getElementById('registerForm');
+    const registerBtn = document.getElementById('registerBtn');
+    const togglePasswordBtns = document.querySelectorAll('.toggle-password');
+
+    // Account type selection
+    accountTypes.forEach(type => {
+        type.addEventListener('click', function() {
+            // Remove active class from all types
+            accountTypes.forEach(t => t.classList.remove('active'));
+            
+            // Add active class to clicked type
+            this.classList.add('active');
+            
+            // Get selected type
+            const selectedType = this.dataset.type;
+            accountTypeInput.value = selectedType;
+            
+            // Show/hide relevant fields
+            if (selectedType === 'visitor') {
+                visitorFields.style.display = 'block';
+                exhibitorFields.style.display = 'none';
+            } else {
+                visitorFields.style.display = 'none';
+                exhibitorFields.style.display = 'block';
+            }
+        });
+    });
+
+    // Toggle password visibility
+    togglePasswordBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const targetId = this.dataset.target;
+            const passwordField = document.getElementById(targetId);
+            
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                this.classList.remove('fa-eye');
+                this.classList.add('fa-eye-slash');
+            } else {
+                passwordField.type = 'password';
+                this.classList.remove('fa-eye-slash');
+                this.classList.add('fa-eye');
+            }
+        });
+    });
+
+    // Form submission with loading state
+    registerForm.addEventListener('submit', function() {
+        const btnText = registerBtn.querySelector('span');
+        const spinner = registerBtn.querySelector('.spinner');
+        
+        btnText.style.display = 'none';
+        spinner.style.display = 'block';
+        registerBtn.disabled = true;
+        
+        // Re-enable after 15 seconds as fallback
+        setTimeout(() => {
+            btnText.style.display = 'block';
+            spinner.style.display = 'none';
+            registerBtn.disabled = false;
+        }, 15000);
+    });
+
+    // Auto-hide alerts after 5 seconds
+    const alerts = document.querySelectorAll('.alert');
+    alerts.forEach(alert => {
+        setTimeout(() => {
+            alert.style.opacity = '0';
+            alert.style.transform = 'translateY(-10px)';
+            setTimeout(() => {
+                alert.remove();
+            }, 300);
+        }, 5000);
+    });
+});
+</script>
+{% endblock %}

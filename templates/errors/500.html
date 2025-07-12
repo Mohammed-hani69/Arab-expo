@@ -1,0 +1,103 @@
+{% extends "base_mobile.html" %}
+
+{% block title %}خطأ في الخادم - 500{% endblock %}
+
+{% block content %}
+<div style="text-align: center; padding: 60px 20px; min-height: 50vh; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+    <div style="font-size: 8rem; font-weight: 900; color: #ffebee; margin-bottom: 20px; line-height: 1;">500</div>
+    
+    <div style="margin-bottom: 30px;">
+        <i class="fas fa-exclamation-triangle" style="font-size: 4rem; color: #f44336; margin-bottom: 20px;"></i>
+        <h1 style="color: #2c3e50; margin-bottom: 15px; font-size: 1.8rem;">خطأ في الخادم</h1>
+        <p style="color: #666; font-size: 1.1rem; max-width: 400px; margin: 0 auto 30px; line-height: 1.6;">
+            نعتذر، حدث خطأ غير متوقع في الخادم. نحن نعمل على حل المشكلة
+        </p>
+    </div>
+    
+    <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+        <a href="{{ url_for('main.index') }}" class="btn-primary" style="text-decoration: none;">
+            <i class="fas fa-home"></i> العودة للرئيسية
+        </a>
+        
+        <button onclick="window.location.reload()" class="btn-secondary">
+            <i class="fas fa-sync-alt"></i> إعادة المحاولة
+        </button>
+    </div>
+    
+    <!-- معلومات الدعم -->
+    <div style="margin-top: 50px; text-align: center; max-width: 500px;">
+        <div style="background: #fff3e0; border: 1px solid #ffcc02; border-radius: 12px; padding: 20px;">
+            <h3 style="color: #f57c00; margin-bottom: 15px; font-size: 1.2rem;">
+                <i class="fas fa-headset"></i> تحتاج مساعدة؟
+            </h3>
+            
+            <p style="color: #e65100; margin-bottom: 20px; font-size: 0.95rem;">
+                إذا استمرت المشكلة، يرجى التواصل مع فريق الدعم الفني
+            </p>
+            
+            <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+                <a href="mailto:support@arabexpo.com" class="btn-primary" style="text-decoration: none; background: linear-gradient(45deg, #2196f3, #1976d2); font-size: 0.9rem;">
+                    <i class="fas fa-envelope"></i> إرسال رسالة
+                </a>
+                
+                <a href="https://wa.me/201097000010" target="_blank" class="btn-primary" style="text-decoration: none; background: linear-gradient(45deg, #25d366, #128c7e); font-size: 0.9rem;">
+                    <i class="fab fa-whatsapp"></i> واتساب
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- معلومات تقنية (للمطورين) -->
+    <div style="margin-top: 30px; padding: 15px; background: #f5f5f5; border-radius: 8px; font-family: monospace; font-size: 0.8rem; color: #666; max-width: 500px;">
+        <strong>معلومات تقنية:</strong><br>
+        وقت الخطأ: {{ moment().format('YYYY-MM-DD HH:mm:ss') }}<br>
+        كود الحالة: 500 - Internal Server Error<br>
+        ID الجلسة: {{ session.get('_id', 'غير متوفر') }}
+    </div>
+</div>
+
+<style>
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+    20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+.fas.fa-exclamation-triangle {
+    animation: shake 3s infinite;
+}
+
+.btn-primary:hover, .btn-secondary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    transition: all 0.3s ease;
+}
+</style>
+
+<script>
+// تسجيل الخطأ للمتابعة
+document.addEventListener('DOMContentLoaded', function() {
+    console.error('500 Error: Internal Server Error');
+    
+    // يمكن إضافة إرسال تقرير تلقائي للمطورين
+    // reportError({
+    //     type: '500',
+    //     url: window.location.href,
+    //     timestamp: new Date().toISOString(),
+    //     userAgent: navigator.userAgent
+    // });
+});
+
+// دالة إعادة المحاولة مع تأخير
+function retryWithDelay() {
+    const button = event.target;
+    button.disabled = true;
+    button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري المحاولة...';
+    
+    setTimeout(() => {
+        window.location.reload();
+    }, 2000);
+}
+</script>
+
+{% endblock %}

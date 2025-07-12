@@ -1,0 +1,652 @@
+{% extends "base_mobile.html" %}
+
+{% block title %}لوحة تحكم العارض - Arab Expo For Food{% endblock %}
+
+{% block content %}
+<div class="dashboard-header">
+    <div class="welcome-section">
+        <div class="avatar">
+            {% if current_user.exhibitor.logo %}
+            <img src="{{ url_for('static', filename='uploads/exhibitors/' + current_user.exhibitor.logo) }}" 
+                 alt="{{ current_user.exhibitor.company_name }}">
+            {% else %}
+            <i class="fas fa-building"></i>
+            {% endif %}
+        </div>
+        <div class="welcome-info">
+            <h1>مرحباً، {{ current_user.exhibitor.company_name }}</h1>
+            <p>{{ current_user.exhibitor.country }}</p>
+        </div>
+    </div>
+    
+    <div class="quick-stats">
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-box"></i>
+            </div>
+            <div class="stat-info">
+                <h3>{{ current_user.exhibitor.products|length }}</h3>
+                <p>المنتجات</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-eye"></i>
+            </div>
+            <div class="stat-info">
+                <h3>{{ current_user.exhibitor.total_visits() }}</h3>
+                <p>المشاهدات</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-star"></i>
+            </div>
+            <div class="stat-info">
+                <h3>{{ featured_products }}</h3>
+                <p>منتجات مميزة</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="dashboard-content">
+    <!-- Quick Actions -->
+    <div class="section">
+        <h2><i class="fas fa-bolt"></i> إجراءات سريعة</h2>
+        <div class="action-grid">
+            <a href="{{ url_for('exhibitor.add_product') }}" class="action-card">
+                <div class="action-icon">
+                    <i class="fas fa-plus"></i>
+                </div>
+                <h3>إضافة منتج جديد</h3>
+                <p>أضف منتجاً جديداً إلى معرضك</p>
+            </a>
+            
+            <a href="{{ url_for('exhibitor.products') }}" class="action-card">
+                <div class="action-icon">
+                    <i class="fas fa-box"></i>
+                </div>
+                <h3>إدارة المنتجات</h3>
+                <p>عرض وتحرير منتجاتك</p>
+            </a>
+            
+            <a href="{{ url_for('exhibitor.profile') }}" class="action-card">
+                <div class="action-icon">
+                    <i class="fas fa-user-edit"></i>
+                </div>
+                <h3>تحديث الملف الشخصي</h3>
+                <p>حدث معلومات شركتك</p>
+            </a>
+            
+            <a href="{{ url_for('main.exhibitor_profile', id=current_user.exhibitor.id) }}" class="action-card">
+                <div class="action-icon">
+                    <i class="fas fa-external-link-alt"></i>
+                </div>
+                <h3>عرض صفحتك العامة</h3>
+                <p>شاهد كيف يراك الزوار</p>
+            </a>
+        </div>
+    </div>
+
+    <!-- Recent Products -->
+    <div class="section">
+        <h2><i class="fas fa-clock"></i> أحدث المنتجات</h2>
+        {% if recent_products %}
+        <div class="products-list">
+            {% for product in recent_products %}
+            <div class="product-item">
+                <div class="product-image">
+                    {% if product.images %}
+                        {% set images = product.images|from_json %}
+                        {% if images %}
+                        <img src="{{ url_for('static', filename='uploads/products/' + images[0]) }}" 
+                             alt="{{ product.name }}">
+                        {% else %}
+                        <div class="product-placeholder">
+                            <i class="fas fa-image"></i>
+                        </div>
+                        {% endif %}
+                    {% else %}
+                    <div class="product-placeholder">
+                        <i class="fas fa-image"></i>
+                    </div>
+                    {% endif %}
+                    
+                    {% if product.is_featured %}
+                    <div class="featured-badge">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <div class="product-info">
+                    <h3>{{ product.name }}</h3>
+                    <p class="product-category">{{ product.category.name }}</p>
+                    {% if product.price %}
+                    <p class="product-price">{{ product.price }} {{ product.currency or 'USD' }}</p>
+                    {% endif %}
+                    <p class="product-date">{{ product.created_at.strftime('%Y-%m-%d') }}</p>
+                </div>
+                
+                <div class="product-actions">
+                    <a href="{{ url_for('exhibitor.edit_product', id=product.id) }}" class="btn btn-sm btn-secondary">
+                        <i class="fas fa-edit"></i>
+                    </a>
+                    <a href="{{ url_for('main.product_detail', id=product.id) }}" class="btn btn-sm btn-primary">
+                        <i class="fas fa-eye"></i>
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        {% if current_user.exhibitor.products|length > 3 %}
+        <div class="view-all">
+            <a href="{{ url_for('exhibitor.products') }}" class="btn btn-outline">
+                <i class="fas fa-list"></i> عرض جميع المنتجات
+            </a>
+        </div>
+        {% endif %}
+        
+        {% else %}
+        <div class="empty-state">
+            <i class="fas fa-box-open"></i>
+            <h3>لا توجد منتجات بعد</h3>
+            <p>ابدأ بإضافة منتجاتك الأولى</p>
+            <a href="{{ url_for('exhibitor.add_product') }}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> إضافة منتج جديد
+            </a>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Performance Overview -->
+    <div class="section">
+        <h2><i class="fas fa-chart-line"></i> نظرة عامة على الأداء</h2>
+        <div class="performance-grid">
+            <div class="performance-card">
+                <div class="performance-header">
+                    <h3>إجمالي المشاهدات</h3>
+                    <i class="fas fa-eye"></i>
+                </div>
+                <div class="performance-value">{{ current_user.exhibitor.total_visits() }}</div>
+                <div class="performance-trend">
+                    <i class="fas fa-arrow-up"></i>
+                    <span>+12% من الشهر الماضي</span>
+                </div>
+            </div>
+            
+            <div class="performance-card">
+                <div class="performance-header">
+                    <h3>المنتجات النشطة</h3>
+                    <i class="fas fa-box"></i>
+                </div>
+                <div class="performance-value">{{ active_products }}</div>
+                <div class="performance-info">
+                    <span>من إجمالي {{ current_user.exhibitor.products|length }} منتج</span>
+                </div>
+            </div>
+            
+            <div class="performance-card">
+                <div class="performance-header">
+                    <h3>معدل التفاعل</h3>
+                    <i class="fas fa-heart"></i>
+                </div>
+                <div class="performance-value">85%</div>
+                <div class="performance-trend positive">
+                    <i class="fas fa-arrow-up"></i>
+                    <span>+5% من الأسبوع الماضي</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Tips -->
+    <div class="section">
+        <h2><i class="fas fa-lightbulb"></i> نصائح سريعة</h2>
+        <div class="tips-container">
+            <div class="tip-item">
+                <div class="tip-icon">
+                    <i class="fas fa-camera"></i>
+                </div>
+                <div class="tip-content">
+                    <h4>أضف صوراً عالية الجودة</h4>
+                    <p>الصور الجذابة تزيد من معدل المشاهدات بنسبة 60%</p>
+                </div>
+            </div>
+            
+            <div class="tip-item">
+                <div class="tip-icon">
+                    <i class="fas fa-edit"></i>
+                </div>
+                <div class="tip-content">
+                    <h4>اكتب وصفاً مفصلاً</h4>
+                    <p>الوصف المفصل يساعد العملاء على فهم منتجك بشكل أفضل</p>
+                </div>
+            </div>
+            
+            <div class="tip-item">
+                <div class="tip-icon">
+                    <i class="fas fa-star"></i>
+                </div>
+                <div class="tip-content">
+                    <h4>استخدم المنتجات المميزة</h4>
+                    <p>المنتجات المميزة تحصل على مشاهدات أكثر بـ 3 مرات</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.dashboard-header {
+    background: white;
+    border-radius: 20px;
+    padding: 25px;
+    margin-bottom: 25px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+.welcome-section {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 25px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.avatar {
+    width: 70px;
+    height: 70px;
+    border-radius: 15px;
+    background: linear-gradient(45deg, #205072, #186687);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 32px;
+    overflow: hidden;
+}
+
+.avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.welcome-info h1 {
+    color: #205072;
+    font-size: 22px;
+    margin-bottom: 8px;
+}
+
+.welcome-info p {
+    color: #666;
+    font-size: 16px;
+    margin: 0;
+}
+
+.quick-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+}
+
+.stat-card {
+    background: #f8f9fa;
+    border-radius: 15px;
+    padding: 20px 15px;
+    text-align: center;
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+    border-color: #205072;
+    transform: translateY(-2px);
+}
+
+.stat-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    background: linear-gradient(45deg, #205072, #186687);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 15px;
+    font-size: 24px;
+}
+
+.stat-info h3 {
+    color: #205072;
+    font-size: 24px;
+    margin-bottom: 5px;
+}
+
+.stat-info p {
+    color: #666;
+    font-size: 14px;
+    margin: 0;
+}
+
+.section {
+    background: white;
+    border-radius: 20px;
+    padding: 25px;
+    margin-bottom: 25px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+.section h2 {
+    color: #205072;
+    font-size: 20px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.action-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+}
+
+.action-card {
+    background: #f8f9fa;
+    border-radius: 15px;
+    padding: 20px;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.action-card:hover {
+    background: #205072;
+    color: white;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(32, 80, 114, 0.3);
+}
+
+.action-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    background: linear-gradient(45deg, #205072, #186687);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 15px;
+    font-size: 28px;
+}
+
+.action-card:hover .action-icon {
+    background: white;
+    color: #205072;
+}
+
+.action-card h3 {
+    font-size: 16px;
+    margin-bottom: 8px;
+}
+
+.action-card p {
+    font-size: 14px;
+    opacity: 0.8;
+    margin: 0;
+}
+
+.products-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.product-item {
+    background: #f8f9fa;
+    border-radius: 15px;
+    padding: 15px;
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.product-image {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    border-radius: 12px;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.product-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.product-placeholder {
+    width: 100%;
+    height: 100%;
+    background: #e0e0e0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #adb5bd;
+    font-size: 24px;
+}
+
+.featured-badge {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: #ffd700;
+    color: #333;
+    padding: 3px 6px;
+    border-radius: 8px;
+    font-size: 10px;
+}
+
+.product-info {
+    flex: 1;
+}
+
+.product-info h3 {
+    color: #205072;
+    font-size: 16px;
+    margin-bottom: 5px;
+}
+
+.product-category {
+    color: #666;
+    font-size: 12px;
+    margin-bottom: 3px;
+}
+
+.product-price {
+    color: #28a745;
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 3px;
+}
+
+.product-date {
+    color: #999;
+    font-size: 12px;
+    margin: 0;
+}
+
+.product-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.btn {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+}
+
+.btn-sm {
+    padding: 6px 10px;
+    font-size: 14px;
+}
+
+.btn-primary {
+    background: linear-gradient(45deg, #205072, #186687);
+    color: white;
+}
+
+.btn-secondary {
+    background: #6c757d;
+    color: white;
+}
+
+.btn-outline {
+    background: transparent;
+    color: #205072;
+    border: 2px solid #205072;
+    padding: 12px 20px;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.view-all {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: #666;
+}
+
+.empty-state i {
+    font-size: 64px;
+    color: #ddd;
+    margin-bottom: 20px;
+}
+
+.empty-state h3 {
+    color: #205072;
+    margin-bottom: 10px;
+}
+
+.empty-state p {
+    margin-bottom: 20px;
+}
+
+.performance-grid {
+    display: grid;
+    gap: 15px;
+}
+
+.performance-card {
+    background: #f8f9fa;
+    border-radius: 15px;
+    padding: 20px;
+}
+
+.performance-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.performance-header h3 {
+    color: #205072;
+    font-size: 16px;
+    margin: 0;
+}
+
+.performance-header i {
+    color: #666;
+    font-size: 20px;
+}
+
+.performance-value {
+    font-size: 32px;
+    font-weight: 700;
+    color: #205072;
+    margin-bottom: 10px;
+}
+
+.performance-trend {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: #28a745;
+    font-size: 14px;
+}
+
+.performance-trend.positive {
+    color: #28a745;
+}
+
+.performance-info {
+    color: #666;
+    font-size: 14px;
+}
+
+.tips-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.tip-item {
+    display: flex;
+    gap: 15px;
+    align-items: flex-start;
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 15px;
+}
+
+.tip-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 10px;
+    background: linear-gradient(45deg, #205072, #186687);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+}
+
+.tip-content h4 {
+    color: #205072;
+    font-size: 16px;
+    margin-bottom: 8px;
+}
+
+.tip-content p {
+    color: #666;
+    font-size: 14px;
+    margin: 0;
+    line-height: 1.4;
+}
+</style>
+{% endblock %}

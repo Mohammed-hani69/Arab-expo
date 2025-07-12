@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Arab Expo For Food{% endblock %}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* تصميم الموبايل - Mobile Design */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', Arial, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: #2c3e50;
+            max-width: 430px;
+            margin: 0 auto;
+            min-height: 100vh;
+            position: relative;
+        }
+        
+        /* شريط علوي متطور - Advanced Top Bar */
+        .topbar {
+            background: linear-gradient(45deg, #ffffffff 0%, #ffffffff 100%);
+            padding: 10px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 20px rgba(32, 80, 114, 0.3);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .topbar-logo {
+            height: 45px;
+            border-radius: 8px;
+            transition: transform 0.3s ease;
+        }
+        
+        .topbar-logo:hover {
+            transform: scale(1.05);
+        }
+        
+        .topbar-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .menu-btn, .login-btn {
+            background: #205072;
+            border: none;
+            border-radius: 12px;
+            color: white;
+            padding: 8px 15px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        
+        .menu-btn:hover, .login-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-2px);
+        }
+        
+        .menu-btn i {
+            font-size: 1.2rem;
+        }
+        
+        /* قائمة منسدلة متطورة - Advanced Dropdown */
+        .dropdown-menu {
+            position: absolute;
+            top: 70px;
+            right: 15px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 16px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(20px);
+            min-width: 200px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-20px) scale(0.9);
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            z-index: 1001;
+            overflow: hidden;
+        }
+        
+        .dropdown-menu.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0) scale(1);
+        }
+        
+        .dropdown-menu a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 15px 20px;
+            color: #2c3e50;
+            text-decoration: none;
+            font-weight: 500;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+        
+        .dropdown-menu a:last-child {
+            border-bottom: none;
+        }
+        
+        .dropdown-menu a:hover {
+            background: linear-gradient(90deg, #e3f2fd 0%, #bbdefb 100%);
+            color: #1565c0;
+            transform: translateX(5px);
+        }
+        
+        .dropdown-menu i {
+            color: #205072;
+            width: 20px;
+            text-align: center;
+        }
+        
+        /* أقسام المحتوى - Content Sections */
+        .section {
+            padding: 25px 15px;
+            margin: 15px 0;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease;
+        }
+        
+        .section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .section h2 {
+            color: #205072;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1.4rem;
+            font-weight: 600;
+        }
+        
+        /* أزرار متطورة - Advanced Buttons */
+        .btn-primary {
+            background: linear-gradient(45deg, #205072 0%, #186687 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 12px 24px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(32, 80, 114, 0.3);
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(32, 80, 114, 0.4);
+        }
+        
+        /* بطاقات - Cards */
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            margin: 15px 0;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+        }
+        
+        /* نوافذ منبثقة - Modals */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+        
+        .modal.show {
+            display: flex;
+            opacity: 1;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 30px 20px;
+            width: 90%;
+            max-width: 350px;
+            position: relative;
+            transform: scale(0.8);
+            transition: all 0.3s ease;
+        }
+        
+        .modal.show .modal-content {
+            transform: scale(1);
+        }
+        
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: #f44336;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 35px;
+            height: 35px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .modal-close:hover {
+            background: #d32f2f;
+            transform: rotate(90deg);
+        }
+        
+        /* حقول الإدخال - Input Fields */
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #fafafa;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: #205072;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(32, 80, 114, 0.1);
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #2c3e50;
+        }
+        
+        /* إشعارات - Notifications */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 12px;
+            color: white;
+            font-weight: 600;
+            z-index: 3000;
+            transform: translateX(400px);
+            transition: all 0.5s ease;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+        
+        .notification.success {
+            background: linear-gradient(45deg, #4caf50 0%, #8bc34a 100%);
+        }
+        
+        .notification.error {
+            background: linear-gradient(45deg, #f44336 0%, #e91e63 100%);
+        }
+        
+        .notification.warning {
+            background: linear-gradient(45deg, #ff9800 0%, #ffc107 100%);
+        }
+        
+        .notification.info {
+            background: linear-gradient(45deg, #2196f3 0%, #03a9f4 100%);
+        }
+        
+        /* زر واتساب عائم - Floating WhatsApp */
+        .whatsapp-float {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(45deg, #25d366 0%, #128c7e 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.8rem;
+            text-decoration: none;
+            box-shadow: 0 8px 30px rgba(37, 211, 102, 0.4);
+            z-index: 1500;
+            transition: all 0.3s ease;
+            animation: pulse 2s infinite;
+        }
+        
+        .whatsapp-float:hover {
+            transform: scale(1.1);
+            box-shadow: 0 12px 40px rgba(37, 211, 102, 0.6);
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 8px 30px rgba(37, 211, 102, 0.4); }
+            50% { box-shadow: 0 8px 30px rgba(37, 211, 102, 0.7); }
+            100% { box-shadow: 0 8px 30px rgba(37, 211, 102, 0.4); }
+        }
+        
+        /* تحريك الظهور - Fade Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .fade-in-up {
+            animation: fadeInUp 0.8s ease forwards;
+        }
+        
+        /* تجاوب إضافي - Extra Responsiveness */
+        @media (max-width: 380px) {
+            .topbar-logo { height: 35px; }
+            .section { padding: 20px 12px; margin: 10px 0; }
+            .modal-content { padding: 25px 15px; }
+        }
+        
+        {% block extra_styles %}{% endblock %}
+    </style>
+</head>
+<body>
+    <!-- شريط علوي - Top Bar -->
+    <div class="topbar">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="Arab Expo Logo" class="topbar-logo">
+        <div class="topbar-actions">
+            <button class="menu-btn" id="menuBtn">
+                <i class="fas fa-bars"></i>
+            </button>
+            {% if current_user.is_authenticated %}
+                <a href="{% if current_user.is_admin() %}{{ url_for('admin.dashboard') }}{% elif current_user.is_exhibitor() %}{{ url_for('exhibitor.dashboard') }}{% else %}{{ url_for('main.index') }}{% endif %}" class="login-btn">
+                    <i class="fas fa-user"></i> {{ current_user.full_name.split()[0] }}
+                </a>
+            {% else %}
+                <a href="{{ url_for('auth.login') }}" class="login-btn">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- قائمة منسدلة - Dropdown Menu -->
+    <div class="dropdown-menu" id="dropdownMenu">
+        <a href="{{ url_for('main.index') }}">
+            <i class="fas fa-home"></i>
+            الرئيسية
+        </a>
+        <a href="{{ url_for('main.exhibitors_list') }}">
+            <i class="fas fa-store"></i>
+            العارضين
+        </a>
+        <a href="#products">
+            <i class="fas fa-box"></i>
+            المنتجات
+        </a>
+        <a href="#about">
+            <i class="fas fa-info-circle"></i>
+            عن المعرض
+        </a>
+        {% if current_user.is_authenticated %}
+            {% if current_user.is_admin() %}
+                <a href="{{ url_for('admin.dashboard') }}">
+                    <i class="fas fa-chart-bar"></i>
+                    لوحة الإدارة
+                </a>
+            {% elif current_user.is_exhibitor() %}
+                <a href="{{ url_for('exhibitor.dashboard') }}">
+                    <i class="fas fa-tachometer-alt"></i>
+                    لوحة التحكم
+                </a>
+            {% endif %}
+            <a href="{{ url_for('auth.logout') }}">
+                <i class="fas fa-sign-out-alt"></i>
+                تسجيل الخروج
+            </a>
+        {% else %}
+            <a href="{{ url_for('auth.register') }}">
+                <i class="fas fa-user-plus"></i>
+                إنشاء حساب
+            </a>
+        {% endif %}
+    </div>
+
+    <!-- المحتوى الرئيسي - Main Content -->
+    <main class="main-content">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="notification {{ category }} show" style="display: block;">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- زر واتساب عائم - Floating WhatsApp -->
+    <a href="https://wa.me/201097000010" target="_blank" class="whatsapp-float">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+
+    <!-- JavaScript -->
+    <script>
+        // قائمة منسدلة - Dropdown Menu
+        document.getElementById('menuBtn').addEventListener('click', function(e) {
+            e.stopPropagation();
+            const dropdown = document.getElementById('dropdownMenu');
+            dropdown.classList.toggle('show');
+        });
+
+        // إغلاق القائمة عند النقر خارجها
+        document.addEventListener('click', function(e) {
+            const dropdown = document.getElementById('dropdownMenu');
+            const menuBtn = document.getElementById('menuBtn');
+            if (!dropdown.contains(e.target) && !menuBtn.contains(e.target)) {
+                dropdown.classList.remove('show');
+            }
+        });
+
+        // تحريك الأقسام عند السحب
+        function animateOnScroll() {
+            const elements = document.querySelectorAll('.section');
+            elements.forEach(element => {
+                const elementTop = element.getBoundingClientRect().top;
+                const windowHeight = window.innerHeight;
+                if (elementTop < windowHeight - 100) {
+                    element.classList.add('visible');
+                }
+            });
+        }
+
+        window.addEventListener('scroll', animateOnScroll);
+        window.addEventListener('load', animateOnScroll);
+
+        // إخفاء الإشعارات تلقائياً
+        document.addEventListener('DOMContentLoaded', function() {
+            const notifications = document.querySelectorAll('.notification');
+            notifications.forEach(notification => {
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                    setTimeout(() => {
+                        notification.remove();
+                    }, 500);
+                }, 4000);
+            });
+        });
+
+        // دوال عامة - Global Functions
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.classList.add('show');
+            }, 100);
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    notification.remove();
+                }, 500);
+            }, 4000);
+        }
+
+        function showModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.classList.add('show');
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        function hideModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.classList.remove('show');
+                document.body.style.overflow = 'auto';
+            }
+        }
+
+        // إغلاق النوافذ المنبثقة بالضغط على الخلفية
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('modal')) {
+                hideModal(e.target.id);
+            }
+        });
+
+        {% block extra_scripts %}{% endblock %}
+    </script>
+</body>
+</html>

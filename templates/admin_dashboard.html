@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة التحكم - Arab Expo For Food</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="admin-container">
+        <div class="admin-header">
+            <h1>لوحة التحكم - Arab Expo For Food</h1>
+        </div>
+        
+        <div class="admin-nav">
+            <a href="{{ url_for('index') }}">الصفحة الرئيسية</a>
+            <a href="{{ url_for('admin_exhibitors') }}">العارضين</a>
+            <a href="{{ url_for('admin_visitors') }}">الزوار</a>
+        </div>
+        
+        <div style="text-align: center;">
+            <div class="stats-card">
+                <div class="stats-number">{{ total_exhibitors }}</div>
+                <div class="stats-label">إجمالي العارضين</div>
+            </div>
+            
+            <div class="stats-card">
+                <div class="stats-number">{{ total_visitors }}</div>
+                <div class="stats-label">إجمالي الزوار</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

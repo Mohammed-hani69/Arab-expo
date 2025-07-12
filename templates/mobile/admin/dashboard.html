@@ -1,0 +1,1059 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة تحكم الإدارة - معرض الطعام العربي</title>
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-color: #dc3545;
+            --white-color: #ffffff;
+            --black-color: #000000;
+            --light-gray: #f8f9fa;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --info-color: #17a2b8;
+            --border-radius: 10px;
+            --transition: all 0.3s ease;
+            --box-shadow: 0 2px 15px rgba(220, 53, 69, 0.1);
+            --hover-shadow: 0 5px 25px rgba(220, 53, 69, 0.15);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Cairo', Arial, sans-serif;
+            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+            color: var(--black-color);
+            line-height: 1.6;
+            direction: rtl;
+            padding-top: 70px;
+            min-height: 100vh;
+        }
+
+        /* شريط التنقل العلوي */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 65px;
+            background: var(--white-color);
+            border-bottom: 3px solid var(--primary-color);
+            z-index: 1000;
+            box-shadow: var(--box-shadow);
+        }
+
+        .navbar-container {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            max-width: 100%;
+        }
+
+        .navbar-brand {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--black-color);
+        }
+
+        .brand-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            padding: 8px 12px;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+            background: rgba(220, 53, 69, 0.05);
+            border: 1px solid transparent;
+            position: relative;
+            user-select: none;
+        }
+
+        .brand-link:hover {
+            background: rgba(220, 53, 69, 0.1);
+            border-color: var(--primary-color);
+        }
+
+        .brand-link.active {
+            background: var(--primary-color);
+            color: var(--white-color);
+        }
+
+        .brand-link:active {
+            transform: scale(0.98);
+        }
+
+        .dropdown-arrow {
+            font-size: 0.8rem;
+            transition: var(--transition);
+            margin-right: 5px;
+            cursor: pointer;
+        }
+
+        .dropdown.active .dropdown-arrow {
+            transform: rotate(180deg);
+            color: var(--white-color);
+        }
+
+        .brand-link:hover .dropdown-arrow {
+            color: var(--primary-color);
+            transform: scale(1.1);
+        }
+
+        .brand-link.active:hover .dropdown-arrow {
+            color: var(--white-color);
+            transform: rotate(180deg) scale(1.1);
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: var(--white-color);
+            border: 2px solid var(--primary-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--hover-shadow);
+            min-width: 250px;
+            z-index: 1001;
+            margin-top: 8px;
+            animation: slideDown 0.3s ease;
+            transform: translateY(-10px);
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .dropdown-content.show {
+            display: block;
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 15px;
+            text-decoration: none;
+            color: var(--black-color);
+            transition: var(--transition);
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 0.95rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .dropdown-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 0;
+            background: var(--primary-color);
+            transition: width 0.3s ease;
+            z-index: -1;
+        }
+
+        .dropdown-item:hover::before {
+            width: 100%;
+        }
+
+        .dropdown-item:hover {
+            color: var(--white-color);
+            transform: translateX(5px);
+        }
+
+        .dropdown-item.active {
+            background: rgba(220, 53, 69, 0.1);
+            color: var(--primary-color);
+            font-weight: 600;
+            border-left: 3px solid var(--primary-color);
+        }
+
+        .dropdown-item.active:hover {
+            background: var(--primary-color);
+            color: var(--white-color);
+            border-left-color: var(--white-color);
+        }
+
+        .dropdown-item:last-child {
+            border-bottom: none;
+        }
+
+        .dropdown-item i {
+            width: 18px;
+            text-align: center;
+            font-size: 1rem;
+        }
+
+        .dropdown-item span {
+            flex: 1;
+        }
+
+        .navbar-brand i {
+            color: var(--primary-color);
+            font-size: 1.4rem;
+        }
+
+        .navbar-menu {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 15px;
+            text-decoration: none;
+            color: var(--black-color);
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+            font-weight: 500;
+            border: 2px solid transparent;
+            font-size: 0.9rem;
+            white-space: nowrap;
+        }
+
+        .nav-link:hover {
+            background: var(--primary-color);
+            color: var(--white-color);
+            transform: translateY(-2px);
+            border-color: var(--primary-color);
+        }
+
+        .nav-link.logout {
+            background: var(--primary-color);
+            color: var(--white-color);
+            border: 2px solid var(--primary-color);
+        }
+
+        .nav-link.logout:hover {
+            background: #c82333;
+            border-color: #c82333;
+        }
+
+        .container {
+            padding: 20px;
+            max-width: 100%;
+        }
+
+        /* تحسينات للشاشات الصغيرة جداً */
+        @media (max-width: 480px) {
+            .container {
+                padding: 15px;
+            }
+
+            .navbar {
+                height: 60px;
+            }
+
+            body {
+                padding-top: 65px;
+            }
+
+            .nav-link span:not(.fa) {
+                display: none;
+            }
+            
+            .dropdown-content {
+                min-width: 280px;
+                right: 0;
+                left: 0;
+                margin: 8px 10px 0 10px;
+                max-height: 60vh;
+                overflow-y: auto;
+            }
+            
+            .dropdown-item {
+                padding: 15px 18px;
+                font-size: 1rem;
+                border-bottom: 1px solid rgba(220, 53, 69, 0.1);
+            }
+            
+            .dropdown-item i {
+                width: 20px;
+                font-size: 1.1rem;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .navbar-container {
+                padding: 0 10px;
+            }
+            
+            .container {
+                padding: 10px;
+            }
+            
+            .navbar-brand span,
+            .nav-link span {
+                display: none;
+            }
+            
+            .dropdown-content {
+                min-width: 200px;
+                right: -10px;
+            }
+            
+            .dropdown-item span {
+                display: block;
+            }
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .dropdown-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.1);
+            z-index: 999;
+            animation: fadeIn 0.3s ease;
+            transition: opacity 0.3s ease;
+        }
+
+        /* محتوى الصفحة */
+        .section {
+            background: var(--white-color);
+            border: 2px solid var(--primary-color);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+        }
+
+        .section:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--hover-shadow);
+        }
+
+        .card {
+            background: var(--white-color);
+            border: 2px solid var(--primary-color);
+            border-radius: var(--border-radius);
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--hover-shadow);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .quick-actions-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        @media (max-width: 480px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .quick-actions-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        button {
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition);
+            font-family: 'Cairo', Arial, sans-serif;
+            font-weight: 600;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--hover-shadow);
+        }
+
+        button:active {
+            transform: scale(0.95);
+        }
+
+        a {
+            transition: var(--transition);
+            text-decoration: none;
+        }
+
+        a:hover {
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- شريط التنقل العلوي -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="navbar-brand dropdown">
+                <div class="brand-link">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>لوحة التحكم</span>
+                    <i class="fas fa-chevron-down dropdown-arrow"></i>
+                </div>
+                <div class="dropdown-content" id="brandDropdown">
+                    <a href="{{ url_for('admin.dashboard') }}" class="dropdown-item active">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>لوحة التحكم الرئيسية</span>
+                    </a>
+                    <a href="{{ url_for('admin.home_management') }}" class="dropdown-item">
+                        <i class="fas fa-home"></i>
+                        <span>إدارة الصفحة الرئيسية</span>
+                    </a>
+                    <a href="{{ url_for('admin.categories') }}" class="dropdown-item">
+                        <i class="fas fa-tags"></i>
+                        <span>إدارة الأقسام</span>
+                    </a>
+                    <a href="{{ url_for('admin.exhibitors') }}" class="dropdown-item">
+                        <i class="fas fa-users"></i>
+                        <span>إدارة العارضين</span>
+                    </a>
+                    <a href="{{ url_for('admin.visitors') }}" class="dropdown-item">
+                        <i class="fas fa-user-friends"></i>
+                        <span>إدارة الزوار</span>
+                    </a>
+                    <a href="{{ url_for('exhibitor.dashboard') }}" class="dropdown-item">
+                        <i class="fas fa-store"></i>
+                        <span>واجهة العارض</span>
+                    </a>
+                    <a href="{{ url_for('main.index') }}" class="dropdown-item">
+                        <i class="fas fa-globe"></i>
+                        <span>عرض الموقع</span>
+                    </a>
+                </div>
+            </div>
+            <div class="navbar-menu">
+                <a href="{{ url_for('admin.home_management') }}" class="nav-link">
+                    <i class="fas fa-home"></i>
+                    <span>إدارة المحتوى</span>
+                </a>
+                <a href="{{ url_for('auth.logout') }}" class="nav-link logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>خروج</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+<!-- ترحيب بالمدير -->
+<div class="section" style="background: linear-gradient(135deg, #6a1b9a 0%, #8e24aa 100%); color: white; text-align: center;">
+    <div style="display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 15px;">
+        <div style="width: 60px; height: 60px; background: rgba(255,255,255,0.2); border-radius: 50%; 
+                    display: flex; align-items: center; justify-content: center;">
+            <i class="fas fa-user-shield" style="font-size: 1.8rem;"></i>
+        </div>
+        <div>
+            <h1 style="margin: 0; font-size: 1.4rem; font-weight: 700;">مرحباً {{ current_user.full_name }}</h1>
+            <p style="margin: 5px 0 0 0; opacity: 0.9;">مدير النظام</p>
+        </div>
+    </div>
+    
+    <div style="display: flex; justify-content: center; gap: 10px; margin-top: 20px;">
+        <span style="background: rgba(255,255,255,0.2); padding: 6px 12px; border-radius: 15px; font-size: 0.8rem;">
+            <i class="fas fa-calendar"></i> {{ current_date.strftime('%d/%m/%Y') }}
+        </span>
+        <span style="background: rgba(255,255,255,0.2); padding: 6px 12px; border-radius: 15px; font-size: 0.8rem;">
+            <i class="fas fa-clock"></i> {{ current_date.strftime('%H:%M') }}
+        </span>
+    </div>
+</div>
+
+<!-- إحصائيات سريعة -->
+<div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin: 20px 0;">
+    <div class="card" style="text-align: center; padding: 20px; background: linear-gradient(135deg, #4caf50 0%, #8bc34a 100%); color: white;">
+        <i class="fas fa-building" style="font-size: 2rem; margin-bottom: 10px;"></i>
+        <div style="font-size: 1.5rem; font-weight: 700; margin-bottom: 5px;">{{ stats.total_exhibitors }}</div>
+        <div style="font-size: 0.9rem; opacity: 0.9;">عارض معتمد</div>
+    </div>
+    
+    <div class="card" style="text-align: center; padding: 20px; background: linear-gradient(135deg, #2196f3 0%, #03a9f4 100%); color: white;">
+        <i class="fas fa-users" style="font-size: 2rem; margin-bottom: 10px;"></i>
+        <div style="font-size: 1.5rem; font-weight: 700; margin-bottom: 5px;">{{ stats.total_visitors }}</div>
+        <div style="font-size: 0.9rem; opacity: 0.9;">زائر مسجل</div>
+    </div>
+    
+    <div class="card" style="text-align: center; padding: 20px; background: linear-gradient(135deg, #ff9800 0%, #ffc107 100%); color: white;">
+        <i class="fas fa-box" style="font-size: 2rem; margin-bottom: 10px;"></i>
+        <div style="font-size: 1.5rem; font-weight: 700; margin-bottom: 5px;">{{ stats.total_products }}</div>
+        <div style="font-size: 0.9rem; opacity: 0.9;">منتج نشط</div>
+    </div>
+    
+    <div class="card" style="text-align: center; padding: 20px; background: linear-gradient(135deg, #e91e63 0%, #f06292 100%); color: white;">
+        <i class="fas fa-eye" style="font-size: 2rem; margin-bottom: 10px;"></i>
+        <div style="font-size: 1.5rem; font-weight: 700; margin-bottom: 5px;">{{ stats.total_visits }}</div>
+        <div style="font-size: 0.9rem; opacity: 0.9;">زيارة للمعرض</div>
+    </div>
+</div>
+
+<!-- قائمة سريعة للإجراءات -->
+<div class="section">
+    <h3 style="color: #2c3e50; margin-bottom: 15px;">
+        <i class="fas fa-tasks"></i> الإجراءات السريعة
+    </h3>
+    
+    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
+        <a href="{{ url_for('admin.exhibitors') }}" 
+           style="background: linear-gradient(135deg, #4caf50 0%, #8bc34a 100%); color: white; 
+                  padding: 15px; border-radius: 10px; text-decoration: none; text-align: center; font-weight: 600;">
+            <i class="fas fa-building" style="margin-bottom: 8px; display: block; font-size: 1.2rem;"></i>
+            إدارة العارضين
+        </a>
+        
+        <a href="{{ url_for('admin.visitors') }}" 
+           style="background: linear-gradient(135deg, #2196f3 0%, #03a9f4 100%); color: white; 
+                  padding: 15px; border-radius: 10px; text-decoration: none; text-align: center; font-weight: 600;">
+            <i class="fas fa-users" style="margin-bottom: 8px; display: block; font-size: 1.2rem;"></i>
+            إدارة الزوار
+        </a>
+        
+        <a href="{{ url_for('admin.categories') }}" 
+           style="background: linear-gradient(135deg, #e91e63 0%, #f06292 100%); color: white; 
+                  padding: 15px; border-radius: 10px; text-decoration: none; text-align: center; font-weight: 600;">
+            <i class="fas fa-tags" style="margin-bottom: 8px; display: block; font-size: 1.2rem;"></i>
+            إدارة الأقسام
+        </a>
+        
+        <a href="{{ url_for('admin.home_management') }}" 
+           style="background: linear-gradient(135deg, #673ab7 0%, #9c27b0 100%); color: white; 
+                  padding: 15px; border-radius: 10px; text-decoration: none; text-align: center; font-weight: 600;">
+            <i class="fas fa-home" style="margin-bottom: 8px; display: block; font-size: 1.2rem;"></i>
+            إدارة المحتوى
+        </a>
+        
+        <a href="{{ url_for('main.products_list') }}" 
+           style="background: linear-gradient(135deg, #ff9800 0%, #ffc107 100%); color: white; 
+                  padding: 15px; border-radius: 10px; text-decoration: none; text-align: center; font-weight: 600;">
+            <i class="fas fa-box" style="margin-bottom: 8px; display: block; font-size: 1.2rem;"></i>
+            عرض المنتجات
+        </a>
+        
+        <a href="{{ url_for('main.exhibitors_list') }}" 
+           style="background: linear-gradient(135deg, #795548 0%, #a1887f 100%); color: white; 
+                  padding: 15px; border-radius: 10px; text-decoration: none; text-align: center; font-weight: 600;">
+            <i class="fas fa-list" style="margin-bottom: 8px; display: block; font-size: 1.2rem;"></i>
+            عرض العارضين
+        </a>
+    </div>
+</div>
+
+<!-- طلبات في انتظار المراجعة -->
+{% if pending_exhibitors %}
+<div class="section">
+    <h3 style="color: #e65100; margin-bottom: 15px;">
+        <i class="fas fa-clock"></i> طلبات في انتظار المراجعة ({{ pending_exhibitors|length }})
+    </h3>
+    
+    {% for exhibitor in pending_exhibitors[:3] %}
+    <div class="card" style="margin-bottom: 12px; border-right: 4px solid #ff9800;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <h4 style="margin: 0 0 5px 0; color: #2c3e50; font-size: 1rem;">{{ exhibitor.company_name }}</h4>
+                <p style="margin: 0; color: #666; font-size: 0.85rem;">{{ exhibitor.category.name if exhibitor.category else 'غير محدد' }}</p>
+                <p style="margin: 5px 0 0 0; color: #999; font-size: 0.8rem;">
+                    تم التقديم: {{ exhibitor.created_at.strftime('%d/%m/%Y') }}
+                </p>
+            </div>
+            
+            <div style="display: flex; gap: 8px;">
+                <button onclick="approveExhibitor({{ exhibitor.id }})" 
+                        style="background: #4caf50; color: white; border: none; padding: 8px 12px; 
+                               border-radius: 6px; font-size: 0.8rem; cursor: pointer;">
+                    <i class="fas fa-check"></i> موافق
+                </button>
+                
+                <button onclick="rejectExhibitor({{ exhibitor.id }})" 
+                        style="background: #f44336; color: white; border: none; padding: 8px 12px; 
+                               border-radius: 6px; font-size: 0.8rem; cursor: pointer;">
+                    <i class="fas fa-times"></i> رفض
+                </button>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    
+    {% if pending_exhibitors|length > 3 %}
+    <div style="text-align: center; margin-top: 15px;">
+        <a href="{{ url_for('admin.exhibitors') }}" 
+           style="color: #ff9800; text-decoration: none; font-weight: 600;">
+            عرض جميع الطلبات ({{ pending_exhibitors|length - 3 }} إضافي)
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endif %}
+
+<!-- آخر الأنشطة -->
+<div class="section">
+    <h3 style="color: #2c3e50; margin-bottom: 15px;">
+        <i class="fas fa-history"></i> آخر الأنشطة
+    </h3>
+    
+    {% if recent_activities %}
+        {% for activity in recent_activities[:5] %}
+        <div style="display: flex; align-items: center; gap: 12px; padding: 12px; 
+                    background: #f8f9fa; border-radius: 8px; margin-bottom: 10px;">
+            <div style="width: 40px; height: 40px; background: 
+                        {{ '#4caf50' if activity.type == 'exhibitor_approved' else
+                           '#2196f3' if activity.type == 'visitor_registered' else
+                           '#ff9800' if activity.type == 'product_added' else '#666' }}; 
+                        border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white;">
+                <i class="fas fa-{{ 'building' if activity.type == 'exhibitor_approved' else
+                                    'user-plus' if activity.type == 'visitor_registered' else
+                                    'box' if activity.type == 'product_added' else 'circle' }}"></i>
+            </div>
+            
+            <div style="flex: 1;">
+                <p style="margin: 0; color: #2c3e50; font-size: 0.9rem; line-height: 1.4;">
+                    {{ activity.description }}
+                </p>
+                <p style="margin: 3px 0 0 0; color: #999; font-size: 0.8rem;">
+                    {{ activity.created_at.strftime('%d/%m/%Y %H:%M') }}
+                </p>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div style="text-align: center; padding: 30px; background: #f8f9fa; border-radius: 8px;">
+            <i class="fas fa-history" style="font-size: 2rem; color: #ccc; margin-bottom: 10px;"></i>
+            <p style="color: #666; margin: 0;">لا توجد أنشطة حديثة</p>
+        </div>
+    {% endif %}
+</div>
+
+<!-- إحصائيات تفصيلية -->
+<div class="section">
+    <h3 style="color: #2c3e50; margin-bottom: 15px;">
+        <i class="fas fa-chart-pie"></i> إحصائيات تفصيلية
+    </h3>
+    
+    <div style="display: grid; gap: 15px;">
+        <div class="card" style="padding: 15px;">
+            <h4 style="color: #2c3e50; margin-bottom: 10px; font-size: 1rem;">
+                <i class="fas fa-building"></i> حالة العارضين
+            </h4>
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; font-size: 0.85rem;">
+                <div style="text-align: center; padding: 8px; background: #e8f5e8; border-radius: 6px;">
+                    <div style="color: #4caf50; font-weight: 600;">{{ stats.approved_exhibitors }}</div>
+                    <div style="color: #666;">معتمد</div>
+                </div>
+                <div style="text-align: center; padding: 8px; background: #fff3e0; border-radius: 6px;">
+                    <div style="color: #ff9800; font-weight: 600;">{{ stats.pending_exhibitors }}</div>
+                    <div style="color: #666;">قيد المراجعة</div>
+                </div>
+                <div style="text-align: center; padding: 8px; background: #ffebee; border-radius: 6px;">
+                    <div style="color: #f44336; font-weight: 600;">{{ stats.rejected_exhibitors }}</div>
+                    <div style="color: #666;">مرفوض</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card" style="padding: 15px;">
+            <h4 style="color: #2c3e50; margin-bottom: 10px; font-size: 1rem;">
+                <i class="fas fa-box"></i> المنتجات
+            </h4>
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; font-size: 0.85rem;">
+                <div style="text-align: center; padding: 8px; background: #e8f5e8; border-radius: 6px;">
+                    <div style="color: #4caf50; font-weight: 600;">{{ stats.active_products }}</div>
+                    <div style="color: #666;">منتج نشط</div>
+                </div>
+                <div style="text-align: center; padding: 8px; background: #fff3e0; border-radius: 6px;">
+                    <div style="color: #ff9800; font-weight: 600;">{{ stats.featured_products }}</div>
+                    <div style="color: #666;">منتج مميز</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- معلومات النظام -->
+<div class="section" style="background: linear-gradient(135deg, #e3f2fd 0%, #f1f8e9 100%); border: 1px solid #2196f3;">
+    <h3 style="color: #1565c0; margin-bottom: 15px;">
+        <i class="fas fa-info-circle"></i> معلومات النظام
+    </h3>
+    
+    <div style="display: grid; gap: 10px; font-size: 0.9rem;">
+        <div style="display: flex; justify-content: space-between;">
+            <span style="color: #666;">إصدار النظام:</span>
+            <span style="color: #2c3e50; font-weight: 600;">1.0.0</span>
+        </div>
+        
+        <div style="display: flex; justify-content: space-between;">
+            <span style="color: #666;">آخر تحديث:</span>
+            <span style="color: #2c3e50; font-weight: 600;">{{ current_date.strftime('%d/%m/%Y') }}</span>
+        </div>
+        
+        <div style="display: flex; justify-content: space-between;">
+            <span style="color: #666;">حالة النظام:</span>
+            <span style="color: #4caf50; font-weight: 600;">
+                <i class="fas fa-check-circle"></i> يعمل بشكل طبيعي
+            </span>
+        </div>
+    </div>
+</div>
+
+<!-- رسائل تأكيد -->
+<div id="notification" style="position: fixed; top: 20px; right: 20px; background: #4caf50; color: white; padding: 15px 20px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); transform: translateX(400px); transition: all 0.3s; z-index: 1000;">
+    تم بنجاح
+</div>
+
+<style>
+/* تحسينات إضافية */
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+    transition: all 0.3s ease;
+}
+
+.card {
+    animation: fadeInUp 0.6s ease forwards;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+button:hover {
+    opacity: 0.9;
+    transform: scale(1.05);
+    transition: all 0.2s ease;
+}
+
+a:hover {
+    transform: translateY(-1px);
+    transition: all 0.3s ease;
+}
+</style>
+
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('لوحة التحكم - تم تحميل الصفحة');
+    
+    // تحسين تجربة الاستخدام على الموبايل
+    enhanceMobileExperience();
+    
+    // عرض رسائل Flash إذا وُجدت
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                showNotification('{{ message }}', '{{ "success" if category == "success" else "error" }}');
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+    
+    // تحديث الوقت كل دقيقة
+    setInterval(updateTime, 60000);
+});
+
+function enhanceMobileExperience() {
+    // تحسين تجربة الاستخدام على الموبايل
+    
+    // تكبير مناطق اللمس
+    const touchTargets = document.querySelectorAll('button, a, .card');
+    touchTargets.forEach(target => {
+        target.style.minHeight = '44px'; // الحد الأدنى المطلوب للمس
+    });
+    
+    // تحسين التنقل بالكيبورد
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' && e.target.tagName === 'BUTTON') {
+            e.target.click();
+        }
+        
+        // إغلاق القائمة المنسدلة عند الضغط على Escape
+        if (e.key === 'Escape') {
+            closeDropdown();
+        }
+    });
+    
+    // إضافة تأثيرات اللمس
+    const buttons = document.querySelectorAll('button');
+    buttons.forEach(button => {
+        button.addEventListener('touchstart', function() {
+            this.style.transform = 'scale(0.95)';
+        });
+        
+        button.addEventListener('touchend', function() {
+            this.style.transform = '';
+        });
+    });
+    
+    // إضافة تأثيرات لمس للقائمة المنسدلة
+    const brandLink = document.querySelector('.brand-link');
+    if (brandLink) {
+        brandLink.addEventListener('touchstart', function() {
+            this.style.transform = 'scale(0.98)';
+        });
+        
+        brandLink.addEventListener('touchend', function() {
+            this.style.transform = '';
+        });
+        
+        brandLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            toggleDropdown();
+        });
+    }
+    
+    // إضافة معالج خاص للنقر على السهم
+    const dropdownArrow = document.querySelector('.dropdown-arrow');
+    if (dropdownArrow) {
+        dropdownArrow.addEventListener('click', function(e) {
+            e.stopPropagation();
+            toggleDropdown();
+        });
+        
+        dropdownArrow.addEventListener('touchstart', function(e) {
+            e.stopPropagation();
+            this.style.transform = 'scale(1.2)';
+        });
+        
+        dropdownArrow.addEventListener('touchend', function(e) {
+            e.stopPropagation();
+            this.style.transform = '';
+        });
+    }
+    
+    // إغلاق القائمة عند النقر خارجها
+    document.addEventListener('click', function(e) {
+        const dropdown = document.querySelector('.navbar-brand.dropdown');
+        const dropdownContent = document.getElementById('brandDropdown');
+        
+        if (dropdown && dropdownContent && dropdownContent.classList.contains('show')) {
+            // التحقق من أن النقر ليس داخل القائمة المنسدلة
+            if (!dropdown.contains(e.target)) {
+                closeDropdown();
+            }
+        }
+    });
+    
+    // إغلاق القائمة عند النقر على روابط القائمة
+    const dropdownItems = document.querySelectorAll('.dropdown-item');
+    dropdownItems.forEach(item => {
+        item.addEventListener('click', function() {
+            // تأخير بسيط للسماح بالتنقل
+            setTimeout(() => {
+                closeDropdown();
+            }, 100);
+        });
+    });
+    
+    console.log('تم تحسين تجربة الاستخدام للموبايل');
+}
+
+// وظائف القائمة المنسدلة
+function toggleDropdown() {
+    const dropdown = document.querySelector('.navbar-brand');
+    const dropdownContent = document.getElementById('brandDropdown');
+    
+    if (dropdownContent && dropdownContent.classList.contains('show')) {
+        closeDropdown();
+    } else {
+        openDropdown();
+    }
+}
+
+function openDropdown() {
+    const dropdown = document.querySelector('.navbar-brand');
+    const dropdownContent = document.getElementById('brandDropdown');
+    const brandLink = document.querySelector('.brand-link');
+    
+    if (dropdown && dropdownContent && brandLink) {
+        dropdown.classList.add('active');
+        dropdownContent.classList.add('show');
+        brandLink.classList.add('active');
+        
+        // تأثير بصري
+        setTimeout(() => {
+            dropdownContent.style.transform = 'translateY(0)';
+            dropdownContent.style.opacity = '1';
+        }, 10);
+        
+        // إضافة تأثير overlay
+        const overlay = document.createElement('div');
+        overlay.className = 'dropdown-overlay';
+        overlay.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.1);
+            z-index: 999;
+            animation: fadeIn 0.3s ease;
+        `;
+        overlay.addEventListener('click', closeDropdown);
+        document.body.appendChild(overlay);
+    }
+}
+
+function closeDropdown() {
+    const dropdown = document.querySelector('.navbar-brand');
+    const dropdownContent = document.getElementById('brandDropdown');
+    const brandLink = document.querySelector('.brand-link');
+    const overlay = document.querySelector('.dropdown-overlay');
+    
+    if (dropdown && dropdownContent && brandLink) {
+        dropdown.classList.remove('active');
+        dropdownContent.classList.remove('show');
+        brandLink.classList.remove('active');
+        
+        dropdownContent.style.transform = 'translateY(-10px)';
+        dropdownContent.style.opacity = '0';
+        
+        // إزالة overlay
+        if (overlay) {
+            overlay.style.opacity = '0';
+            setTimeout(() => {
+                if (overlay.parentElement) {
+                    overlay.remove();
+                }
+            }, 300);
+        }
+    }
+}
+
+// إظهار الإشعارات
+function showNotification(message, type = 'success') {
+    const notification = document.getElementById('notification');
+    if (notification) {
+        notification.innerHTML = message;
+        notification.style.background = type === 'success' ? '#4caf50' : '#f44336';
+        notification.style.transform = 'translateX(0)';
+        
+        setTimeout(() => {
+            notification.style.transform = 'translateX(400px)';
+        }, 3000);
+    }
+}
+
+// موافقة العارض
+function approveExhibitor(id) {
+    if (confirm('هل أنت متأكد من الموافقة على هذا العارض؟')) {
+        fetch(`/admin/exhibitors/${id}/approve`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showNotification('تم اعتماد العارض بنجاح');
+                setTimeout(() => location.reload(), 1500);
+            } else {
+                showNotification('حدث خطأ في الاعتماد', 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showNotification('حدث خطأ في الاتصال', 'error');
+        });
+    }
+}
+
+// رفض العارض
+function rejectExhibitor(id) {
+    if (confirm('هل أنت متأكد من رفض هذا العارض؟')) {
+        fetch(`/admin/exhibitors/${id}/reject`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showNotification('تم رفض العارض');
+                setTimeout(() => location.reload(), 1500);
+            } else {
+                showNotification('حدث خطأ في الرفض', 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showNotification('حدث خطأ في الاتصال', 'error');
+        });
+    }
+}
+
+// تحديث الوقت
+function updateTime() {
+    const now = new Date();
+    const timeString = now.toLocaleTimeString('ar-EG', { 
+        hour: '2-digit', 
+        minute: '2-digit',
+        hour12: false 
+    });
+    
+    const timeElement = document.querySelector('.fa-clock').parentElement;
+    if (timeElement) {
+        timeElement.innerHTML = `<i class="fas fa-clock"></i> ${timeString}`;
+    }
+}
+</script>
+</body>
+</html>
+

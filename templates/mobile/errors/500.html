@@ -1,0 +1,287 @@
+{% extends "base_mobile.html" %}
+
+{% block title %}خطأ في الخادم - 500{% endblock %}
+
+{% block content %}
+<div class="mobile-container">
+    <div class="error-page-mobile">
+        <div class="error-number error-500">500</div>
+        
+        <div class="error-icon error-500-icon">
+            <i class="fas fa-exclamation-triangle"></i>
+        </div>
+        
+        <div class="error-content">
+            <h1>خطأ في الخادم</h1>
+            <p>نعتذر، حدث خطأ غير متوقع في الخادم. نحن نعمل على حل المشكلة</p>
+        </div>
+        
+        <div class="error-actions">
+            <a href="{{ url_for('main.index') }}" class="btn btn-primary btn-mobile">
+                <i class="fas fa-home"></i> العودة للرئيسية
+            </a>
+            
+            <button onclick="window.location.reload()" class="btn btn-secondary btn-mobile">
+                <i class="fas fa-sync-alt"></i> إعادة المحاولة
+            </button>
+        </div>
+        
+        <!-- معلومات الدعم -->
+        <div class="support-info-mobile">
+            <div class="support-card">
+                <h3><i class="fas fa-headset"></i> المساعدة</h3>
+                <p>إذا استمرت المشكلة، يرجى التواصل مع فريق الدعم الفني</p>
+                
+                <div class="support-actions">
+                    <a href="mailto:support@arabexpo.com" class="support-link">
+                        <i class="fas fa-envelope"></i>
+                        <span>إرسال ايميل</span>
+                    </a>
+                    
+                    <a href="tel:+971501234567" class="support-link">
+                        <i class="fas fa-phone"></i>
+                        <span>اتصال هاتفي</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- نصائح للمستخدم -->
+        <div class="tips-mobile">
+            <h3><i class="fas fa-lightbulb"></i> نصائح:</h3>
+            
+            <div class="tips-list">
+                <div class="tip-item">
+                    <i class="fas fa-wifi"></i>
+                    <span>تأكد من اتصالك بالإنترنت</span>
+                </div>
+                
+                <div class="tip-item">
+                    <i class="fas fa-clock"></i>
+                    <span>انتظر قليلاً ثم أعد المحاولة</span>
+                </div>
+                
+                <div class="tip-item">
+                    <i class="fas fa-browser"></i>
+                    <span>جرب تحديث صفحة المتصفح</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.error-page-mobile {
+    text-align: center;
+    padding: 40px 20px;
+    min-height: 70vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.error-500 {
+    color: #ffebee !important;
+}
+
+.error-500-icon {
+    color: #f44336 !important;
+}
+
+.error-number {
+    font-size: 6rem;
+    font-weight: 900;
+    margin-bottom: 20px;
+    line-height: 1;
+}
+
+.error-icon {
+    font-size: 3rem;
+    margin-bottom: 25px;
+}
+
+.error-content h1 {
+    color: #2c3e50;
+    margin-bottom: 15px;
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.error-content p {
+    color: #666;
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 30px;
+    max-width: 300px;
+}
+
+.error-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+    max-width: 280px;
+    margin-bottom: 40px;
+}
+
+.btn-mobile {
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+}
+
+.btn-primary {
+    background: #2196f3;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #1976d2;
+    transform: translateY(-2px);
+}
+
+.btn-secondary {
+    background: #f5f5f5;
+    color: #666;
+    border: 1px solid #ddd;
+}
+
+.btn-secondary:hover {
+    background: #e0e0e0;
+    transform: translateY(-2px);
+}
+
+.support-info-mobile {
+    width: 100%;
+    max-width: 320px;
+    margin-bottom: 30px;
+}
+
+.support-card {
+    background: #fff3e0;
+    border: 1px solid #ffcc02;
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+}
+
+.support-card h3 {
+    color: #f57c00;
+    margin-bottom: 15px;
+    font-size: 1.1rem;
+}
+
+.support-card p {
+    color: #666;
+    font-size: 0.9rem;
+    margin-bottom: 20px;
+    line-height: 1.5;
+}
+
+.support-actions {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+}
+
+.support-link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 12px;
+    background: rgba(245, 124, 0, 0.1);
+    border-radius: 8px;
+    text-decoration: none;
+    color: #f57c00;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    flex: 1;
+}
+
+.support-link:hover {
+    background: rgba(245, 124, 0, 0.2);
+    transform: translateY(-2px);
+}
+
+.support-link i {
+    font-size: 1.2rem;
+}
+
+.tips-mobile {
+    width: 100%;
+    max-width: 320px;
+    text-align: right;
+}
+
+.tips-mobile h3 {
+    color: #2c3e50;
+    margin-bottom: 20px;
+    font-size: 1.1rem;
+    text-align: center;
+}
+
+.tips-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.tip-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+}
+
+.tip-item i {
+    color: #2196f3;
+    font-size: 1.1rem;
+    width: 20px;
+    text-align: center;
+}
+
+.tip-item span {
+    font-size: 0.9rem;
+    color: #2c3e50;
+}
+
+@media (max-width: 480px) {
+    .error-number {
+        font-size: 4rem;
+    }
+    
+    .error-icon {
+        font-size: 2.5rem;
+    }
+    
+    .error-content h1 {
+        font-size: 1.3rem;
+    }
+    
+    .support-actions {
+        flex-direction: column;
+    }
+    
+    .support-link {
+        flex-direction: row;
+        justify-content: center;
+    }
+}
+</style>
+{% endblock %}

@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arab Expo For Food</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="topbar">
+        <div class="topbar-actions">
+            <button class="menu-icon" id="menuIcon" aria-label="Menu"><i class="fas fa-bars"></i></button>
+            {% if current_user.is_authenticated %}
+                <!-- إذا كان المستخدم مسجل دخول، أظهر اسمه ولوحة التحكم -->
+                <div class="user-menu">
+                    <span class="user-name">{{ current_user.full_name }}</span>
+                    {% if current_user.is_admin() %}
+                        <a href="{{ url_for('admin.dashboard') }}" class="dashboard-btn">
+                            <i class="fas fa-tachometer-alt"></i> Admin Dashboard
+                        </a>
+                    {% elif current_user.is_exhibitor() %}
+                        <a href="{{ url_for('exhibitor.dashboard') }}" class="dashboard-btn">
+                            <i class="fas fa-store"></i> Exhibitor Dashboard
+                        </a>
+                    {% endif %}
+                    <a href="{{ url_for('auth.logout') }}" class="logout-btn">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </a>
+                </div>
+            {% else %}
+                <!-- إذا لم يكن مسجل دخول، أظهر زر تسجيل الدخول -->
+                <button class="login-btn">Login</button>
+            {% endif %}
+        </div>
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="Arab Expo Logo" class="topbar-logo">
+    </div>
+    <div id="dropdownMenu">
+        <a href="#" style="display:flex;align-items:center;gap:10px;padding:14px 26px;color:#205072;text-decoration:none;font-weight:600;font-size:1.08rem;transition:background 0.2s;">
+            <i class="fas fa-home"></i> Home
+        </a>
+        <a href="#" style="display:flex;align-items:center;gap:10px;padding:14px 26px;color:#205072;text-decoration:none;font-weight:600;font-size:1.08rem;transition:background 0.2s;">
+            <i class="fas fa-info-circle"></i> About
+        </a>
+        <a href="#" style="display:flex;align-items:center;gap:10px;padding:14px 26px;color:#205072;text-decoration:none;font-weight:600;font-size:1.08rem;transition:background 0.2s;">
+            <i class="fas fa-th-large"></i> Exhibition Pavilions
+        </a>
+        <a href="#" style="display:flex;align-items:center;gap:10px;padding:14px 26px;color:#205072;text-decoration:none;font-weight:600;font-size:1.08rem;transition:background 0.2s;">
+            <i class="fas fa-handshake"></i> Sponsors
+        </a>
+        <a href="#" style="display:flex;align-items:center;gap:10px;padding:14px 26px;color:#205072;text-decoration:none;font-weight:600;font-size:1.08rem;transition:background 0.2s;">
+            <i class="fas fa-box"></i> Products
+        </a>
+        
+        {% if current_user.is_authenticated %}
+            <!-- إذا كان المستخدم مسجل دخول، أظهر لوحة التحكم -->
+            {% if current_user.is_admin() %}
+                <a href="{{ url_for('admin.dashboard') }}" style="display:flex;align-items:center;gap:10px;padding:14px 26px;color:#205072;text-decoration:none;font-weight:600;font-size:1.08rem;transition:background 0.2s;border-top:1px solid #e0e0e0;">
+                    <i class="fas fa-tachometer-alt"></i> Admin Dashboard
+                </a>
+            {% elif current_user.is_exhibitor() %}
+                <a href="{{ url_for('exhibitor.dashboard') }}" style="display:flex;align-items:center;gap:10px;padding:14px 26px;color:#205072;text-decoration:none;font-weight:600;font-size:1.08rem;transition:background 0.2s;border-top:1px solid #e0e0e0;">
+                    <i class="fas fa-store"></i> Exhibitor Dashboard
+                </a>
+            {% endif %}
+            <a href="{{ url_for('auth.logout') }}" style="display:flex;align-items:center;gap:10px;padding:14px 26px;color:#d73527;text-decoration:none;font-weight:600;font-size:1.08rem;transition:background 0.2s;">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+        {% else %}
+            <!-- إذا لم يكن مسجل دخول، أظهر زر التسجيل -->
+            <a href="#" onclick="showModal('exhibitorModal')" style="display:flex;align-items:center;gap:10px;padding:14px 26px;color:#205072;text-decoration:none;font-weight:600;font-size:1.08rem;transition:background 0.2s;border-top:1px solid #e0e0e0;">
+                <i class="fas fa-user-plus"></i> Register as Exhibitor
+            </a>
+            <a href="#" onclick="showModal('visitorModal')" style="display:flex;align-items:center;gap:10px;padding:14px 26px;color:#205072;text-decoration:none;font-weight:600;font-size:1.08rem;transition:background 0.2s;">
+                <i class="fas fa-user-plus"></i> Register as Visitor
+            </a>
+            <a href="{{ url_for('auth.login') }}" style="display:flex;align-items:center;gap:10px;padding:14px 26px;color:#205072;text-decoration:none;font-weight:600;font-size:1.08rem;transition:background 0.2s;">
+                <i class="fas fa-sign-in-alt"></i> Login
+            </a>
+        {% endif %}
+    </div>
+
+    <div class="hero fade-in-up">
+        {% set main_banner = home_sections.get('main_banner') %}
+        {% if main_banner and main_banner.is_active %}
+            <h1>{{ main_banner.title_en or 'Arab expo for food' }}</h1>
+            <p>
+                {{ main_banner.subtitle_en or 'The International Virtual Exhibition and Conference for Food, Beverage, and F&B Industry Technology.' }}
+            </p>
+            <h5 id="heroText">
+                {{ main_banner.description_en or 'Virtual Space for Real Business • Arab expo for food brings together the international food & beverage community to explore new opportunities in the Africa, Middle East, Arabian Gulf and Mediterranean Sea markets.' }}
+                <span id="moreHeroText" style="display:none;">
+                    {% set custom_data = main_banner.get_custom_data() %}
+                    {{ custom_data.get('extended_description', 'Showcasing their products and services like never before and connect with global audiences through our virtual exhibition Arab expo for food serves as a bridge between companies in the food industry worldwide It will contribute a great deal to the food industry by widening brand exposure to guarantee long-term business success and market reach Showcase to a Global Audience with a Virtual Exhibition for Food & Beverages.') }}
+                </span>
+            </h5>
+        {% else %}
+            <h1>Arab expo for food</h1>
+            <p>
+                The International Virtual Exhibition and Conference for Food, Beverage, and F&B Industry Technology.
+            </p>
+            <h5 id="heroText">
+                Virtual Space for Real Business • Arab expo for food  brings together the international food & beverage community to explore new opportunities in the Africa, Middle East, Arabian Gulf and Mediterranean Sea markets.
+                <span id="moreHeroText" style="display:none;">
+                    Showcasing their products and services like never before and connect with global audiences through our virtual exhibition
+                    Arab expo for food  serves as a bridge between companies in the food industry worldwide
+                    It will contribute a great deal to the food industry by widening brand exposure to guarantee long-term business success and market reach
+                    Showcase to a Global Audience with a Virtual Exhibition for Food & Beverages.
+                </span>
+            </h5>
+        {% endif %}
+        <button class="button" id="learnMoreBtn">Learn More</button>
+    </div>
+
+    <div class="section fade-in-up">
+        {% set intro_video = home_sections.get('intro_video') %}
+        {% if intro_video and intro_video.is_active %}
+            <h2>{{ intro_video.title_en or 'Arab Expo For Food' }}</h2>
+            {% set custom_data = intro_video.get_custom_data() %}
+            {% if custom_data.get('video_url') %}
+                <div class="video-box">
+                    <iframe src="{{ custom_data.get('video_url') }}" width="100%" height="200" frameborder="0" allowfullscreen></iframe>
+                </div>
+            {% elif intro_video.video_file %}
+                <div class="video-box">
+                    <video width="100%" height="200" controls poster="{{ url_for('static', filename='uploads/' + intro_video.main_image) if intro_video.main_image else '' }}">
+                        {% set video_ext = intro_video.video_file.split('.')[-1].lower() %}
+                        {% if video_ext == 'mp4' %}
+                            <source src="{{ url_for('static', filename='uploads/' + intro_video.video_file) }}" type="video/mp4">
+                        {% elif video_ext in ['mov', 'qt'] %}
+                            <source src="{{ url_for('static', filename='uploads/' + intro_video.video_file) }}" type="video/quicktime">
+                        {% elif video_ext == 'webm' %}
+                            <source src="{{ url_for('static', filename='uploads/' + intro_video.video_file) }}" type="video/webm">
+                        {% elif video_ext == 'avi' %}
+                            <source src="{{ url_for('static', filename='uploads/' + intro_video.video_file) }}" type="video/x-msvideo">
+                        {% else %}
+                            <source src="{{ url_for('static', filename='uploads/' + intro_video.video_file) }}">
+                        {% endif %}
+                        Your browser does not support video playback.
+                    </video>
+                </div>
+            {% else %}
+                <div class="video-box">Video</div>
+            {% endif %}
+            {% if intro_video.download_file %}
+                <a href="{{ url_for('static', filename='uploads/' + intro_video.download_file) }}" class="button" download>Download Brochure</a>
+            {% else %}
+                <button class="button">Download Brochure</button>
+            {% endif %}
+        {% else %}
+            <h2>Arab Expo For Food</h2>
+            <div class="video-box">Video</div>
+            <button class="button">Download Brochure</button>
+        {% endif %}
+    </div>
+
+    <div class="section fade-in-up">
+        {% set pavilions = home_sections.get('pavilions') %}
+        {% if pavilions and pavilions.is_active %}
+            <h2>{{ pavilions.title_en or 'Exhibition Pavilions' }}</h2>
+            <div class="images">
+                {% if pavilions.main_image %}
+                    <a href="{{ url_for('main.pavilions_flags') }}" style="display: block;">
+                        <img src="{{ url_for('static', filename='uploads/' + pavilions.main_image) }}" alt="{{ pavilions.title_en or 'Pavilion' }}" style="cursor: pointer;">
+                    </a>
+                {% else %}
+                    <a href="{{ url_for('main.pavilions_flags') }}" style="display: block;">
+                        <img src="{{ url_for('static', filename='2.jpg') }}" alt="Pavilion 1" style="cursor: pointer;">
+                    </a>
+                {% endif %}
+            </div>
+            {% if pavilions.download_file %}
+                <a href="{{ url_for('static', filename='uploads/' + pavilions.download_file) }}" class="button" download>Download Brochure</a>
+            {% else %}
+                <button class="button">Download Brochure</button>
+            {% endif %}
+        {% else %}
+            <h2>Exhibition Pavilions</h2>
+            <div class="images">
+                <a href="{{ url_for('main.pavilions_flags') }}" style="display: block;">
+                    <img src="{{ url_for('static', filename='2.jpg') }}" alt="Pavilion 1" style="cursor: pointer;">
+                </a>
+            </div>
+            <button class="button">Download Brochure</button>
+        {% endif %}
+    </div>
+
+    <div class="section fade-in-up">
+        {% set sponsors = home_sections.get('sponsors') %}
+        {% if sponsors and sponsors.is_active %}
+            <h2>{{ sponsors.title_en or 'Our Sponsors' }}</h2>
+            <div class="images">
+                {% if sponsors.main_image %}
+                    <img src="{{ url_for('static', filename='uploads/' + sponsors.main_image) }}" alt="{{ sponsors.title_en or 'Our Sponsors' }}">
+                {% else %}
+                    <img src="{{ url_for('static', filename='3.jpg') }}" alt="Our Sponsors">
+                {% endif %}
+            </div>
+            {% if sponsors.download_file %}
+                <a href="{{ url_for('static', filename='uploads/' + sponsors.download_file) }}" class="button" download>Download Brochure</a>
+            {% else %}
+                <button class="button">Download Brochure</button>
+            {% endif %}
+        {% else %}
+            <h2>Our Sponsors</h2>
+            <div class="images">
+                <img src="{{ url_for('static', filename='3.jpg') }}" alt="Our Sponsors">
+            </div>
+            <button class="button">Download Brochure</button>
+        {% endif %}
+    </div>
+
+    <div class="section fade-in-up">
+        {% set featured_products = home_sections.get('featured_products') %}
+        {% if featured_products and featured_products.is_active %}
+            <h2>{{ featured_products.title_en or 'Recommended Products' }}</h2>
+            <div class="images">
+                {% if featured_products.main_image %}
+                    <img src="{{ url_for('static', filename='uploads/' + featured_products.main_image) }}" alt="{{ featured_products.title_en or 'Recommended Products' }}">
+                {% else %}
+                    <img src="{{ url_for('static', filename='4.jpg') }}" alt="Recommended Products">
+                {% endif %}
+            </div>
+            {% if featured_products.download_file %}
+                <a href="{{ url_for('static', filename='uploads/' + featured_products.download_file) }}" class="button" download>Download Brochure</a>
+            {% else %}
+                <button class="button">Download Brochure</button>
+            {% endif %}
+        {% else %}
+            <h2>Recommended Products</h2>
+            <div class="images">
+                <img src="{{ url_for('static', filename='4.jpg') }}" alt="Recommended Products">
+            </div>
+            <button class="button">Download Brochure</button>
+        {% endif %}
+    </div>
+
+    <div class="section fade-in-up">
+        {% set target_countries = home_sections.get('target_countries') %}
+        {% if target_countries and target_countries.is_active %}
+            <h2>{{ target_countries.title_en or 'Targeted Countries & Cities' }}</h2>
+            <div class="images">
+                {% if target_countries.main_image %}
+                    <img src="{{ url_for('static', filename='uploads/' + target_countries.main_image) }}" alt="{{ target_countries.title_en or 'Targeted Countries & Cities' }}">
+                {% else %}
+                    <img src="{{ url_for('static', filename='5.jpg') }}" alt="Targeted Countries & Cities">
+                {% endif %}
+            </div>
+            {% if target_countries.download_file %}
+                <a href="{{ url_for('static', filename='uploads/' + target_countries.download_file) }}" class="button" download>Download Brochure</a>
+            {% else %}
+                <button class="button">Download Brochure</button>
+            {% endif %}
+        {% else %}
+            <h2>Targeted Countries & Cities</h2>
+            <div class="images">
+                <img src="{{ url_for('static', filename='5.jpg') }}" alt="Targeted Countries & Cities">
+            </div>
+            <button class="button">Download Brochure</button>
+        {% endif %}
+    </div>
+
+    <div class="section fade-in-up">
+        {% set pavilion_types = home_sections.get('pavilion_types') %}
+        {% if pavilion_types and pavilion_types.is_active %}
+            <h2>{{ pavilion_types.title_en or 'Arab Expo offers many shapes for your booth<br>Customize your store' | safe }}</h2>
+            <div class="images">
+                {% if pavilion_types.main_image %}
+                    <img src="{{ url_for('static', filename='uploads/' + pavilion_types.main_image) }}" alt="{{ pavilion_types.title_en or 'Booth Shape' }}">
+                {% else %}
+                    <img src="{{ url_for('static', filename='6.jpg') }}" alt="Booth Shape 1">
+                    <img src="{{ url_for('static', filename='7.jpg') }}" alt="Booth Shape 2">
+                {% endif %}
+                
+                {% set gallery_images = pavilion_types.get_gallery_images() %}
+                {% if gallery_images %}
+                    {% for img in gallery_images %}
+                        <img src="{{ url_for('static', filename='uploads/' + img) }}" alt="Booth Shape">
+                    {% endfor %}
+                {% endif %}
+            </div>
+            {% if pavilion_types.download_file %}
+                <a href="{{ url_for('static', filename='uploads/' + pavilion_types.download_file) }}" class="button" download>Download Brochure</a>
+            {% else %}
+                <button class="button">Download Brochure</button>
+            {% endif %}
+        {% else %}
+            <h2>Arab Expo offers many shapes for your booth<br>Customize your store</h2>
+            <div class="images">
+                <img src="{{ url_for('static', filename='6.jpg') }}" alt="Booth Shape 1">
+                <img src="{{ url_for('static', filename='7.jpg') }}" alt="Booth Shape 2">
+            </div>
+            <button class="button">Download Brochure</button>
+        {% endif %}
+    </div>
+
+    <div class="section fade-in-up">
+        {% set events = home_sections.get('events') %}
+        {% if events and events.is_active %}
+            <h2>{{ events.title_en or 'Arab Expo Events' }}</h2>
+            <div class="images">
+                {% if events.main_image %}
+                    <img src="{{ url_for('static', filename='uploads/' + events.main_image) }}" alt="{{ events.title_en or 'Arab Expo Events' }}">
+                {% else %}
+                    <img src="{{ url_for('static', filename='8.jpg') }}" alt="Arab Expo Events">
+                {% endif %}
+            </div>
+            {% if events.download_file %}
+                <a href="{{ url_for('static', filename='uploads/' + events.download_file) }}" class="button" download>Download Brochure</a>
+            {% else %}
+                <button class="button">Download Brochure</button>
+            {% endif %}
+        {% else %}
+            <h2>Arab Expo Events</h2>
+            <div class="images">
+                <img src="{{ url_for('static', filename='8.jpg') }}" alt="Arab Expo Events">
+            </div>
+            <button class="button">Download Brochure</button>
+        {% endif %}
+    </div>
+
+    <div style="background: #e0ecf3; padding: 32px 0 40px 0; text-align: center;">
+        <div style="display: inline-block; background: #fff; color: #205072; font-size: 1.3rem; font-weight: bold; border-radius: 12px; padding: 12px 32px; margin-bottom: 18px;">Register Now</div>
+        <div style="display: flex; justify-content: space-between; max-width: 320px; margin: 0 auto; gap: 12px;">
+            <button class="button" id="exhibitorBtn" style="flex:1; background:#205072; color:#fff;">As Exhibitors</button>
+            <button class="button" id="visitorBtn" style="flex:1; background:#205072; color:#fff;">As Visitors</button>
+        </div>
+    </div>
+
+    <!-- Exhibitor Modal -->
+    <div id="exhibitorModal" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(32,80,114,0.85);z-index:10000;align-items:center;justify-content:center;">
+      <div style="background:#fff;padding:24px 12px 18px 12px;border-radius:12px;max-width:340px;width:90vw;position:relative;text-align:right;">
+        <button onclick="closeModal('exhibitorModal')" style="position:absolute;top:8px;left:8px;background:none;border:none;font-size:1.5rem;color:#205072;cursor:pointer;">&times;</button>
+        <h3 style="color:#205072;text-align:center;margin-bottom:12px;">Exhibitor Registration</h3>
+        <form id="exhibitorForm">
+          <input type="text" id="companyName" placeholder="Company Name" required style="width:100%;margin-bottom:10px;padding:8px;border-radius:6px;border:1px solid #ccc;">
+          <input type="text" id="contactPerson" placeholder="Contact Person" required style="width:100%;margin-bottom:10px;padding:8px;border-radius:6px;border:1px solid #ccc;">
+          <input type="email" id="exhibitorEmail" placeholder="Email" required style="width:100%;margin-bottom:10px;padding:8px;border-radius:6px;border:1px solid #ccc;">
+          <input type="tel" id="exhibitorPhone" placeholder="Phone" required style="width:100%;margin-bottom:10px;padding:8px;border-radius:6px;border:1px solid #ccc;">
+          <button type="submit" class="button" style="width:100%;margin-top:8px;">Submit</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Visitor Modal -->
+    <div id="visitorModal" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(32,80,114,0.85);z-index:10000;align-items:center;justify-content:center;">
+      <div style="background:#fff;padding:24px 12px 18px 12px;border-radius:12px;max-width:340px;width:90vw;position:relative;text-align:right;">
+        <button onclick="closeModal('visitorModal')" style="position:absolute;top:8px;left:8px;background:none;border:none;font-size:1.5rem;color:#205072;cursor:pointer;">&times;</button>
+        <h3 style="color:#205072;text-align:center;margin-bottom:12px;">Visitor Registration</h3>
+        <form id="visitorForm">
+          <input type="text" id="fullName" placeholder="Full Name" required style="width:100%;margin-bottom:10px;padding:8px;border-radius:6px;border:1px solid #ccc;">
+          <input type="email" id="visitorEmail" placeholder="Email" required style="width:100%;margin-bottom:10px;padding:8px;border-radius:6px;border:1px solid #ccc;">
+          <input type="tel" id="visitorPhone" placeholder="Phone" required style="width:100%;margin-bottom:10px;padding:8px;border-radius:6px;border:1px solid #ccc;">
+          <button type="submit" class="button" style="width:100%;margin-top:8px;">Submit</button>
+        </form>
+      </div>
+    </div>
+
+    <div style="background: #fff; padding: 24px 0 40px 0; text-align: center;">
+        <div style="display: flex; justify-content: center; gap: 18px; margin-bottom: 18px;">
+            <a href="#" style="color:#205072; font-size:1.7rem;"><i class="fab fa-facebook"></i></a>
+            <a href="#" style="color:#205072; font-size:1.7rem;"><i class="fab fa-twitter"></i></a>
+            <a href="#" style="color:#205072; font-size:1.7rem;"><i class="fab fa-instagram"></i></a>
+            <a href="#" style="color:#205072; font-size:1.7rem;"><i class="fab fa-linkedin"></i></a>
+        </div>
+    </div>
+
+    <a href="https://wa.me/201097000010" target="_blank" style="position:fixed;bottom:18px;right:18px;z-index:9999;background:#25d366;color:#fff;border-radius:50%;width:56px;height:56px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,0.18);font-size:2rem;text-decoration:none;"><i class="fab fa-whatsapp"></i></a>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    
+    <script>
+        // Modal Functions
+        function showModal(modalId) {
+            document.getElementById(modalId).style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+            document.body.style.overflow = 'auto';
+            // Reset form
+            const form = document.getElementById(modalId).querySelector('form');
+            if (form) form.reset();
+        }
+        
+        // Button Events
+        document.getElementById('exhibitorBtn').addEventListener('click', function() {
+            showModal('exhibitorModal');
+        });
+        
+        document.getElementById('visitorBtn').addEventListener('click', function() {
+            showModal('visitorModal');
+        });
+        
+        // Login button
+        document.querySelector('.login-btn').addEventListener('click', function() {
+            window.location.href = '{{ url_for("auth.login") }}';
+        });
+        
+        // Dropdown menu links
+        document.querySelectorAll('#dropdownMenu a').forEach(function(link, index) {
+            switch(index) {
+                case 0: // Home
+                    link.href = '{{ url_for("main.index") }}';
+                    break;
+                case 1: // About
+                    link.href = '#';
+                    break;
+                case 2: // Exhibition Pavilions
+                    link.href = '{{ url_for("main.exhibitors_list") }}';
+                    break;
+                case 3: // Sponsors
+                    link.href = '#';
+                    break;
+                case 4: // Products
+                    link.href = '{{ url_for("main.products_list") }}';
+                    break;
+                case 5: // Register
+                    link.href = '{{ url_for("auth.register") }}';
+                    break;
+            }
+        });
+        
+        // Exhibitor registration
+        document.getElementById('exhibitorForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = {
+                companyName: document.getElementById('companyName').value,
+                contactPerson: document.getElementById('contactPerson').value,
+                email: document.getElementById('exhibitorEmail').value,
+                phone: document.getElementById('exhibitorPhone').value
+            };
+            
+            // Send data
+            fetch('{{ url_for("api.register_exhibitor_api") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Registration successful!\n\nYour credentials:\nEmail: ' + formData.email + '\nTemporary Password: ' + data.tempPassword + '\n\nPlease save this information and login to complete your profile.');
+                    closeModal('exhibitorModal');
+                    // Redirect to login page with automatic message
+                    setTimeout(() => {
+                        window.location.href = '{{ url_for("auth.login") }}?email=' + encodeURIComponent(formData.email) + '&registered=1';
+                    }, 1000);
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            })
+            .catch(error => {
+                alert('An error occurred during registration. Please try again.');
+                console.error('Error:', error);
+            });
+        });
+        
+        // Visitor registration
+        document.getElementById('visitorForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = {
+                fullName: document.getElementById('fullName').value,
+                email: document.getElementById('visitorEmail').value,
+                phone: document.getElementById('visitorPhone').value
+            };
+            
+            // Send data
+            fetch('{{ url_for("api.register_visitor_api") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Registration successful!\n\nYour credentials:\nEmail: ' + formData.email + '\nTemporary Password: ' + data.tempPassword + '\n\nPlease save this information and login.');
+                    closeModal('visitorModal');
+                    // Redirect to login page with automatic message
+                    setTimeout(() => {
+                        window.location.href = '{{ url_for("auth.login") }}?email=' + encodeURIComponent(formData.email) + '&registered=1';
+                    }, 1000);
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            })
+            .catch(error => {
+                alert('An error occurred during registration. Please try again.');
+                console.error('Error:', error);
+            });
+        });
+        
+        // Close modals when clicking outside
+        document.getElementById('exhibitorModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal('exhibitorModal');
+            }
+        });
+        
+        document.getElementById('visitorModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal('visitorModal');
+            }
+        });
+    </script>
+</body>
+</html>

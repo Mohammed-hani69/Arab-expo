@@ -1,0 +1,138 @@
+{% extends "base_mobile.html" %}
+
+{% block title %}Arab Countries Pavilions - Arab Expo For Food{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div style="background: #205072; color: #ffffffff; padding: 30px 15px; text-align: center; margin: -15px -15px 20px -15px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+    <h1 style="margin: 0 0 10px 0; font-size: 1.8rem; font-weight: 700;">
+        <i class="fas fa-flag"></i> Arab Countries Pavilions
+    </h1>
+    <p style="margin: 0; opacity: 0.8; font-size: 1rem;">
+        Click on any flag to view exhibitors from that country
+    </p>
+</div>
+
+<!-- Arab Countries Flags Grid -->
+<div class="section">
+    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 20px;">
+        
+        <!-- Egypt -->
+        <div class="flag-card" onclick="location.href='{{ url_for('main.exhibitors_by_country', country='EG') }}'">
+            <img src="{{ url_for('static', filename='flags/egypt.png') }}" alt="Egypt Flag" class="flag-img">
+        </div>
+
+        <!-- Saudi Arabia -->
+        <div class="flag-card" onclick="location.href='{{ url_for('main.exhibitors_by_country', country='SA') }}'">
+            <img src="{{ url_for('static', filename='flags/saudi.png') }}" alt="Saudi Arabia Flag" class="flag-img">
+        </div>
+
+        <!-- UAE -->
+        <div class="flag-card" onclick="location.href='{{ url_for('main.exhibitors_by_country', country='AE') }}'">
+            <img src="{{ url_for('static', filename='flags/emirates.png') }}" alt="UAE Flag" class="flag-img">
+        </div>
+
+        <!-- Kuwait -->
+        <div class="flag-card" onclick="location.href='{{ url_for('main.exhibitors_by_country', country='KW') }}'">
+            <img src="{{ url_for('static', filename='flags/kuwait.png') }}" alt="Kuwait Flag" class="flag-img">
+        </div>
+
+        <!-- Qatar -->
+        <div class="flag-card" onclick="location.href='{{ url_for('main.exhibitors_by_country', country='QA') }}'">
+            <img src="{{ url_for('static', filename='flags/qatar.png') }}" alt="Qatar Flag" class="flag-img">
+        </div>
+
+        <!-- Oman -->
+        <div class="flag-card" onclick="location.href='{{ url_for('main.exhibitors_by_country', country='OM') }}'">
+            <img src="{{ url_for('static', filename='flags/omani.png') }}" alt="Oman Flag" class="flag-img">
+        </div>
+
+        <!-- Jordan -->
+        <div class="flag-card" onclick="location.href='{{ url_for('main.exhibitors_by_country', country='JO') }}'">
+            <img src="{{ url_for('static', filename='flags/jordan.png') }}" alt="Jordan Flag" class="flag-img">
+        </div>
+
+        <!-- Morocco -->
+        <div class="flag-card" onclick="location.href='{{ url_for('main.exhibitors_by_country', country='MA') }}'">
+            <img src="{{ url_for('static', filename='flags/moroccan.png') }}" alt="Morocco Flag" class="flag-img">
+        </div>
+
+        <!-- Algeria -->
+        <div class="flag-card" onclick="location.href='{{ url_for('main.exhibitors_by_country', country='DZ') }}'">
+            <img src="{{ url_for('static', filename='flags/algerian.png') }}" alt="Algeria Flag" class="flag-img">
+        </div>
+
+        <!-- Tunisia -->
+        <div class="flag-card" onclick="location.href='{{ url_for('main.exhibitors_by_country', country='TN') }}'">
+            <img src="{{ url_for('static', filename='flags/tunisian.png') }}" alt="Tunisia Flag" class="flag-img">
+        </div>
+
+    </div>
+</div>
+
+<!-- Back Button -->
+<div class="section" style="text-align: center; margin-top: 30px;">
+    <a href="{{ url_for('main.index') }}" class="button" style="background: linear-gradient(135deg, #205072 0%, #186687 100%); color: white; padding: 12px 30px; border-radius: 25px; text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">
+        <i class="fas fa-arrow-left"></i> Back to Homepage
+    </a>
+</div>
+
+<style>
+.flag-card {
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    border: 1px solid #e0e0e0;
+    cursor: pointer;
+    aspect-ratio: 3/2;
+    position: relative;
+}
+
+.flag-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    border-color: #205072;
+}
+
+.flag-card:active {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+}
+
+.flag-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transition: transform 0.3s ease;
+    background: white;
+}
+
+.flag-card:hover .flag-img {
+    transform: scale(1.05);
+}
+
+.flag-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(32, 80, 114, 0.1), transparent);
+    transition: left 0.5s;
+    z-index: 1;
+}
+
+.flag-card:hover::before {
+    left: 100%;
+}
+
+@media (max-width: 480px) {
+    .flag-card {
+        aspect-ratio: 3/2;
+    }
+}
+</style>
+{% endblock %}

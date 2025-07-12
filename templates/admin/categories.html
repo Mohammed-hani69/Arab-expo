@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إدارة أقسام المعرض - معرض الطعام العربي</title>
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-color: #dc3545;
+            --white-color: #ffffff;
+            --black-color: #000000;
+            --light-gray: #f8f9fa;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --info-color: #17a2b8;
+            --border-radius: 8px;
+            --transition: all 0.3s ease;
+            --box-shadow: 0 2px 10px rgba(220, 53, 69, 0.1);
+            --hover-shadow: 0 4px 20px rgba(220, 53, 69, 0.2);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Cairo', Arial, sans-serif;
+            background: var(--white-color);
+            color: var(--black-color);
+            line-height: 1.6;
+            direction: rtl;
+            padding-top: 80px;
+        }
+
+        /* شريط التنقل العلوي */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 70px;
+            background: var(--white-color);
+            border-bottom: 3px solid var(--primary-color);
+            z-index: 1000;
+            box-shadow: var(--box-shadow);
+        }
+
+        .navbar-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--black-color);
+        }
+
+        .navbar-brand i {
+            color: var(--primary-color);
+            font-size: 1.5rem;
+        }
+
+        .navbar-menu {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 15px;
+            text-decoration: none;
+            color: var(--black-color);
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+            font-weight: 500;
+            border: 2px solid transparent;
+        }
+
+        .nav-link:hover {
+            background: var(--primary-color);
+            color: var(--white-color);
+            transform: translateY(-2px);
+            border-color: var(--primary-color);
+        }
+
+        .nav-link.logout {
+            background: var(--primary-color);
+            color: var(--white-color);
+            border: 2px solid var(--primary-color);
+        }
+
+        .nav-link.logout:hover {
+            background: #c82333;
+            border-color: #c82333;
+        }
+
+        .dropdown {
+            position: relative;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: var(--white-color);
+            border: 2px solid var(--primary-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--hover-shadow);
+            min-width: 200px;
+            z-index: 1001;
+            margin-top: 5px;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .dropdown-item {
+            display: block;
+            padding: 12px 15px;
+            text-decoration: none;
+            color: var(--black-color);
+            transition: var(--transition);
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .dropdown-item:last-child {
+            border-bottom: none;
+        }
+
+        .dropdown-item:hover {
+            background: var(--primary-color);
+            color: var(--white-color);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .page-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #c82333 100%);
+            color: var(--white-color);
+            padding: 30px;
+            border-radius: var(--border-radius);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .page-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .page-header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .section {
+            background: var(--white-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 25px;
+            margin-bottom: 25px;
+            transition: var(--transition);
+        }
+
+        .section:hover {
+            box-shadow: var(--hover-shadow);
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--light-gray);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--black-color);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e1e8ed;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: var(--white-color);
+        }
+
+        .btn-primary:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+            box-shadow: var(--hover-shadow);
+        }
+
+        .btn-success {
+            background: var(--success-color);
+            color: var(--white-color);
+        }
+
+        .btn-success:hover {
+            background: #218838;
+            transform: translateY(-2px);
+        }
+
+        .btn-warning {
+            background: var(--warning-color);
+            color: var(--black-color);
+        }
+
+        .btn-warning:hover {
+            background: #e0a800;
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: var(--white-color);
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+        }
+
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .category-card {
+            background: var(--white-color);
+            border: 2px solid #e1e8ed;
+            border-radius: var(--border-radius);
+            padding: 20px;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .category-card:hover {
+            border-color: var(--primary-color);
+            transform: translateY(-5px);
+            box-shadow: var(--hover-shadow);
+        }
+
+        .category-icon {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+
+        .category-name {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--black-color);
+            margin-bottom: 10px;
+        }
+
+        .category-description {
+            color: #666;
+            margin-bottom: 15px;
+        }
+
+        .category-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .category-status {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .status-active {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-inactive {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #c82333 100%);
+            color: var(--white-color);
+            padding: 25px;
+            border-radius: var(--border-radius);
+            text-align: center;
+            transition: var(--transition);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--hover-shadow);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: var(--border-radius);
+            color: var(--white-color);
+            z-index: 2000;
+            transform: translateX(400px);
+            transition: var(--transition);
+        }
+
+        .notification.success {
+            background: var(--success-color);
+        }
+
+        .notification.error {
+            background: #dc3545;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        /* تحسينات للموبايل */
+        @media (max-width: 768px) {
+            .navbar-container {
+                padding: 0 15px;
+            }
+
+            .container {
+                padding: 15px;
+            }
+
+            .page-header h1 {
+                font-size: 2rem;
+            }
+
+            .categories-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- شريط التنقل العلوي -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="navbar-brand">
+                <i class="fas fa-utensils"></i>
+                معرض الطعام العربي
+            </div>
+            
+            <div class="navbar-menu">
+                <a href="{{ url_for('main.index') }}" class="nav-link">
+                    <i class="fas fa-home"></i>
+                    الرئيسية
+                </a>
+                
+                <div class="dropdown">
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-cogs"></i>
+                        الإدارة
+                        <i class="fas fa-chevron-down"></i>
+                    </a>
+                    <div class="dropdown-content">
+                        <a href="{{ url_for('admin.dashboard') }}" class="dropdown-item">
+                            <i class="fas fa-tachometer-alt"></i>
+                            لوحة التحكم
+                        </a>
+                        <a href="{{ url_for('admin.exhibitors') }}" class="dropdown-item">
+                            <i class="fas fa-store"></i>
+                            إدارة العارضين
+                        </a>
+                        <a href="{{ url_for('admin.visitors') }}" class="dropdown-item">
+                            <i class="fas fa-users"></i>
+                            إدارة الزوار
+                        </a>
+                        <a href="{{ url_for('admin.admin_categories') }}" class="dropdown-item">
+                            <i class="fas fa-tags"></i>
+                            إدارة الأقسام
+                        </a>
+                        <a href="{{ url_for('admin.home_management') }}" class="dropdown-item">
+                            <i class="fas fa-edit"></i>
+                            إدارة المحتوى
+                        </a>
+                    </div>
+                </div>
+                
+                <a href="{{ url_for('auth.logout') }}" class="nav-link logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                    تسجيل الخروج
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- رأس الصفحة -->
+        <div class="page-header">
+            <h1><i class="fas fa-tags"></i> إدارة أقسام المعرض</h1>
+            <p>إضافة وتعديل الأقسام الرئيسية التي يختار منها العارضون عند تسجيل ملفاتهم</p>
+        </div>
+
+        <!-- إحصائيات سريعة -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number">{{ total_categories or 0 }}</div>
+                <div class="stat-label">إجمالي الأقسام</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">{{ active_categories or 0 }}</div>
+                <div class="stat-label">الأقسام النشطة</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">{{ categories_with_exhibitors or 0 }}</div>
+                <div class="stat-label">أقسام بها عارضين</div>
+            </div>
+        </div>
+
+        <!-- إضافة قسم جديد -->
+        <div class="section">
+            <h2 class="section-title">
+                <i class="fas fa-plus-circle"></i> إضافة قسم جديد
+            </h2>
+            
+            <form id="addCategoryForm" method="POST" action="{{ url_for('admin.add_category') }}">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div class="form-group">
+                        <label for="name_ar">اسم القسم (عربي) *</label>
+                        <input type="text" id="name_ar" name="name_ar" class="form-control" required
+                               placeholder="مثال: منتجات الألبان">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="name_en">اسم القسم (إنجليزي) *</label>
+                        <input type="text" id="name_en" name="name_en" class="form-control" required
+                               placeholder="Example: Dairy Products">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="description">وصف القسم</label>
+                    <textarea id="description" name="description" class="form-control" rows="3"
+                              placeholder="وصف مختصر عن القسم ونوع المنتجات التي يشملها..."></textarea>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div class="form-group">
+                        <label for="icon">رمز القسم (FontAwesome)</label>
+                        <input type="text" id="icon" name="icon" class="form-control"
+                               placeholder="fas fa-cheese" value="fas fa-tag">
+                        <small style="color: #666; font-size: 0.9rem;">
+                            يمكنك اختيار رمز من <a href="https://fontawesome.com/icons" target="_blank">FontAwesome</a>
+                        </small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="is_active">حالة القسم</label>
+                        <select id="is_active" name="is_active" class="form-control">
+                            <option value="1" selected>نشط</option>
+                            <option value="0">غير نشط</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div style="text-align: center; margin-top: 25px;">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> إضافة القسم
+                    </button>
+                    <button type="reset" class="btn btn-warning">
+                        <i class="fas fa-undo"></i> إعادة تعيين
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- قائمة الأقسام الموجودة -->
+        <div class="section">
+            <h2 class="section-title">
+                <i class="fas fa-list"></i> الأقسام الموجودة
+            </h2>
+            
+            {% if categories %}
+                <div class="categories-grid">
+                    {% for category in categories %}
+                    <div class="category-card">
+                        <div class="category-status {{ 'status-active' if category.is_active else 'status-inactive' }}">
+                            {{ 'نشط' if category.is_active else 'غير نشط' }}
+                        </div>
+                        
+                        <div class="category-icon">
+                            <i class="{{ category.icon or 'fas fa-tag' }}"></i>
+                        </div>
+                        
+                        <div class="category-name">{{ category.name_ar }}</div>
+                        <div style="color: #666; font-size: 0.9rem; margin-bottom: 10px;">{{ category.name_en }}</div>
+                        
+                        {% if category.description %}
+                        <div class="category-description">{{ category.description }}</div>
+                        {% endif %}
+                        
+                        <div style="font-size: 0.8rem; color: #999; margin-bottom: 15px;">
+                            <i class="fas fa-store"></i> {{ category.exhibitors|length }} عارض
+                            | تاريخ الإنشاء: {{ category.created_at.strftime('%d/%m/%Y') }}
+                        </div>
+                        
+                        <div class="category-actions">
+                            <button onclick="editCategory({{ category.id }})" class="btn btn-warning">
+                                <i class="fas fa-edit"></i> تعديل
+                            </button>
+                            
+                            {% if category.is_active %}
+                                <button onclick="toggleCategory({{ category.id }}, false)" class="btn btn-warning">
+                                    <i class="fas fa-eye-slash"></i> إخفاء
+                                </button>
+                            {% else %}
+                                <button onclick="toggleCategory({{ category.id }}, true)" class="btn btn-success">
+                                    <i class="fas fa-eye"></i> تفعيل
+                                </button>
+                            {% endif %}
+                            
+                            {% if category.exhibitors|length == 0 %}
+                                <button onclick="deleteCategory({{ category.id }})" class="btn btn-danger">
+                                    <i class="fas fa-trash"></i> حذف
+                                </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div style="text-align: center; padding: 50px; background: #f8f9fa; border-radius: var(--border-radius);">
+                    <i class="fas fa-tags" style="font-size: 4rem; color: #ddd; margin-bottom: 20px;"></i>
+                    <h3 style="color: #666; margin-bottom: 15px;">لا توجد أقسام بعد</h3>
+                    <p style="color: #999;">ابدأ بإضافة أول قسم للمعرض باستخدام النموذج أعلاه</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- مودال تعديل القسم -->
+    <div id="editModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000;">
+        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; border-radius: var(--border-radius); padding: 30px; width: 90%; max-width: 600px;">
+            <h3 style="margin-bottom: 20px; color: var(--primary-color);">
+                <i class="fas fa-edit"></i> تعديل القسم
+            </h3>
+            
+            <form id="editCategoryForm">
+                <input type="hidden" id="edit_category_id">
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div class="form-group">
+                        <label for="edit_name_ar">اسم القسم (عربي) *</label>
+                        <input type="text" id="edit_name_ar" name="name_ar" class="form-control" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="edit_name_en">اسم القسم (إنجليزي) *</label>
+                        <input type="text" id="edit_name_en" name="name_en" class="form-control" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="edit_description">وصف القسم</label>
+                    <textarea id="edit_description" name="description" class="form-control" rows="3"></textarea>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div class="form-group">
+                        <label for="edit_icon">رمز القسم</label>
+                        <input type="text" id="edit_icon" name="icon" class="form-control">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="edit_is_active">حالة القسم</label>
+                        <select id="edit_is_active" name="is_active" class="form-control">
+                            <option value="1">نشط</option>
+                            <option value="0">غير نشط</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div style="text-align: center; margin-top: 25px; display: flex; gap: 10px; justify-content: center;">
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-save"></i> حفظ التغييرات
+                    </button>
+                    <button type="button" onclick="closeEditModal()" class="btn btn-warning">
+                        <i class="fas fa-times"></i> إلغاء
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- رسائل التنبيه -->
+    <div id="notification" class="notification"></div>
+
+    <script>
+        // عرض رسالة تنبيه
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification ${type}`;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 4000);
+        }
+
+        // إضافة قسم جديد
+        document.getElementById('addCategoryForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            
+            fetch('{{ url_for("admin.add_category") }}', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showNotification('تم إضافة القسم بنجاح!', 'success');
+                    setTimeout(() => location.reload(), 1500);
+                } else {
+                    showNotification(data.message || 'حدث خطأ أثناء إضافة القسم', 'error');
+                }
+            })
+            .catch(error => {
+                showNotification('حدث خطأ في الشبكة', 'error');
+            });
+        });
+
+        // تعديل قسم
+        function editCategory(categoryId) {
+            fetch(`/admin/categories/${categoryId}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const category = data.category;
+                    document.getElementById('edit_category_id').value = category.id;
+                    document.getElementById('edit_name_ar').value = category.name_ar;
+                    document.getElementById('edit_name_en').value = category.name_en;
+                    document.getElementById('edit_description').value = category.description || '';
+                    document.getElementById('edit_icon').value = category.icon || '';
+                    document.getElementById('edit_is_active').value = category.is_active ? '1' : '0';
+                    
+                    document.getElementById('editModal').style.display = 'block';
+                } else {
+                    showNotification('فشل في تحميل بيانات القسم', 'error');
+                }
+            });
+        }
+
+        // حفظ تعديل القسم
+        document.getElementById('editCategoryForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const categoryId = document.getElementById('edit_category_id').value;
+            const formData = new FormData(this);
+            
+            fetch(`/admin/categories/${categoryId}/edit`, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showNotification('تم تحديث القسم بنجاح!', 'success');
+                    closeEditModal();
+                    setTimeout(() => location.reload(), 1500);
+                } else {
+                    showNotification(data.message || 'حدث خطأ أثناء تحديث القسم', 'error');
+                }
+            });
+        });
+
+        // إغلاق مودال التعديل
+        function closeEditModal() {
+            document.getElementById('editModal').style.display = 'none';
+        }
+
+        // تفعيل/إلغاء تفعيل القسم
+        function toggleCategory(categoryId, isActive) {
+            const action = isActive ? 'تفعيل' : 'إخفاء';
+            
+            if (!confirm(`هل أنت متأكد من ${action} هذا القسم؟`)) {
+                return;
+            }
+            
+            fetch(`/admin/categories/${categoryId}/toggle`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ is_active: isActive })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showNotification(`تم ${action} القسم بنجاح!`, 'success');
+                    setTimeout(() => location.reload(), 1500);
+                } else {
+                    showNotification(data.message || 'حدث خطأ', 'error');
+                }
+            });
+        }
+
+        // حذف قسم
+        function deleteCategory(categoryId) {
+            if (!confirm('هل أنت متأكد من حذف هذا القسم؟ لا يمكن التراجع عن هذا الإجراء.')) {
+                return;
+            }
+            
+            fetch(`/admin/categories/${categoryId}/delete`, {
+                method: 'DELETE'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showNotification('تم حذف القسم بنجاح!', 'success');
+                    setTimeout(() => location.reload(), 1500);
+                } else {
+                    showNotification(data.message || 'حدث خطأ أثناء الحذف', 'error');
+                }
+            });
+        }
+
+        // إغلاق المودال عند النقر خارجه
+        document.getElementById('editModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeEditModal();
+            }
+        });
+
+        // عرض رسائل الفلاش
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    showNotification('{{ message }}', '{{ category }}');
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </script>
+</body>
+</html>

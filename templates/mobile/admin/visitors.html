@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إدارة الزوار - معرض الطعام العربي</title>
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-color: #dc3545;
+            --white-color: #ffffff;
+            --black-color: #000000;
+            --light-gray: #f8f9fa;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --info-color: #17a2b8;
+            --danger-color: #dc3545;
+            --border-radius: 10px;
+            --transition: all 0.3s ease;
+            --box-shadow: 0 2px 15px rgba(220, 53, 69, 0.1);
+            --hover-shadow: 0 5px 25px rgba(220, 53, 69, 0.15);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Cairo', Arial, sans-serif;
+            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+            color: var(--black-color);
+            line-height: 1.6;
+            direction: rtl;
+            padding-top: 70px;
+            min-height: 100vh;
+        }
+
+        /* شريط التنقل العلوي */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: var(--white-color);
+            border-bottom: 3px solid var(--primary-color);
+            z-index: 1000;
+            box-shadow: var(--box-shadow);
+        }
+
+        .navbar-container {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 15px;
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--black-color);
+        }
+
+        .navbar-brand i {
+            color: var(--primary-color);
+        }
+
+        .mobile-menu-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            background: var(--primary-color);
+            color: var(--white-color);
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .mobile-menu-btn:hover {
+            background: #c82333;
+        }
+
+        .mobile-menu {
+            position: fixed;
+            top: 60px;
+            left: 0;
+            right: 0;
+            background: var(--white-color);
+            border-bottom: 2px solid var(--primary-color);
+            box-shadow: var(--box-shadow);
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            z-index: 999;
+        }
+
+        .mobile-menu.active {
+            max-height: 400px;
+        }
+
+        .mobile-menu-item {
+            display: block;
+            padding: 15px;
+            text-decoration: none;
+            color: var(--black-color);
+            border-bottom: 1px solid #e0e0e0;
+            transition: var(--transition);
+        }
+
+        .mobile-menu-item:hover {
+            background: var(--primary-color);
+            color: var(--white-color);
+        }
+
+        .mobile-menu-item i {
+            margin-left: 10px;
+            width: 20px;
+        }
+
+        .container {
+            padding: 15px;
+        }
+
+        /* Header Styles */
+        .page-header {
+            text-align: center;
+            margin-bottom: 25px;
+            padding: 20px 15px;
+            background: var(--white-color);
+            border: 2px solid var(--primary-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+        }
+
+        .page-header h1 {
+            color: var(--black-color);
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .page-header p {
+            color: var(--black-color);
+            font-size: 1rem;
+            opacity: 0.8;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            background: var(--white-color);
+            border: 2px solid var(--primary-color);
+            border-radius: var(--border-radius);
+            padding: 20px 15px;
+            text-align: center;
+            transition: var(--transition);
+            box-shadow: var(--box-shadow);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--hover-shadow);
+        }
+
+        .stat-card i {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        .stat-card h3 {
+            font-size: 1.5rem;
+            color: var(--black-color);
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        .stat-card p {
+            color: var(--black-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        /* Search Bar */
+        .search-bar {
+            background: var(--white-color);
+            border: 2px solid var(--primary-color);
+            border-radius: var(--border-radius);
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: var(--box-shadow);
+        }
+
+        .search-form {
+            display: flex;
+            gap: 10px;
+        }
+
+        .form-control {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: var(--border-radius);
+            font-family: 'Cairo', Arial, sans-serif;
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
+        }
+
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 15px;
+            background: var(--primary-color);
+            color: var(--white-color);
+            border: none;
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            font-family: 'Cairo', Arial, sans-serif;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+            box-shadow: var(--hover-shadow);
+        }
+
+        .btn-secondary {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 10px;
+            background: var(--white-color);
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            font-family: 'Cairo', Arial, sans-serif;
+            font-size: 0.75rem;
+        }
+
+        .btn-secondary:hover {
+            background: var(--primary-color);
+            color: var(--white-color);
+        }
+
+        .btn-success {
+            background: var(--success-color);
+            color: var(--white-color);
+            border: 2px solid var(--success-color);
+        }
+
+        .btn-success:hover {
+            background: #218838;
+        }
+
+        .btn-warning {
+            background: var(--warning-color);
+            color: var(--black-color);
+            border: 2px solid var(--warning-color);
+        }
+
+        .btn-warning:hover {
+            background: #e0a800;
+        }
+
+        .btn-danger {
+            background: var(--danger-color);
+            color: var(--white-color);
+            border: 2px solid var(--danger-color);
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
+        .btn-info {
+            background: var(--info-color);
+            color: var(--white-color);
+            border: 2px solid var(--info-color);
+        }
+
+        .btn-info:hover {
+            background: #138496;
+        }
+
+        .btn-sm {
+            padding: 6px 10px;
+            font-size: 0.75rem;
+        }
+
+        /* Visitors Cards */
+        .visitors-container {
+            display: grid;
+            gap: 15px;
+        }
+
+        .visitor-card {
+            background: var(--white-color);
+            border: 2px solid var(--primary-color);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+        }
+
+        .visitor-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--hover-shadow);
+        }
+
+        .visitor-header {
+            background: var(--primary-color);
+            color: var(--white-color);
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .visitor-avatar {
+            width: 45px;
+            height: 45px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+
+        .visitor-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .visitor-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .visitor-email {
+            font-size: 0.85rem;
+            opacity: 0.9;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .visitor-body {
+            padding: 15px;
+        }
+
+        .visitor-details {
+            margin-bottom: 15px;
+        }
+
+        .visitor-detail-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            font-size: 0.85rem;
+        }
+
+        .visitor-detail-label {
+            font-weight: 600;
+            color: var(--black-color);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .visitor-detail-value {
+            color: var(--black-color);
+            opacity: 0.8;
+            text-align: left;
+        }
+
+        .visitor-badges {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+
+        .badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        .badge-company {
+            background: #e3f2fd;
+            color: #1565c0;
+        }
+
+        .badge-individual {
+            background: #e8f5e8;
+            color: #2e7d32;
+        }
+
+        .badge-active {
+            background: #d4edda;
+            color: var(--success-color);
+        }
+
+        .badge-inactive {
+            background: #f8d7da;
+            color: var(--danger-color);
+        }
+
+        .visitor-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 8px 4px;
+            background: var(--light-gray);
+            border-radius: 6px;
+            font-size: 0.75rem;
+        }
+
+        .stat-item i {
+            display: block;
+            margin-bottom: 3px;
+            font-size: 0.9rem;
+        }
+
+        .visitor-actions {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .visitor-actions .btn-secondary,
+        .visitor-actions .btn-success,
+        .visitor-actions .btn-warning,
+        .visitor-actions .btn-info {
+            flex: 1;
+            min-width: 70px;
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin: 25px 0;
+            flex-wrap: wrap;
+        }
+
+        .pagination .btn-secondary {
+            min-width: 40px;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            background: var(--white-color);
+            border: 2px solid var(--primary-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            color: #ccc;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .empty-state p {
+            color: var(--black-color);
+            opacity: 0.7;
+            font-size: 1rem;
+        }
+
+        /* Notification */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--success-color);
+            color: white;
+            padding: 15px 20px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--hover-shadow);
+            z-index: 1001;
+            transform: translateX(400px);
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.error {
+            background: var(--danger-color);
+        }
+
+        .notification.warning {
+            background: var(--warning-color);
+            color: var(--black-color);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            position: relative;
+            background-color: var(--white-color);
+            margin: 10px auto;
+            padding: 0;
+            border: 2px solid var(--primary-color);
+            border-radius: var(--border-radius);
+            width: calc(100% - 20px);
+            max-width: 500px;
+            box-shadow: var(--hover-shadow);
+            max-height: calc(100vh - 20px);
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            background: var(--primary-color);
+            color: var(--white-color);
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-weight: 600;
+            font-size: 1.2rem;
+        }
+
+        .close {
+            color: var(--white-color);
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .close:hover {
+            opacity: 0.7;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .modal-footer {
+            padding: 15px 20px;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            gap: 10px;
+        }
+
+        .modal-footer .btn-secondary,
+        .modal-footer .btn-primary {
+            flex: 1;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+    <!-- شريط التنقل العلوي -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="navbar-brand">
+                <i class="fas fa-utensils"></i>
+                معرض الطعام العربي
+            </div>
+            <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+                <i class="fas fa-bars"></i>
+                القائمة
+            </button>
+        </div>
+    </nav>
+
+    <!-- القائمة المنسدلة للموبايل -->
+    <div class="mobile-menu" id="mobileMenu">
+        <a href="{{ url_for('admin.dashboard') }}" class="mobile-menu-item">
+            <i class="fas fa-tachometer-alt"></i>
+            لوحة التحكم
+        </a>
+        <a href="{{ url_for('admin.home_management') }}" class="mobile-menu-item">
+            <i class="fas fa-home"></i>
+            إدارة الصفحة الرئيسية
+        </a>
+        <a href="{{ url_for('admin.exhibitors') }}" class="mobile-menu-item">
+            <i class="fas fa-store"></i>
+            إدارة العارضين
+        </a>
+        <a href="{{ url_for('admin.visitors') }}" class="mobile-menu-item">
+            <i class="fas fa-users"></i>
+            إدارة الزوار
+        </a>
+        <a href="{{ url_for('admin.categories') }}" class="mobile-menu-item">
+            <i class="fas fa-tags"></i>
+            إدارة الأقسام
+        </a>
+        <a href="{{ url_for('auth.logout') }}" class="mobile-menu-item">
+            <i class="fas fa-sign-out-alt"></i>
+            تسجيل الخروج
+        </a>
+    </div>
+
+    <div class="container">
+        <!-- رأس الصفحة -->
+        <div class="page-header">
+            <h1><i class="fas fa-users"></i> إدارة الزوار</h1>
+            <p>عرض وإدارة جميع زوار المعرض المسجلين</p>
+        </div>
+
+        <!-- الإحصائيات -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <i class="fas fa-users"></i>
+                <h3>{{ visitors.total or 0 }}</h3>
+                <p>إجمالي الزوار</p>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-user-check"></i>
+                <h3>
+                    {% set active_visitors = 0 %}
+                    {% for visitor in visitors.items %}
+                        {% if visitor.user.is_active %}
+                            {% set active_visitors = active_visitors + 1 %}
+                        {% endif %}
+                    {% endfor %}
+                    {{ active_visitors }}
+                </h3>
+                <p>الزوار النشطون</p>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-building"></i>
+                <h3>{{ visitors.items | selectattr('company_name') | list | length }}</h3>
+                <p>زوار الشركات</p>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-eye"></i>
+                <h3>
+                    {% set total_visits = 0 %}
+                    {% for visitor in visitors.items %}
+                        {% set total_visits = total_visits + visitor.get_total_visits() %}
+                    {% endfor %}
+                    {{ total_visits }}
+                </h3>
+                <p>إجمالي الزيارات</p>
+            </div>
+        </div>
+
+        <!-- شريط البحث -->
+        <div class="search-bar">
+            <form method="GET" class="search-form">
+                <input type="text" name="search" value="{{ search_term or '' }}" 
+                       class="form-control" placeholder="البحث بالاسم أو البريد الإلكتروني...">
+                <button type="submit" class="btn-primary">
+                    <i class="fas fa-search"></i>
+                    بحث
+                </button>
+            </form>
+        </div>
+
+        <!-- رسائل التنبيه -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="notification {{ 'error' if category == 'error' else 'success' }} show">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <!-- قائمة الزوار -->
+        <div class="visitors-container">
+            {% if visitors.items %}
+                {% for visitor in visitors.items %}
+                <div class="visitor-card">
+                    <div class="visitor-header">
+                        <div class="visitor-avatar">
+                            {{ visitor.user.full_name[0] if visitor.user.full_name else 'ز' }}
+                        </div>
+                        <div class="visitor-info">
+                            <div class="visitor-name">{{ visitor.user.full_name }}</div>
+                            <div class="visitor-email">{{ visitor.user.email }}</div>
+                        </div>
+                    </div>
+                    <div class="visitor-body">
+                        <div class="visitor-details">
+                            {% if visitor.user.phone %}
+                            <div class="visitor-detail-item">
+                                <span class="visitor-detail-label">
+                                    <i class="fas fa-phone"></i>
+                                    الهاتف:
+                                </span>
+                                <span class="visitor-detail-value">{{ visitor.user.phone }}</span>
+                            </div>
+                            {% endif %}
+                            
+                            {% if visitor.company_name %}
+                            <div class="visitor-detail-item">
+                                <span class="visitor-detail-label">
+                                    <i class="fas fa-building"></i>
+                                    الشركة:
+                                </span>
+                                <span class="visitor-detail-value">{{ visitor.company_name }}</span>
+                            </div>
+                            {% endif %}
+                            
+                            {% if visitor.job_title %}
+                            <div class="visitor-detail-item">
+                                <span class="visitor-detail-label">
+                                    <i class="fas fa-user-tie"></i>
+                                    المنصب:
+                                </span>
+                                <span class="visitor-detail-value">{{ visitor.job_title }}</span>
+                            </div>
+                            {% endif %}
+                            
+                            {% if visitor.country %}
+                            <div class="visitor-detail-item">
+                                <span class="visitor-detail-label">
+                                    <i class="fas fa-globe"></i>
+                                    البلد:
+                                </span>
+                                <span class="visitor-detail-value">{{ visitor.country }}</span>
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="visitor-badges">
+                            {% if visitor.company_name %}
+                                <span class="badge badge-company">
+                                    <i class="fas fa-building"></i> زائر شركة
+                                </span>
+                            {% else %}
+                                <span class="badge badge-individual">
+                                    <i class="fas fa-user"></i> زائر فردي
+                                </span>
+                            {% endif %}
+
+                            {% if visitor.user.is_active %}
+                                <span class="badge badge-active">نشط</span>
+                            {% else %}
+                                <span class="badge badge-inactive">غير نشط</span>
+                            {% endif %}
+                        </div>
+
+                        <div class="visitor-stats">
+                            <div class="stat-item">
+                                <i class="fas fa-eye" style="color: #2196f3;"></i>
+                                {{ visitor.get_total_visits() }} زيارة
+                            </div>
+                            <div class="stat-item">
+                                <i class="fas fa-store" style="color: #4caf50;"></i>
+                                {{ visitor.get_visited_exhibitors_count() }} عارض
+                            </div>
+                            <div class="stat-item">
+                                <i class="fas fa-heart" style="color: #e91e63;"></i>
+                                {{ visitor.get_favorite_products_count() }} مفضلة
+                            </div>
+                        </div>
+
+                        <div class="visitor-actions">
+                            <button class="btn-info btn-sm" onclick="viewVisitorDetails({{ visitor.id }})">
+                                <i class="fas fa-eye"></i>
+                                تفاصيل
+                            </button>
+                            
+                            <button class="btn-success btn-sm" onclick="sendMessage({{ visitor.id }})">
+                                <i class="fas fa-envelope"></i>
+                                رسالة
+                            </button>
+                            
+                            {% if visitor.user.is_active %}
+                                <button class="btn-warning btn-sm" onclick="toggleVisitor({{ visitor.id }}, false)">
+                                    <i class="fas fa-pause"></i>
+                                    تعطيل
+                                </button>
+                            {% else %}
+                                <button class="btn-success btn-sm" onclick="toggleVisitor({{ visitor.id }}, true)">
+                                    <i class="fas fa-play"></i>
+                                    تفعيل
+                                </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+
+                <!-- صفحات التنقل -->
+                {% if visitors.pages > 1 %}
+                <div class="pagination">
+                    {% if visitors.has_prev %}
+                        <a href="{{ url_for('admin.visitors', page=visitors.prev_num, search=search_term) }}" 
+                           class="btn-secondary">
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                    {% endif %}
+                    
+                    {% for page_num in visitors.iter_pages() %}
+                        {% if page_num %}
+                            {% if page_num != visitors.page %}
+                                <a href="{{ url_for('admin.visitors', page=page_num, search=search_term) }}" 
+                                   class="btn-secondary">
+                                    {{ page_num }}
+                                </a>
+                            {% else %}
+                                <span class="btn-primary">
+                                    {{ page_num }}
+                                </span>
+                            {% endif %}
+                        {% else %}
+                            <span class="btn-secondary">...</span>
+                        {% endif %}
+                    {% endfor %}
+                    
+                    {% if visitors.has_next %}
+                        <a href="{{ url_for('admin.visitors', page=visitors.next_num, search=search_term) }}" 
+                           class="btn-secondary">
+                            <i class="fas fa-chevron-left"></i>
+                        </a>
+                    {% endif %}
+                </div>
+                {% endif %}
+
+            {% else %}
+                <div class="empty-state">
+                    <i class="fas fa-users"></i>
+                    {% if search_term %}
+                        <p>لم يتم العثور على زوار يطابقون البحث "{{ search_term }}"</p>
+                    {% else %}
+                        <p>لا توجد زوار مسجلين حتى الآن</p>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- نافذة تفاصيل الزائر -->
+    <div id="visitorModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>تفاصيل الزائر</h2>
+                <span class="close" onclick="closeModal()">&times;</span>
+            </div>
+            <div class="modal-body" id="visitorDetails">
+                <!-- سيتم ملء المحتوى بـ JavaScript -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeModal()">إغلاق</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- رسالة إشعار -->
+    <div id="notification" class="notification">
+        تم بنجاح
+    </div>
+
+    <script>
+        // تبديل القائمة المنسدلة
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('active');
+        }
+
+        // إغلاق القائمة عند النقر خارجها
+        document.addEventListener('click', function(event) {
+            const menu = document.getElementById('mobileMenu');
+            const button = document.querySelector('.mobile-menu-btn');
+            
+            if (!menu.contains(event.target) && !button.contains(event.target)) {
+                menu.classList.remove('active');
+            }
+        });
+
+        // عرض تفاصيل الزائر
+        function viewVisitorDetails(visitorId) {
+            document.getElementById('visitorDetails').innerHTML = `
+                <div style="text-align: center; padding: 20px;">
+                    <i class="fas fa-user-circle" style="font-size: 3rem; color: var(--primary-color); margin-bottom: 15px;"></i>
+                    <h4>تفاصيل الزائر رقم ${visitorId}</h4>
+                    <p style="color: #666; margin-top: 10px;">هذه الميزة ستكون متاحة في التحديث القادم</p>
+                </div>
+            `;
+            document.getElementById('visitorModal').style.display = 'block';
+        }
+
+        // إرسال رسالة
+        function sendMessage(visitorId) {
+            showNotification('جاري إعداد ميزة الرسائل...', 'warning');
+        }
+
+        // تفعيل/تعطيل زائر
+        function toggleVisitor(visitorId, activate) {
+            const action = activate ? 'تفعيل' : 'تعطيل';
+            if (confirm(`هل تريد ${action} هذا الزائر؟`)) {
+                showNotification(`تم ${action} الزائر بنجاح`, 'success');
+                setTimeout(() => location.reload(), 1500);
+            }
+        }
+
+        // إغلاق النافذة
+        function closeModal() {
+            document.getElementById('visitorModal').style.display = 'none';
+        }
+
+        // عرض الإشعارات
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification ${type} show`;
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // إغلاق النافذة عند النقر خارجها
+        window.onclick = function(event) {
+            const modal = document.getElementById('visitorModal');
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+
+        // إخفاء الإشعارات عند تحميل الصفحة
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(() => {
+                const notifications = document.querySelectorAll('.notification.show');
+                notifications.forEach(notif => notif.classList.remove('show'));
+            }, 3000);
+        });
+    </script>
+</body>
+</html>

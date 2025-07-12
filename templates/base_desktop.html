@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Arab Expo For Food{% endblock %}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* تصميم الأجهزة العادية - Desktop Design */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #2c3e50;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        /* إخفاء المحتوى على الشاشات الصغيرة */
+        @media (max-width: 768px) {
+            .desktop-content {
+                display: none !important;
+            }
+            
+            .mobile-only-message {
+                display: flex !important;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                min-height: 100vh;
+                text-align: center;
+                background: linear-gradient(135deg, #205072 0%, #186687 100%);
+                color: white;
+                padding: 40px 20px;
+            }
+            
+            .mobile-only-message i {
+                font-size: 80px;
+                margin-bottom: 30px;
+                opacity: 0.8;
+            }
+            
+            .mobile-only-message h1 {
+                font-size: 28px;
+                margin-bottom: 20px;
+                font-weight: 700;
+            }
+            
+            .mobile-only-message p {
+                font-size: 18px;
+                line-height: 1.6;
+                margin-bottom: 30px;
+                opacity: 0.9;
+            }
+            
+            .mobile-redirect-btn {
+                background: white;
+                color: #205072;
+                padding: 15px 30px;
+                border: none;
+                border-radius: 25px;
+                font-size: 16px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                text-decoration: none;
+                display: inline-flex;
+                align-items: center;
+                gap: 10px;
+            }
+            
+            .mobile-redirect-btn:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+            }
+        }
+        
+        .mobile-only-message {
+            display: none;
+        }
+        
+        /* شريط علوي متطور - Advanced Header */
+        .header {
+            background: linear-gradient(90deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.9) 100%);
+            backdrop-filter: blur(20px);
+            box-shadow: 0 8px 40px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .navbar {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
+        }
+        
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            text-decoration: none;
+            color: #2c3e50;
+        }
+        
+        .navbar-brand img {
+            height: 55px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+        
+        .navbar-brand:hover img {
+            transform: scale(1.05) rotate(5deg);
+        }
+        
+        .brand-text {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, #205072, #186687);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .navbar-nav {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            list-style: none;
+        }
+        
+        .nav-link {
+            text-decoration: none;
+            color: #2c3e50;
+            font-weight: 500;
+            padding: 12px 20px;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, #205072, #186687);
+            transition: all 0.3s ease;
+            z-index: -1;
+        }
+        
+        .nav-link:hover::before {
+            left: 0;
+        }
+        
+        .nav-link:hover {
+            color: white;
+            transform: translateY(-3px);
+        }
+        
+        .nav-link.active {
+            background: linear-gradient(45deg, #205072, #186687);
+            color: white;
+        }
+        
+        .user-menu {
+            position: relative;
+        }
+        
+        .user-btn {
+            background: linear-gradient(45deg, #205072, #186687);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(32, 80, 114, 0.3);
+        }
+        
+        .user-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(32, 80, 114, 0.4);
+        }
+        
+        /* محتوى رئيسي - Main Content */
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 30px;
+        }
+        
+        .hero-section {
+            background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.7) 100%);
+            border-radius: 30px;
+            padding: 60px;
+            margin-bottom: 50px;
+            text-align: center;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(32,80,114,0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+        }
+        
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, #205072, #186687, #667eea);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .hero-subtitle {
+            font-size: 1.3rem;
+            color: #555;
+            margin-bottom: 30px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.6;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .hero-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .btn-primary, .btn-secondary {
+            padding: 15px 35px;
+            border: none;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(45deg, #205072, #186687);
+            color: white;
+            box-shadow: 0 8px 25px rgba(32, 80, 114, 0.3);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(32, 80, 114, 0.4);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-secondary:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
+        }
+        
+        /* شبكة البطاقات - Cards Grid */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin: 50px 0;
+        }
+        
+        .card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(20px);
+            border-radius: 25px;
+            padding: 40px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: all 0.6s ease;
+        }
+        
+        .card:hover::before {
+            left: 100%;
+        }
+        
+        .card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 25px 60px rgba(0,0,0,0.15);
+        }
+        
+        .card-icon {
+            font-size: 3rem;
+            color: #205072;
+            margin-bottom: 20px;
+            display: block;
+        }
+        
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+        
+        .card-text {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+        
+        /* إحصائيات - Statistics */
+        .stats-section {
+            background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.7) 100%);
+            backdrop-filter: blur(20px);
+            border-radius: 25px;
+            padding: 50px;
+            margin: 50px 0;
+            text-align: center;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+        
+        .stat-item {
+            padding: 30px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .stat-item:nth-child(2) {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+        
+        .stat-item:nth-child(3) {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        }
+        
+        .stat-item:nth-child(4) {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+        }
+        
+        .stat-item:hover {
+            transform: translateY(-8px) scale(1.05);
+        }
+        
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+        
+        .stat-label {
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+        
+        /* نوافذ منبثقة متطورة - Advanced Modals */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            transition: all 0.4s ease;
+        }
+        
+        .modal.show {
+            display: flex;
+            opacity: 1;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 25px;
+            padding: 50px;
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+            transform: scale(0.8) rotateX(45deg);
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            box-shadow: 0 30px 80px rgba(0,0,0,0.3);
+        }
+        
+        .modal.show .modal-content {
+            transform: scale(1) rotateX(0deg);
+        }
+        
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: linear-gradient(45deg, #f44336, #e91e63);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            font-size: 1.3rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .modal-close:hover {
+            transform: rotate(90deg) scale(1.1);
+        }
+        
+        /* حقول الإدخال المتطورة - Advanced Form Fields */
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 1.1rem;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 15px;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            background: #fafafa;
+            font-family: inherit;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: #205072;
+            background: white;
+            box-shadow: 0 0 0 5px rgba(32, 80, 114, 0.1);
+            transform: translateY(-2px);
+        }
+        
+        .form-control:hover {
+            border-color: #bbb;
+        }
+        
+        /* فوتر - Footer */
+        .footer {
+            background: linear-gradient(135deg, rgba(44, 62, 80, 0.95) 0%, rgba(32, 80, 114, 0.95) 100%);
+            backdrop-filter: blur(20px);
+            color: white;
+            padding: 60px 30px 30px;
+            margin-top: 80px;
+            border-radius: 30px 30px 0 0;
+        }
+        
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+        }
+        
+        .footer-section h3 {
+            font-size: 1.4rem;
+            margin-bottom: 20px;
+            color: #fff;
+        }
+        
+        .footer-section a {
+            color: #bbb;
+            text-decoration: none;
+            display: block;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .footer-section a:hover {
+            color: #fff;
+            transform: translateX(10px);
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .social-links a {
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+        
+        .social-links a:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-5px) scale(1.1);
+        }
+        
+        /* تجاوب - Responsive */
+        @media (max-width: 1200px) {
+            .navbar { padding: 15px 20px; }
+            .main-container { padding: 30px 20px; }
+            .hero-section { padding: 40px 30px; }
+            .hero-title { font-size: 2.8rem; }
+        }
+        
+        @media (max-width: 768px) {
+            .navbar-nav { display: none; }
+            .hero-title { font-size: 2.2rem; }
+            .hero-subtitle { font-size: 1.1rem; }
+            .cards-grid { grid-template-columns: 1fr; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        
+        @media (max-width: 480px) {
+            .hero-section { padding: 30px 20px; }
+            .modal-content { padding: 30px 20px; }
+            .stats-grid { grid-template-columns: 1fr; }
+        }
+        
+        /* إشعارات متطورة - Advanced Notifications */
+        .notification {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            padding: 20px 25px;
+            border-radius: 15px;
+            color: white;
+            font-weight: 600;
+            z-index: 3000;
+            transform: translateX(400px);
+            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+            border-left: 5px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+        
+        .notification.success {
+            background: linear-gradient(135deg, #4caf50 0%, #8bc34a 100%);
+        }
+        
+        .notification.error {
+            background: linear-gradient(135deg, #f44336 0%, #e91e63 100%);
+        }
+        
+        .notification.warning {
+            background: linear-gradient(135deg, #ff9800 0%, #ffc107 100%);
+        }
+        
+        .notification.info {
+            background: linear-gradient(135deg, #2196f3 0%, #03a9f4 100%);
+        }
+        
+        {% block extra_styles %}{% endblock %}
+    </style>
+</head>
+<body>
+    <!-- شريط علوي - Header -->
+    <header class="header">
+        <nav class="navbar">
+            <a href="{{ url_for('main.index') }}" class="navbar-brand">
+                <img src="{{ url_for('static', filename='logo.png') }}" alt="Arab Expo Logo">
+                <span class="brand-text">Arab Expo</span>
+            </a>
+            
+            <ul class="navbar-nav">
+                <li><a href="{{ url_for('main.index') }}" class="nav-link">الرئيسية</a></li>
+                <li><a href="{{ url_for('main.exhibitors_list') }}" class="nav-link">العارضين</a></li>
+                <li><a href="#products" class="nav-link">المنتجات</a></li>
+                <li><a href="#about" class="nav-link">عن المعرض</a></li>
+                {% if current_user.is_authenticated %}
+                    {% if current_user.is_admin() %}
+                        <li><a href="{{ url_for('admin.dashboard') }}" class="nav-link">لوحة الإدارة</a></li>
+                    {% elif current_user.is_exhibitor() %}
+                        <li><a href="{{ url_for('exhibitor.dashboard') }}" class="nav-link">لوحة التحكم</a></li>
+                    {% endif %}
+                {% endif %}
+            </ul>
+            
+            <div class="user-menu">
+                {% if current_user.is_authenticated %}
+                    <button class="user-btn" onclick="location.href='{% if current_user.is_admin() %}{{ url_for('admin.dashboard') }}{% elif current_user.is_exhibitor() %}{{ url_for('exhibitor.dashboard') }}{% else %}{{ url_for('main.index') }}{% endif %}'">
+                        <i class="fas fa-user"></i> {{ current_user.full_name.split()[0] }}
+                    </button>
+                {% else %}
+                    <button class="user-btn" onclick="location.href='{{ url_for('auth.login') }}'">
+                        <i class="fas fa-sign-in-alt"></i> تسجيل الدخول
+                    </button>
+                {% endif %}
+            </div>
+        </nav>
+    </header>
+
+    <!-- المحتوى الرئيسي - Main Content -->
+    <main class="main-container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="notification {{ category }} show">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- فوتر - Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Arab Expo For Food</h3>
+                <p>المعرض الدولي الافتراضي للأغذية والمشروبات وتكنولوجيا صناعة الطعام</p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-linkedin"></i></a>
+                </div>
+            </div>
+            <div class="footer-section">
+                <h3>روابط سريعة</h3>
+                <a href="{{ url_for('main.index') }}">الرئيسية</a>
+                <a href="{{ url_for('main.exhibitors_list') }}">العارضين</a>
+                <a href="#products">المنتجات</a>
+                <a href="#about">عن المعرض</a>
+            </div>
+            <div class="footer-section">
+                <h3>خدمات</h3>
+                <a href="{{ url_for('auth.register') }}">تسجيل عارض</a>
+                <a href="{{ url_for('auth.register') }}">تسجيل زائر</a>
+                <a href="#">دعم فني</a>
+            </div>
+            <div class="footer-section">
+                <h3>اتصل بنا</h3>
+                <a href="mailto:info@arabexpo.com">info@arabexpo.com</a>
+                <a href="tel:+966123456789">+966 12 345 6789</a>
+                <a href="https://wa.me/201097000010" target="_blank">واتساب</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        // إخفاء الإشعارات تلقائياً
+        document.addEventListener('DOMContentLoaded', function() {
+            const notifications = document.querySelectorAll('.notification');
+            notifications.forEach(notification => {
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                    setTimeout(() => {
+                        notification.remove();
+                    }, 500);
+                }, 5000);
+            });
+        });
+
+        // دوال عامة - Global Functions
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.classList.add('show');
+            }, 100);
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    notification.remove();
+                }, 500);
+            }, 5000);
+        }
+
+        function showModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.classList.add('show');
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        function hideModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.classList.remove('show');
+                document.body.style.overflow = 'auto';
+            }
+        }
+
+        // إغلاق النوافذ المنبثقة بالضغط على الخلفية
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('modal')) {
+                hideModal(e.target.id);
+            }
+        });
+
+        // تأثيرات التمرير
+        window.addEventListener('scroll', function() {
+            const scrolled = window.pageYOffset;
+            const header = document.querySelector('.header');
+            
+            if (scrolled > 100) {
+                header.style.background = 'linear-gradient(90deg, rgba(255,255,255,0.98) 0%, rgba(255,255,255,0.95) 100%)';
+                header.style.boxShadow = '0 10px 50px rgba(0,0,0,0.15)';
+            } else {
+                header.style.background = 'linear-gradient(90deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.9) 100%)';
+                header.style.boxShadow = '0 8px 40px rgba(0,0,0,0.1)';
+            }
+        });
+
+        {% block extra_scripts %}{% endblock %}
+    </script>
+</body>
+</html>

@@ -1,0 +1,530 @@
+{% extends "base_mobile.html" %}
+
+{% block title %}{{ product.name }} - Arab Expo For Food{% endblock %}
+
+{% block content %}
+<div class="breadcrumb">
+    <a href="{{ url_for('main.index') }}"><i class="fas fa-home"></i></a>
+    <span>/</span>
+    <a href="{{ url_for('main.products_list') }}">المنتجات</a>
+    <span>/</span>
+    <span>{{ product.name }}</span>
+</div>
+
+<div class="product-detail">
+    <!-- Product Images -->
+    <div class="product-gallery">
+        {% if product.images %}
+            {% set images = product.images|from_json %}
+            {% if images %}
+                <div class="main-image">
+                    <img id="mainImage" src="{{ url_for('static', filename='uploads/products/' + images[0]) }}" 
+                         alt="{{ product.name }}">
+                    {% if product.is_featured %}
+                    <div class="featured-badge">
+                        <i class="fas fa-star"></i> منتج مميز
+                    </div>
+                    {% endif %}
+                </div>
+                {% if images|length > 1 %}
+                <div class="image-thumbnails">
+                    {% for image in images %}
+                    <img src="{{ url_for('static', filename='uploads/products/' + image) }}" 
+                         alt="{{ product.name }}" 
+                         class="thumbnail {% if loop.index0 == 0 %}active{% endif %}"
+                         onclick="changeMainImage(this.src)">
+                    {% endfor %}
+                </div>
+                {% endif %}
+            {% else %}
+            <div class="no-image">
+                <i class="fas fa-image"></i>
+                <p>لا توجد صورة متاحة</p>
+            </div>
+            {% endif %}
+        {% else %}
+        <div class="no-image">
+            <i class="fas fa-image"></i>
+            <p>لا توجد صورة متاحة</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Product Info -->
+    <div class="product-info">
+        <div class="product-header">
+            <h1>{{ product.name }}</h1>
+            <div class="product-category">{{ product.category.name }}</div>
+        </div>
+
+        {% if product.price %}
+        <div class="product-price">
+            <span class="price">{{ product.price }} {{ product.currency or 'USD' }}</span>
+        </div>
+        {% endif %}
+
+        <div class="product-description">
+            <h3><i class="fas fa-info-circle"></i> وصف المنتج</h3>
+            <p>{{ product.description }}</p>
+        </div>
+
+        {% if product.specifications %}
+        <div class="product-specs">
+            <h3><i class="fas fa-list"></i> المواصفات</h3>
+            <p>{{ product.specifications }}</p>
+        </div>
+        {% endif %}
+
+        <!-- Exhibitor Info -->
+        <div class="exhibitor-section">
+            <h3><i class="fas fa-building"></i> معلومات العارض</h3>
+            <div class="exhibitor-card">
+                <div class="exhibitor-header">
+                    {% if product.exhibitor.logo %}
+                    <img src="{{ url_for('static', filename='uploads/exhibitors/' + product.exhibitor.logo) }}" 
+                         alt="{{ product.exhibitor.company_name }}" class="exhibitor-logo">
+                    {% else %}
+                    <div class="exhibitor-placeholder">
+                        <i class="fas fa-building"></i>
+                    </div>
+                    {% endif %}
+                    <div class="exhibitor-info">
+                        <h4>{{ product.exhibitor.company_name }}</h4>
+                        <p><i class="fas fa-map-marker-alt"></i> {{ product.exhibitor.country }}</p>
+                    </div>
+                </div>
+                <p class="exhibitor-description">
+                    {{ product.exhibitor.description[:100] }}{% if product.exhibitor.description|length > 100 %}...{% endif %}
+                </p>
+                <a href="{{ url_for('main.exhibitor_profile', exhibitor_id=product.exhibitor.id) }}" class="btn btn-outline">
+                    <i class="fas fa-eye"></i> عرض ملف العارض
+                </a>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="product-actions">
+            {% if product.contact_info %}
+            <button class="btn btn-primary contact-btn" data-contact="{{ product.contact_info }}">
+                <i class="fas fa-phone"></i> تواصل مع العارض
+            </button>
+            {% endif %}
+            
+            {% if product.exhibitor.website %}
+            <a href="{{ product.exhibitor.website }}" target="_blank" class="btn btn-secondary">
+                <i class="fas fa-external-link-alt"></i> موقع الشركة
+            </a>
+            {% endif %}
+            
+            {% if product.exhibitor.email %}
+            <a href="mailto:{{ product.exhibitor.email }}" class="btn btn-secondary">
+                <i class="fas fa-envelope"></i> إرسال إيميل
+            </a>
+            {% endif %}
+        </div>
+
+        <!-- Product Meta -->
+        <div class="product-meta">
+            <div class="meta-item">
+                <i class="fas fa-calendar"></i>
+                <span>تاريخ الإضافة: {{ product.created_at.strftime('%Y-%m-%d') }}</span>
+            </div>
+            {% if product.updated_at != product.created_at %}
+            <div class="meta-item">
+                <i class="fas fa-edit"></i>
+                <span>آخر تحديث: {{ product.updated_at.strftime('%Y-%m-%d') }}</span>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Contact Modal -->
+<div id="contactModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3><i class="fas fa-phone"></i> معلومات التواصل</h3>
+            <span class="close">&times;</span>
+        </div>
+        <div class="modal-body">
+            <p id="contactInfo"></p>
+            <p><small>يمكنك التواصل مع العارض مباشرة باستخدام المعلومات أعلاه</small></p>
+        </div>
+    </div>
+</div>
+
+<style>
+.breadcrumb {
+    padding: 15px;
+    background: white;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.breadcrumb a {
+    color: #205072;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.breadcrumb span:last-child {
+    color: #666;
+}
+
+.product-detail {
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+}
+
+.product-gallery {
+    position: relative;
+}
+
+.main-image {
+    position: relative;
+    height: 300px;
+    overflow: hidden;
+}
+
+.main-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.featured-badge {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: linear-gradient(45deg, #ffd700, #ffed4a);
+    color: #333;
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+}
+
+.image-thumbnails {
+    display: flex;
+    gap: 10px;
+    padding: 15px;
+    overflow-x: auto;
+}
+
+.thumbnail {
+    width: 80px;
+    height: 80px;
+    border-radius: 8px;
+    object-fit: cover;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+}
+
+.thumbnail.active,
+.thumbnail:hover {
+    border-color: #205072;
+}
+
+.no-image {
+    height: 300px;
+    background: #f8f9fa;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #adb5bd;
+}
+
+.no-image i {
+    font-size: 48px;
+    margin-bottom: 10px;
+}
+
+.product-info {
+    padding: 25px;
+}
+
+.product-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 20px;
+}
+
+.product-header h1 {
+    color: #205072;
+    font-size: 24px;
+    flex: 1;
+    margin: 0;
+}
+
+.product-category {
+    background: #e3f2fd;
+    color: #1976d2;
+    padding: 6px 12px;
+    border-radius: 15px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.product-price {
+    margin-bottom: 25px;
+}
+
+.price {
+    background: linear-gradient(45deg, #205072, #186687);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 25px;
+    font-weight: 700;
+    font-size: 20px;
+    display: inline-block;
+}
+
+.product-description,
+.product-specs {
+    margin-bottom: 25px;
+}
+
+.product-description h3,
+.product-specs h3 {
+    color: #205072;
+    font-size: 18px;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.product-description p,
+.product-specs p {
+    color: #555;
+    line-height: 1.6;
+}
+
+.exhibitor-section {
+    margin-bottom: 25px;
+}
+
+.exhibitor-section h3 {
+    color: #205072;
+    font-size: 18px;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.exhibitor-card {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 20px;
+}
+
+.exhibitor-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.exhibitor-logo {
+    width: 60px;
+    height: 60px;
+    border-radius: 10px;
+    object-fit: cover;
+}
+
+.exhibitor-placeholder {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(45deg, #205072, #186687);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 24px;
+}
+
+.exhibitor-info h4 {
+    color: #205072;
+    margin: 0 0 5px 0;
+}
+
+.exhibitor-info p {
+    color: #666;
+    margin: 0;
+    font-size: 14px;
+}
+
+.exhibitor-description {
+    color: #555;
+    line-height: 1.5;
+    margin-bottom: 15px;
+}
+
+.product-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 25px;
+}
+
+.btn {
+    padding: 14px 20px;
+    text-align: center;
+    text-decoration: none;
+    border: none;
+    border-radius: 25px;
+    font-weight: 600;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+}
+
+.btn-primary {
+    background: linear-gradient(45deg, #205072, #186687);
+    color: white;
+}
+
+.btn-secondary {
+    background: #f8f9fa;
+    color: #205072;
+    border: 2px solid #e0e0e0;
+}
+
+.btn-outline {
+    background: transparent;
+    color: #205072;
+    border: 2px solid #205072;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.product-meta {
+    border-top: 1px solid #e0e0e0;
+    padding-top: 20px;
+}
+
+.meta-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    color: #666;
+    font-size: 14px;
+}
+
+.meta-item i {
+    color: #205072;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+}
+
+.modal-content {
+    background: white;
+    margin: 50% auto;
+    padding: 0;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 400px;
+    transform: translateY(-50%);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.modal-header h3 {
+    margin: 0;
+    color: #205072;
+}
+
+.close {
+    font-size: 24px;
+    cursor: pointer;
+    color: #666;
+}
+
+.modal-body {
+    padding: 20px;
+}
+
+.modal-body p:last-child {
+    margin-top: 15px;
+    color: #666;
+    font-size: 14px;
+}
+</style>
+
+<script>
+function changeMainImage(src) {
+    document.getElementById('mainImage').src = src;
+    
+    // Update active thumbnail
+    document.querySelectorAll('.thumbnail').forEach(thumb => {
+        thumb.classList.remove('active');
+        if (thumb.src === src) {
+            thumb.classList.add('active');
+        }
+    });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const modal = document.getElementById('contactModal');
+    const contactBtn = document.querySelector('.contact-btn');
+    const closeBtn = document.querySelector('.close');
+
+    if (contactBtn) {
+        contactBtn.addEventListener('click', function() {
+            const contactInfo = this.dataset.contact;
+            document.getElementById('contactInfo').textContent = contactInfo;
+            modal.style.display = 'block';
+        });
+    }
+
+    if (closeBtn) {
+        closeBtn.addEventListener('click', function() {
+            modal.style.display = 'none';
+        });
+    }
+
+    window.addEventListener('click', function(event) {
+        if (event.target === modal) {
+            modal.style.display = 'none';
+        }
+    });
+});
+</script>
+{% endblock %}

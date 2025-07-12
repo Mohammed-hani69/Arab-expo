@@ -1,0 +1,319 @@
+{% extends "base_mobile.html" %}
+
+{% block title %}الملف كبير جداً - 413{% endblock %}
+
+{% block content %}
+<div class="mobile-container">
+    <div class="error-page-mobile">
+        <div class="error-number error-413">413</div>
+        
+        <div class="error-icon error-413-icon">
+            <i class="fas fa-file-upload"></i>
+        </div>
+        
+        <div class="error-content">
+            <h1>الملف كبير جداً</h1>
+            <p>حجم الملف المرفوع يتجاوز الحد الأقصى المسموح به (5 ميجابايت)</p>
+        </div>
+        
+        <div class="error-actions">
+            <button onclick="window.history.back()" class="btn btn-primary btn-mobile">
+                <i class="fas fa-arrow-right"></i> العودة والمحاولة مرة أخرى
+            </button>
+            
+            <a href="{{ url_for('main.index') }}" class="btn btn-secondary btn-mobile">
+                <i class="fas fa-home"></i> الصفحة الرئيسية
+            </a>
+        </div>
+        
+        <!-- نصائح لتقليل حجم الملف -->
+        <div class="tips-mobile">
+            <h3><i class="fas fa-lightbulb"></i> نصائح لتقليل حجم الملف:</h3>
+            
+            <div class="tips-list">
+                <div class="tip-item">
+                    <div class="tip-icon">
+                        <i class="fas fa-compress-alt"></i>
+                    </div>
+                    <div class="tip-content">
+                        <div class="tip-title">ضغط الصورة</div>
+                        <div class="tip-desc">استخدم أدوات ضغط الصور لتقليل الحجم</div>
+                    </div>
+                </div>
+                
+                <div class="tip-item">
+                    <div class="tip-icon">
+                        <i class="fas fa-crop"></i>
+                    </div>
+                    <div class="tip-content">
+                        <div class="tip-title">قص الصورة</div>
+                        <div class="tip-desc">اقطع الأجزاء غير المرغوب فيها</div>
+                    </div>
+                </div>
+                
+                <div class="tip-item">
+                    <div class="tip-icon">
+                        <i class="fas fa-images"></i>
+                    </div>
+                    <div class="tip-content">
+                        <div class="tip-title">تغيير الصيغة</div>
+                        <div class="tip-desc">استخدم صيغة JPG بدلاً من PNG للصور</div>
+                    </div>
+                </div>
+                
+                <div class="tip-item">
+                    <div class="tip-icon">
+                        <i class="fas fa-expand-arrows-alt"></i>
+                    </div>
+                    <div class="tip-content">
+                        <div class="tip-title">تقليل الأبعاد</div>
+                        <div class="tip-desc">قلل من عرض وطول الصورة</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- حدود الملفات المقبولة -->
+        <div class="file-limits-mobile">
+            <h3><i class="fas fa-info-circle"></i> حدود الملفات المقبولة:</h3>
+            
+            <div class="limits-grid">
+                <div class="limit-item">
+                    <div class="limit-type">الصور</div>
+                    <div class="limit-size">5 ميجابايت</div>
+                    <div class="limit-formats">JPG, PNG, GIF</div>
+                </div>
+                
+                <div class="limit-item">
+                    <div class="limit-type">المستندات</div>
+                    <div class="limit-size">5 ميجابايت</div>
+                    <div class="limit-formats">PDF, DOC, DOCX</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.error-page-mobile {
+    text-align: center;
+    padding: 40px 20px;
+    min-height: 70vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.error-413 {
+    color: #fff3e0 !important;
+}
+
+.error-413-icon {
+    color: #ff9800 !important;
+}
+
+.error-number {
+    font-size: 6rem;
+    font-weight: 900;
+    margin-bottom: 20px;
+    line-height: 1;
+}
+
+.error-icon {
+    font-size: 3rem;
+    margin-bottom: 25px;
+}
+
+.error-content h1 {
+    color: #2c3e50;
+    margin-bottom: 15px;
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.error-content p {
+    color: #666;
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 30px;
+    max-width: 300px;
+}
+
+.error-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+    max-width: 280px;
+    margin-bottom: 40px;
+}
+
+.btn-mobile {
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+}
+
+.btn-primary {
+    background: #2196f3;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #1976d2;
+    transform: translateY(-2px);
+}
+
+.btn-secondary {
+    background: #f5f5f5;
+    color: #666;
+    border: 1px solid #ddd;
+}
+
+.btn-secondary:hover {
+    background: #e0e0e0;
+    transform: translateY(-2px);
+}
+
+.tips-mobile {
+    width: 100%;
+    max-width: 320px;
+    margin-bottom: 30px;
+    text-align: right;
+}
+
+.tips-mobile h3 {
+    color: #2c3e50;
+    margin-bottom: 20px;
+    font-size: 1.1rem;
+    text-align: center;
+}
+
+.tips-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.tip-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 12px;
+    border: 1px solid #e9ecef;
+}
+
+.tip-icon {
+    width: 45px;
+    height: 45px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+    background: rgba(255, 152, 0, 0.1);
+    color: #ff9800;
+}
+
+.tip-content {
+    flex: 1;
+    text-align: right;
+}
+
+.tip-title {
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 4px;
+    font-size: 0.95rem;
+}
+
+.tip-desc {
+    font-size: 0.85rem;
+    color: #666;
+    line-height: 1.4;
+}
+
+.file-limits-mobile {
+    width: 100%;
+    max-width: 320px;
+    text-align: center;
+}
+
+.file-limits-mobile h3 {
+    color: #2c3e50;
+    margin-bottom: 20px;
+    font-size: 1.1rem;
+}
+
+.limits-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.limit-item {
+    background: #e3f2fd;
+    border: 1px solid #90caf9;
+    border-radius: 12px;
+    padding: 15px;
+    text-align: center;
+}
+
+.limit-type {
+    font-weight: 600;
+    color: #1976d2;
+    margin-bottom: 8px;
+    font-size: 1rem;
+}
+
+.limit-size {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 5px;
+}
+
+.limit-formats {
+    font-size: 0.85rem;
+    color: #666;
+}
+
+@media (max-width: 480px) {
+    .error-number {
+        font-size: 4rem;
+    }
+    
+    .error-icon {
+        font-size: 2.5rem;
+    }
+    
+    .error-content h1 {
+        font-size: 1.3rem;
+    }
+    
+    .tip-item {
+        padding: 12px;
+    }
+    
+    .tip-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 1.1rem;
+    }
+}
+</style>
+{% endblock %}

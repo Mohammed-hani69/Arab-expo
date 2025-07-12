@@ -1,0 +1,241 @@
+{% extends "base_mobile.html" %}
+
+{% block title %}إنشاء حساب - Arab Expo For Food{% endblock %}
+
+{% block content %}
+<div class="section" style="max-width: 450px; margin: 30px auto;">
+    <h2 style="text-align: center; margin-bottom: 30px; color: #205072;">
+        <i class="fas fa-user-plus"></i> إنشاء حساب جديد
+    </h2>
+    
+    <!-- اختيار نوع الحساب -->
+    <div style="display: flex; gap: 10px; margin-bottom: 25px;">
+        <button type="button" class="account-type-btn" data-type="exhibitor" 
+                style="flex: 1; padding: 15px; border: 2px solid #205072; background: #205072; color: white; border-radius: 12px; font-weight: 600; cursor: pointer; transition: all 0.3s;">
+            <i class="fas fa-store"></i><br>عارض
+        </button>
+        <button type="button" class="account-type-btn" data-type="visitor" 
+                style="flex: 1; padding: 15px; border: 2px solid #205072; background: transparent; color: #205072; border-radius: 12px; font-weight: 600; cursor: pointer; transition: all 0.3s;">
+            <i class="fas fa-eye"></i><br>زائر
+        </button>
+    </div>
+    
+    <form method="POST" action="{{ url_for('auth.register') }}" id="registerForm">
+        <input type="hidden" name="user_type" id="user_type" value="exhibitor">
+        
+        <!-- حقول مشتركة -->
+        <div class="form-group">
+            <label class="form-label">
+                <i class="fas fa-user"></i> الاسم الكامل
+            </label>
+            <input type="text" name="full_name" class="form-control" required 
+                   placeholder="أدخل اسمك الكامل">
+        </div>
+        
+        <div class="form-group">
+            <label class="form-label">
+                <i class="fas fa-envelope"></i> البريد الإلكتروني
+            </label>
+            <input type="email" name="email" class="form-control" required 
+                   placeholder="أدخل بريدك الإلكتروني">
+        </div>
+        
+        <div class="form-group">
+            <label class="form-label">
+                <i class="fas fa-phone"></i> رقم الهاتف
+            </label>
+            <input type="tel" name="phone" class="form-control" required 
+                   placeholder="أدخل رقم هاتفك">
+        </div>
+        
+        <div class="form-group">
+            <label class="form-label">
+                <i class="fas fa-lock"></i> كلمة المرور
+            </label>
+            <input type="password" name="password" class="form-control" required 
+                   placeholder="أدخل كلمة مرور قوية" minlength="6">
+        </div>
+        
+        <!-- حقول خاصة بالعارض -->
+        <div id="exhibitor_fields">
+            <div class="form-group">
+                <label class="form-label">
+                    <i class="fas fa-building"></i> اسم الشركة
+                </label>
+                <input type="text" name="company_name" class="form-control" 
+                       placeholder="أدخل اسم شركتك">
+            </div>
+            
+            {% if categories %}
+            <div class="form-group">
+                <label class="form-label">
+                    <i class="fas fa-tags"></i> تصنيف الشركة
+                </label>
+                <select name="category_id" class="form-control">
+                    <option value="">اختر التصنيف</option>
+                    {% for category in categories %}
+                        <option value="{{ category.id }}">{{ category.name_ar }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            {% endif %}
+        </div>
+        
+        <!-- حقول خاصة بالزائر -->
+        <div id="visitor_fields" style="display: none;">
+            <div class="form-group">
+                <label class="form-label">
+                    <i class="fas fa-briefcase"></i> المسمى الوظيفي (اختياري)
+                </label>
+                <input type="text" name="job_title" class="form-control" 
+                       placeholder="أدخل مسماك الوظيفي">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">
+                    <i class="fas fa-industry"></i> مجال العمل (اختياري)
+                </label>
+                <input type="text" name="industry" class="form-control" 
+                       placeholder="أدخل مجال عملك">
+            </div>
+        </div>
+        
+        <!-- شروط الاستخدام -->
+        <div class="form-group" style="display: flex; align-items: flex-start; gap: 10px;">
+            <input type="checkbox" name="terms" id="terms" required style="margin-top: 5px;">
+            <label for="terms" style="margin: 0; font-weight: normal; font-size: 0.9rem; line-height: 1.4;">
+                أوافق على <a href="#" style="color: #205072;">شروط الاستخدام</a> و 
+                <a href="#" style="color: #205072;">سياسة الخصوصية</a>
+            </label>
+        </div>
+        
+        <button type="submit" class="btn-primary" style="width: 100%; margin-top: 20px;">
+            <i class="fas fa-check"></i> إنشاء الحساب
+        </button>
+    </form>
+    
+    <div style="text-align: center; margin-top: 25px; padding-top: 20px; border-top: 1px solid #eee;">
+        <p style="color: #666; margin-bottom: 15px;">لديك حساب بالفعل؟</p>
+        <a href="{{ url_for('auth.login') }}" class="btn-primary" style="text-decoration: none; display: inline-block; background: linear-gradient(45deg, #667eea, #764ba2);">
+            <i class="fas fa-sign-in-alt"></i> تسجيل الدخول
+        </a>
+    </div>
+    
+    <div style="text-align: center; margin-top: 20px;">
+        <a href="{{ url_for('main.index') }}" style="color: #666; text-decoration: none;">
+            <i class="fas fa-arrow-right"></i> العودة للرئيسية
+        </a>
+    </div>
+</div>
+
+<!-- معلومات إضافية -->
+<div class="section" style="max-width: 450px; margin: 20px auto; background: linear-gradient(135deg, #e3f2fd 0%, #f0f8e8 100%); border: 1px solid #bbdefb;">
+    <h3 style="color: #1565c0; margin-bottom: 15px; text-align: center;">
+        <i class="fas fa-info-circle"></i> ما الفرق بين العارض والزائر؟
+    </h3>
+    
+    <div style="margin-bottom: 15px;">
+        <h4 style="color: #1565c0; font-size: 1rem; margin-bottom: 8px;">
+            <i class="fas fa-store"></i> العارض
+        </h4>
+        <ul style="margin: 0; padding-right: 20px; font-size: 0.9rem; color: #555;">
+            <li>يمكنه عرض منتجات شركته</li>
+            <li>إنشاء معرض افتراضي خاص</li>
+            <li>تلقي زيارات من المهتمين</li>
+            <li>رفع الكتالوجات والبروشورات</li>
+        </ul>
+    </div>
+    
+    <div>
+        <h4 style="color: #1565c0; font-size: 1rem; margin-bottom: 8px;">
+            <i class="fas fa-eye"></i> الزائر
+        </h4>
+        <ul style="margin: 0; padding-right: 20px; font-size: 0.9rem; color: #555;">
+            <li>تصفح المعارض والمنتجات</li>
+            <li>التواصل مع العارضين</li>
+            <li>تحميل الكتالوجات</li>
+            <li>حفظ المفضلات</li>
+        </ul>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+// تبديل نوع الحساب
+document.querySelectorAll('.account-type-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const type = this.dataset.type;
+        
+        // تحديث الأزرار
+        document.querySelectorAll('.account-type-btn').forEach(b => {
+            b.style.background = 'transparent';
+            b.style.color = '#205072';
+        });
+        this.style.background = '#205072';
+        this.style.color = 'white';
+        
+        // تحديث الحقول
+        document.getElementById('user_type').value = type;
+        
+        const exhibitorFields = document.getElementById('exhibitor_fields');
+        const visitorFields = document.getElementById('visitor_fields');
+        
+        if (type === 'exhibitor') {
+            exhibitorFields.style.display = 'block';
+            visitorFields.style.display = 'none';
+            // جعل اسم الشركة مطلوب للعارض
+            document.querySelector('input[name="company_name"]').required = true;
+        } else {
+            exhibitorFields.style.display = 'none';
+            visitorFields.style.display = 'block';
+            // إلغاء إجبارية اسم الشركة للزائر
+            document.querySelector('input[name="company_name"]').required = false;
+        }
+    });
+});
+
+// التحقق من قوة كلمة المرور
+document.querySelector('input[name="password"]').addEventListener('input', function() {
+    const password = this.value;
+    const strength = checkPasswordStrength(password);
+    
+    // إزالة رسائل سابقة
+    const existingMsg = this.parentNode.querySelector('.password-strength');
+    if (existingMsg) existingMsg.remove();
+    
+    if (password.length > 0) {
+        const msg = document.createElement('div');
+        msg.className = 'password-strength';
+        msg.style.fontSize = '0.8rem';
+        msg.style.marginTop = '5px';
+        
+        if (strength === 'weak') {
+            msg.style.color = '#f44336';
+            msg.innerHTML = '<i class="fas fa-times"></i> ضعيفة - أضف أرقام ورموز';
+        } else if (strength === 'medium') {
+            msg.style.color = '#ff9800';
+            msg.innerHTML = '<i class="fas fa-minus"></i> متوسطة - يمكن تحسينها';
+        } else {
+            msg.style.color = '#4caf50';
+            msg.innerHTML = '<i class="fas fa-check"></i> قوية';
+        }
+        
+        this.parentNode.appendChild(msg);
+    }
+});
+
+function checkPasswordStrength(password) {
+    let score = 0;
+    if (password.length >= 8) score++;
+    if (/[a-z]/.test(password)) score++;
+    if (/[A-Z]/.test(password)) score++;
+    if (/[0-9]/.test(password)) score++;
+    if (/[^a-zA-Z0-9]/.test(password)) score++;
+    
+    if (score < 3) return 'weak';
+    if (score < 4) return 'medium';
+    return 'strong';
+}
+</script>
+{% endblock %}

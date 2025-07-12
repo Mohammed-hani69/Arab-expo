@@ -1,0 +1,145 @@
+{% extends "base_mobile.html" %}
+
+{% block title %}الملف كبير جداً - 413{% endblock %}
+
+{% block content %}
+<div style="text-align: center; padding: 60px 20px; min-height: 50vh; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+    <div style="font-size: 8rem; font-weight: 900; color: #fff3e0; margin-bottom: 20px; line-height: 1;">413</div>
+    
+    <div style="margin-bottom: 30px;">
+        <i class="fas fa-file-upload" style="font-size: 4rem; color: #ff9800; margin-bottom: 20px;"></i>
+        <h1 style="color: #2c3e50; margin-bottom: 15px; font-size: 1.8rem;">الملف كبير جداً</h1>
+        <p style="color: #666; font-size: 1.1rem; max-width: 400px; margin: 0 auto 30px; line-height: 1.6;">
+            حجم الملف المرفوع يتجاوز الحد الأقصى المسموح به (2 جيجابايت للفيديوهات)
+        </p>
+    </div>
+    
+    <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+        <button onclick="window.history.back()" class="btn-primary">
+            <i class="fas fa-arrow-left"></i> العودة والمحاولة مرة أخرى
+        </button>
+        
+        <a href="{{ url_for('main.index') }}" class="btn-secondary" style="text-decoration: none;">
+            <i class="fas fa-home"></i> الصفحة الرئيسية
+        </a>
+    </div>
+    
+    <!-- نصائح لتقليل حجم الملف -->
+    <div style="margin-top: 50px; text-align: right; max-width: 500px;">
+        <h3 style="color: #2c3e50; margin-bottom: 20px; font-size: 1.2rem; text-align: center;">
+            <i class="fas fa-lightbulb"></i> نصائح لتقليل حجم الملف:
+        </h3>
+        
+        <div style="display: grid; gap: 12px;">
+            <div style="display: flex; align-items: center; gap: 12px; padding: 12px; background: #f8f9fa; border-radius: 8px;">
+                <i class="fas fa-compress-alt" style="color: #4caf50; font-size: 1.2rem;"></i>
+                <div>
+                    <div style="font-weight: 600; color: #2c3e50;">ضغط الصور</div>
+                    <div style="font-size: 0.9rem; color: #666;">استخدم أدوات ضغط الصور لتقليل الحجم دون فقدان الجودة</div>
+                </div>
+            </div>
+            
+            <div style="display: flex; align-items: center; gap: 12px; padding: 12px; background: #f8f9fa; border-radius: 8px;">
+                <i class="fas fa-crop-alt" style="color: #2196f3; font-size: 1.2rem;"></i>
+                <div>
+                    <div style="font-weight: 600; color: #2c3e50;">تقليل الأبعاد</div>
+                    <div style="font-size: 0.9rem; color: #666;">قم بتغيير حجم الصورة إلى أبعاد مناسبة (مثل 1200x800 بكسل)</div>
+                </div>
+            </div>
+            
+            <div style="display: flex; align-items: center; gap: 12px; padding: 12px; background: #f8f9fa; border-radius: 8px;">
+                <i class="fas fa-file-image" style="color: #ff9800; font-size: 1.2rem;"></i>
+                <div>
+                    <div style="font-weight: 600; color: #2c3e50;">تغيير التنسيق</div>
+                    <div style="font-size: 0.9rem; color: #666;">استخدم تنسيق JPEG للصور و PNG للشعارات</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- حدود الرفع -->
+    <div style="margin-top: 30px; padding: 20px; background: #e3f2fd; border: 1px solid #2196f3; border-radius: 12px; max-width: 500px;">
+        <h4 style="color: #1565c0; margin-bottom: 15px; text-align: center;">
+            <i class="fas fa-info-circle"></i> حدود الرفع المسموحة
+        </h4>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; font-size: 0.9rem;">
+            <div style="text-align: center; padding: 10px; background: white; border-radius: 8px;">
+                <div style="font-weight: 600; color: #2c3e50;">الصور</div>
+                <div style="color: #666;">16 MB كحد أقصى</div>
+            </div>
+            
+            <div style="text-align: center; padding: 10px; background: white; border-radius: 8px;">
+                <div style="font-weight: 600; color: #2c3e50;">المستندات</div>
+                <div style="color: #666;">16 MB كحد أقصى</div>
+            </div>
+            
+            <div style="text-align: center; padding: 10px; background: white; border-radius: 8px;">
+                <div style="font-weight: 600; color: #2c3e50;">الصيغ المدعومة</div>
+                <div style="color: #666;">JPG, PNG, GIF, PDF</div>
+            </div>
+            
+            <div style="text-align: center; padding: 10px; background: white; border-radius: 8px;">
+                <div style="font-weight: 600; color: #2c3e50;">جودة مُوصى بها</div>
+                <div style="color: #666;">1200x800 بكسل</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+.fas.fa-file-upload {
+    animation: pulse 2s infinite;
+}
+
+.btn-primary:hover, .btn-secondary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    transition: all 0.3s ease;
+}
+
+/* تحسين العرض للهواتف */
+@media (max-width: 600px) {
+    .grid-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .tips-grid {
+        font-size: 0.8rem;
+    }
+}
+</style>
+
+<script>
+// معلومات مفيدة للمطور
+document.addEventListener('DOMContentLoaded', function() {
+    console.warn('413 Error: Request Entity Too Large');
+    console.info('حد الرفع الحالي: 16MB');
+    
+    // يمكن إضافة نصائح ديناميكية حسب نوع الملف
+    const fileType = sessionStorage.getItem('lastUploadType');
+    if (fileType) {
+        console.info('نوع آخر ملف تم محاولة رفعه:', fileType);
+    }
+});
+
+// دالة لمساعدة المستخدم في اختيار أداة ضغط
+function suggestCompressionTool() {
+    const tools = [
+        'TinyPNG - لضغط صور PNG',
+        'JPEG-Optimizer - لضغط صور JPEG', 
+        'Squoosh.app - أداة ضغط متقدمة من Google',
+        'Canva - لتعديل وضغط الصور'
+    ];
+    
+    alert('أدوات ضغط مُوصى بها:\n\n' + tools.join('\n'));
+}
+</script>
+
+{% endblock %}

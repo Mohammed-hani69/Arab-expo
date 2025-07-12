@@ -1,0 +1,479 @@
+{% extends "base_mobile.html" %}
+
+{% block title %}إضافة منتج جديد - {{ current_user.exhibitor_profile.company_name }}{% endblock %}
+
+{% block content %}
+<!-- عنوان الصفحة -->
+<div class="section" style="background: linear-gradient(135deg, #4caf50 0%, #8bc34a 100%); color: white; text-align: center; padding: 20px 15px;">
+    <h1 style="margin: 0; font-size: 1.6rem;">
+        <i class="fas fa-plus-circle"></i> إضافة منتج جديد
+    </h1>
+    <p style="margin: 10px 0 0 0; opacity: 0.9;">
+        أضف منتجاً جديداً لمعرض {{ current_user.exhibitor_profile.company_name }}
+    </p>
+</div>
+
+<!-- نموذج إضافة المنتج -->
+<div class="section">
+    <form method="POST" enctype="multipart/form-data" id="addProductForm">
+        <!-- معلومات أساسية -->
+        <div class="card" style="margin-bottom: 20px;">
+            <h3 style="color: #2c3e50; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #e3f2fd;">
+                <i class="fas fa-info-circle"></i> المعلومات الأساسية
+            </h3>
+            
+            <!-- اسم المنتج -->
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 8px; color: #2c3e50; font-weight: 600;">
+                    <i class="fas fa-tag"></i> اسم المنتج *
+                </label>
+                <input type="text" name="name" required 
+                       style="width: 100%; padding: 12px 15px; border: 2px solid #e1e8ed; border-radius: 10px; font-size: 1rem; transition: all 0.3s;"
+                       placeholder="أدخل اسم المنتج"
+                       onFocus="this.style.borderColor='#4caf50'"
+                       onBlur="this.style.borderColor='#e1e8ed'">
+            </div>
+            
+            <!-- وصف المنتج -->
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 8px; color: #2c3e50; font-weight: 600;">
+                    <i class="fas fa-align-left"></i> وصف المنتج
+                </label>
+                <textarea name="description" rows="4"
+                          style="width: 100%; padding: 12px 15px; border: 2px solid #e1e8ed; border-radius: 10px; font-size: 1rem; resize: vertical; transition: all 0.3s; font-family: inherit;"
+                          placeholder="اكتب وصفاً تفصيلياً للمنتج..."
+                          onFocus="this.style.borderColor='#4caf50'"
+                          onBlur="this.style.borderColor='#e1e8ed'"></textarea>
+            </div>
+            
+            <!-- القسم -->
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 8px; color: #2c3e50; font-weight: 600;">
+                    <i class="fas fa-folder"></i> القسم
+                </label>
+                <select name="category" 
+                        style="width: 100%; padding: 12px 15px; border: 2px solid #e1e8ed; border-radius: 10px; font-size: 1rem; transition: all 0.3s; background: white;"
+                        onFocus="this.style.borderColor='#4caf50'"
+                        onBlur="this.style.borderColor='#e1e8ed'">
+                    <option value="">اختر القسم</option>
+                    <option value="dairy">منتجات الألبان</option>
+                    <option value="meat">اللحوم والدواجن</option>
+                    <option value="seafood">المأكولات البحرية</option>
+                    <option value="fruits">الفواكه</option>
+                    <option value="vegetables">الخضروات</option>
+                    <option value="grains">الحبوب والبقول</option>
+                    <option value="oils">الزيوت والدهون</option>
+                    <option value="spices">التوابل والبهارات</option>
+                    <option value="beverages">المشروبات</option>
+                    <option value="sweets">الحلويات والمخبوزات</option>
+                    <option value="organic">المنتجات العضوية</option>
+                    <option value="halal">المنتجات الحلال</option>
+                    <option value="other">أخرى</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- السعر والعملة -->
+        <div class="card" style="margin-bottom: 20px;">
+            <h3 style="color: #2c3e50; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #e3f2fd;">
+                <i class="fas fa-dollar-sign"></i> معلومات التسعير
+            </h3>
+            
+            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 15px;">
+                <!-- السعر -->
+                <div>
+                    <label style="display: block; margin-bottom: 8px; color: #2c3e50; font-weight: 600;">
+                        <i class="fas fa-money-bill"></i> السعر
+                    </label>
+                    <input type="number" name="price" step="0.01" min="0"
+                           style="width: 100%; padding: 12px 15px; border: 2px solid #e1e8ed; border-radius: 10px; font-size: 1rem; transition: all 0.3s;"
+                           placeholder="0.00"
+                           onFocus="this.style.borderColor='#4caf50'"
+                           onBlur="this.style.borderColor='#e1e8ed'">
+                </div>
+                
+                <!-- العملة -->
+                <div>
+                    <label style="display: block; margin-bottom: 8px; color: #2c3e50; font-weight: 600;">
+                        <i class="fas fa-coins"></i> العملة
+                    </label>
+                    <select name="currency" 
+                            style="width: 100%; padding: 12px 15px; border: 2px solid #e1e8ed; border-radius: 10px; font-size: 1rem; transition: all 0.3s; background: white;"
+                            onFocus="this.style.borderColor='#4caf50'"
+                            onBlur="this.style.borderColor='#e1e8ed'">
+                        <option value="USD">USD ($)</option>
+                        <option value="EUR">EUR (€)</option>
+                        <option value="SAR">SAR (ر.س)</option>
+                        <option value="AED">AED (د.إ)</option>
+                        <option value="EGP">EGP (ج.م)</option>
+                        <option value="JOD">JOD (د.أ)</option>
+                        <option value="KWD">KWD (د.ك)</option>
+                        <option value="QAR">QAR (ر.ق)</option>
+                        <option value="BHD">BHD (د.ب)</option>
+                        <option value="OMR">OMR (ر.ع)</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- الصور -->
+        <div class="card" style="margin-bottom: 20px;">
+            <h3 style="color: #2c3e50; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #e3f2fd;">
+                <i class="fas fa-images"></i> صور المنتج
+            </h3>
+            
+            <!-- الصورة الرئيسية -->
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 8px; color: #2c3e50; font-weight: 600;">
+                    <i class="fas fa-image"></i> الصورة الرئيسية
+                </label>
+                <div style="position: relative;">
+                    <input type="file" name="main_image" accept="image/*" id="mainImageInput"
+                           style="display: none;"
+                           onchange="previewImage(this, 'mainImagePreview')">
+                    <div onclick="document.getElementById('mainImageInput').click()" 
+                         style="border: 2px dashed #e1e8ed; border-radius: 10px; padding: 40px 20px; text-align: center; cursor: pointer; transition: all 0.3s; background: #fafafa;"
+                         onmouseover="this.style.borderColor='#4caf50'; this.style.background='#f1f8e9'"
+                         onmouseout="this.style.borderColor='#e1e8ed'; this.style.background='#fafafa'">
+                        <div id="mainImagePreview">
+                            <i class="fas fa-cloud-upload-alt" style="font-size: 2rem; color: #999; margin-bottom: 10px;"></i>
+                            <p style="color: #666; margin: 0; font-size: 0.9rem;">انقر لاختيار صورة</p>
+                            <p style="color: #999; margin: 5px 0 0 0; font-size: 0.8rem;">JPG, PNG, GIF (الحد الأقصى: 5MB)</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- العلامات والكلمات المفتاحية -->
+        <div class="card" style="margin-bottom: 20px;">
+            <h3 style="color: #2c3e50; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #e3f2fd;">
+                <i class="fas fa-tags"></i> العلامات والكلمات المفتاحية
+            </h3>
+            
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 8px; color: #2c3e50; font-weight: 600;">
+                    <i class="fas fa-hashtag"></i> العلامات
+                </label>
+                <input type="text" name="tags" 
+                       style="width: 100%; padding: 12px 15px; border: 2px solid #e1e8ed; border-radius: 10px; font-size: 1rem; transition: all 0.3s;"
+                       placeholder="أدخل العلامات مفصولة بفواصل (مثال: عضوي, طازج, حلال)"
+                       onFocus="this.style.borderColor='#4caf50'"
+                       onBlur="this.style.borderColor='#e1e8ed'">
+                <p style="color: #666; font-size: 0.8rem; margin: 5px 0 0 0;">
+                    <i class="fas fa-info-circle"></i> استخدم الفواصل للفصل بين العلامات
+                </p>
+            </div>
+        </div>
+
+        <!-- خيارات إضافية -->
+        <div class="card" style="margin-bottom: 20px;">
+            <h3 style="color: #2c3e50; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #e3f2fd;">
+                <i class="fas fa-cogs"></i> خيارات إضافية
+            </h3>
+            
+            <div style="display: flex; flex-direction: column; gap: 15px;">
+                <!-- منتج مميز -->
+                <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; padding: 10px; border-radius: 8px; transition: all 0.3s;"
+                       onmouseover="this.style.background='#fff3e0'"
+                       onmouseout="this.style.background='transparent'">
+                    <input type="checkbox" name="is_featured" value="1" 
+                           style="width: 18px; height: 18px; accent-color: #ff9800;">
+                    <div>
+                        <div style="color: #2c3e50; font-weight: 600;">
+                            <i class="fas fa-star" style="color: #ff9800;"></i> منتج مميز
+                        </div>
+                        <div style="color: #666; font-size: 0.8rem;">سيظهر في المقدمة ويحصل على إبراز خاص</div>
+                    </div>
+                </label>
+                
+                <!-- نشط -->
+                <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; padding: 10px; border-radius: 8px; transition: all 0.3s;"
+                       onmouseover="this.style.background='#e8f5e8'"
+                       onmouseout="this.style.background='transparent'">
+                    <input type="checkbox" name="is_active" value="1" checked
+                           style="width: 18px; height: 18px; accent-color: #4caf50;">
+                    <div>
+                        <div style="color: #2c3e50; font-weight: 600;">
+                            <i class="fas fa-check-circle" style="color: #4caf50;"></i> نشط
+                        </div>
+                        <div style="color: #666; font-size: 0.8rem;">المنتج متاح للعرض والبحث</div>
+                    </div>
+                </label>
+            </div>
+        </div>
+
+        <!-- أزرار الإجراءات -->
+        <div class="section" style="position: sticky; bottom: 20px; background: white; padding: 20px; margin: 0 -15px; border-top: 1px solid #eee; box-shadow: 0 -2px 10px rgba(0,0,0,0.1);">
+            <div style="display: flex; gap: 10px;">
+                <button type="submit" class="btn-primary" style="flex: 2; padding: 15px; font-size: 1.1rem;">
+                    <i class="fas fa-plus-circle"></i> إضافة المنتج
+                </button>
+                <a href="{{ url_for('exhibitor.products') }}" class="btn-secondary" style="flex: 1; padding: 15px; font-size: 1.1rem; text-decoration: none; text-align: center;">
+                    <i class="fas fa-times"></i> إلغاء
+                </a>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- تحميل الصور -->
+<div id="uploadProgress" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); display: none; z-index: 2000;">
+    <div style="text-align: center;">
+        <i class="fas fa-spinner fa-spin" style="font-size: 2rem; color: #4caf50; margin-bottom: 15px;"></i>
+        <p style="margin: 0; color: #2c3e50; font-weight: 600;">جاري رفع المنتج...</p>
+        <p style="margin: 10px 0 0 0; color: #666; font-size: 0.9rem;">يرجى الانتظار</p>
+    </div>
+</div>
+
+<!-- رسائل تأكيد -->
+<div id="notification" style="position: fixed; top: 20px; right: 20px; background: #4caf50; color: white; padding: 15px 20px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); transform: translateX(400px); transition: all 0.3s; z-index: 1000;">
+    <div id="notification-message"></div>
+</div>
+
+<style>
+/* تحسينات إضافية للنموذج */
+input:focus, textarea:focus, select:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+}
+
+.card {
+    position: relative;
+    overflow: hidden;
+}
+
+.card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #4caf50, #8bc34a);
+    transform: scaleX(0);
+    transition: transform 0.3s;
+}
+
+.card:hover::before {
+    transform: scaleX(1);
+}
+
+/* تحسين عرض الصور */
+.image-preview {
+    max-width: 100%;
+    max-height: 200px;
+    border-radius: 10px;
+    object-fit: cover;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+/* تحسين الأزرار */
+.btn-primary, .btn-secondary {
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-primary:hover, .btn-secondary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+}
+
+.btn-primary:active, .btn-secondary:active {
+    transform: translateY(0);
+}
+
+/* تحسين المظهر للموبايل */
+@media (max-width: 480px) {
+    .section {
+        padding: 10px !important;
+    }
+    
+    .card {
+        padding: 15px !important;
+    }
+    
+    input, textarea, select {
+        font-size: 16px !important; /* منع الزوم في iOS */
+    }
+    
+    .btn-primary, .btn-secondary {
+        padding: 12px !important;
+        font-size: 1rem !important;
+    }
+}
+
+/* تحسين عرض الملفات المرفوعة */
+.upload-area {
+    transition: all 0.3s;
+}
+
+.upload-area.dragover {
+    border-color: #4caf50 !important;
+    background: #f1f8e9 !important;
+    transform: scale(1.02);
+}
+</style>
+
+<script>
+// معاينة الصور
+function previewImage(input, previewId) {
+    const preview = document.getElementById(previewId);
+    
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        
+        reader.onload = function(e) {
+            preview.innerHTML = `
+                <img src="${e.target.result}" class="image-preview" alt="معاينة الصورة">
+                <p style="color: #4caf50; margin: 10px 0 0 0; font-size: 0.9rem;">
+                    <i class="fas fa-check-circle"></i> تم اختيار الصورة
+                </p>
+            `;
+        };
+        
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+// إظهار الإشعارات
+function showNotification(message, type = 'success') {
+    const notification = document.getElementById('notification');
+    const messageEl = document.getElementById('notification-message');
+    
+    messageEl.textContent = message;
+    
+    // تغيير اللون حسب النوع
+    if (type === 'error') {
+        notification.style.background = '#f44336';
+    } else if (type === 'warning') {
+        notification.style.background = '#ff9800';
+    } else {
+        notification.style.background = '#4caf50';
+    }
+    
+    // إظهار الإشعار
+    notification.style.transform = 'translateX(0)';
+    
+    // إخفاء الإشعار بعد 3 ثوان
+    setTimeout(() => {
+        notification.style.transform = 'translateX(400px)';
+    }, 3000);
+}
+
+// التحقق من صحة النموذج
+function validateForm() {
+    const name = document.querySelector('input[name="name"]').value.trim();
+    
+    if (!name) {
+        showNotification('يرجى إدخال اسم المنتج', 'error');
+        return false;
+    }
+    
+    if (name.length < 3) {
+        showNotification('اسم المنتج يجب أن يكون أكثر من 3 أحرف', 'error');
+        return false;
+    }
+    
+    return true;
+}
+
+// إرسال النموذج
+document.getElementById('addProductForm').addEventListener('submit', function(e) {
+    if (!validateForm()) {
+        e.preventDefault();
+        return;
+    }
+    
+    // إظهار مؤشر التحميل
+    document.getElementById('uploadProgress').style.display = 'block';
+    
+    // يمكن إزالة هذا إذا كنت تريد الإرسال الفعلي
+    // e.preventDefault();
+    // showNotification('سيتم إضافة المنتج قريباً...', 'success');
+    // setTimeout(() => {
+    //     document.getElementById('uploadProgress').style.display = 'none';
+    // }, 2000);
+});
+
+// دعم السحب والإفلات للصور
+function setupDragAndDrop() {
+    const uploadArea = document.querySelector('div[onclick*="mainImageInput"]');
+    
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        uploadArea.addEventListener(eventName, preventDefaults, false);
+    });
+    
+    function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+    
+    ['dragenter', 'dragover'].forEach(eventName => {
+        uploadArea.addEventListener(eventName, highlight, false);
+    });
+    
+    ['dragleave', 'drop'].forEach(eventName => {
+        uploadArea.addEventListener(eventName, unhighlight, false);
+    });
+    
+    function highlight(e) {
+        uploadArea.classList.add('dragover');
+    }
+    
+    function unhighlight(e) {
+        uploadArea.classList.remove('dragover');
+    }
+    
+    uploadArea.addEventListener('drop', handleDrop, false);
+    
+    function handleDrop(e) {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        
+        if (files.length > 0) {
+            document.getElementById('mainImageInput').files = files;
+            previewImage(document.getElementById('mainImageInput'), 'mainImagePreview');
+        }
+    }
+}
+
+// تحسين تجربة المستخدم
+document.addEventListener('DOMContentLoaded', function() {
+    // إعداد السحب والإفلات
+    setupDragAndDrop();
+    
+    // إضافة تأثيرات للكروت
+    const cards = document.querySelectorAll('.card');
+    cards.forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.transition = 'all 0.3s ease';
+        });
+    });
+    
+    // فحص الرسائل المنقولة من الخادم
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                showNotification('{{ message }}', '{{ category }}');
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+    
+    // إضافة تحسينات لتجربة الكتابة
+    const inputs = document.querySelectorAll('input, textarea, select');
+    inputs.forEach(input => {
+        input.addEventListener('focus', function() {
+            this.parentElement.style.transform = 'scale(1.02)';
+            this.parentElement.style.transition = 'all 0.3s ease';
+        });
+        
+        input.addEventListener('blur', function() {
+            this.parentElement.style.transform = 'scale(1)';
+        });
+    });
+});
+</script>
+
+{% endblock %}

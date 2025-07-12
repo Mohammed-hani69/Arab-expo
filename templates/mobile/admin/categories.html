@@ -1,0 +1,1085 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إدارة الأقسام - معرض الطعام العربي</title>
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-color: #dc3545;
+            --white-color: #ffffff;
+            --black-color: #000000;
+            --light-gray: #f8f9fa;
+            --border-radius: 8px;
+            --transition: all 0.3s ease;
+            --box-shadow: 0 2px 10px rgba(220, 53, 69, 0.1);
+            --hover-shadow: 0 4px 20px rgba(220, 53, 69, 0.2);
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --info-color: #17a2b8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Cairo', Arial, sans-serif;
+            background: var(--white-color);
+            color: var(--black-color);
+            line-height: 1.6;
+            direction: rtl;
+            padding-top: 70px;
+        }
+
+        /* شريط التنقل العلوي */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: var(--white-color);
+            border-bottom: 3px solid var(--primary-color);
+            z-index: 1000;
+            box-shadow: var(--box-shadow);
+            padding: 0 15px;
+        }
+
+        .navbar-container {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--black-color);
+        }
+
+        .navbar-brand i {
+            color: var(--primary-color);
+            font-size: 1.3rem;
+        }
+
+        .mobile-menu-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            background: var(--primary-color);
+            color: var(--white-color);
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .mobile-menu-btn:hover {
+            background: #c82333;
+        }
+
+        .mobile-menu {
+            position: fixed;
+            top: 60px;
+            left: 0;
+            right: 0;
+            background: var(--white-color);
+            border-bottom: 2px solid var(--primary-color);
+            box-shadow: var(--box-shadow);
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            z-index: 999;
+        }
+
+        .mobile-menu.active {
+            max-height: 400px;
+        }
+
+        .mobile-menu-item {
+            display: block;
+            padding: 15px;
+            text-decoration: none;
+            color: var(--black-color);
+            border-bottom: 1px solid #e0e0e0;
+            transition: var(--transition);
+        }
+
+        .mobile-menu-item:hover {
+            background: var(--primary-color);
+            color: var(--white-color);
+        }
+
+        .mobile-menu-item i {
+            margin-left: 10px;
+            width: 20px;
+        }
+
+        .container {
+            padding: 15px;
+        }
+
+        /* Header Styles */
+        .page-header {
+            text-align: center;
+            margin-bottom: 25px;
+            padding: 20px 15px;
+            background: var(--white-color);
+            border: 2px solid var(--primary-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+        }
+
+        .page-header h1 {
+            color: var(--black-color);
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .page-header p {
+            color: var(--black-color);
+            font-size: 1rem;
+            opacity: 0.8;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            background: var(--white-color);
+            border: 2px solid var(--primary-color);
+            border-radius: var(--border-radius);
+            padding: 20px 15px;
+            text-align: center;
+            transition: var(--transition);
+            box-shadow: var(--box-shadow);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--hover-shadow);
+        }
+
+        .stat-card i {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        .stat-card h3 {
+            font-size: 1.5rem;
+            color: var(--black-color);
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        .stat-card p {
+            color: var(--black-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        /* Action Bar */
+        .action-bar {
+            background: var(--white-color);
+            border: 2px solid var(--primary-color);
+            border-radius: var(--border-radius);
+            padding: 15px;
+            margin-bottom: 20px;
+            text-align: center;
+            box-shadow: var(--box-shadow);
+        }
+
+        .action-bar h3 {
+            color: var(--black-color);
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 20px;
+            background: var(--primary-color);
+            color: var(--white-color);
+            border: none;
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            font-family: 'Cairo', Arial, sans-serif;
+            font-size: 0.95rem;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .btn-primary:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+            box-shadow: var(--hover-shadow);
+        }
+
+        .btn-secondary {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 12px;
+            background: var(--white-color);
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            font-family: 'Cairo', Arial, sans-serif;
+            font-size: 0.8rem;
+        }
+
+        .btn-secondary:hover {
+            background: var(--primary-color);
+            color: var(--white-color);
+        }
+
+        .btn-success {
+            background: var(--success-color);
+            color: var(--white-color);
+            border: 2px solid var(--success-color);
+        }
+
+        .btn-success:hover {
+            background: #218838;
+        }
+
+        .btn-warning {
+            background: var(--warning-color);
+            color: var(--black-color);
+            border: 2px solid var(--warning-color);
+        }
+
+        .btn-warning:hover {
+            background: #e0a800;
+        }
+
+        .btn-danger {
+            background: var(--danger-color);
+            color: var(--white-color);
+            border: 2px solid var(--danger-color);
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
+        .btn-sm {
+            padding: 6px 10px;
+            font-size: 0.75rem;
+        }
+
+        /* Categories Cards */
+        .categories-container {
+            display: grid;
+            gap: 12px;
+        }
+
+        .category-card {
+            background: var(--white-color);
+            border: 2px solid var(--primary-color);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+        }
+
+        .category-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--hover-shadow);
+        }
+
+        .category-header {
+            background: var(--primary-color);
+            color: var(--white-color);
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .category-avatar {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .category-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .category-name {
+            font-weight: 600;
+            font-size: 1rem;
+            margin-bottom: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .category-name-en {
+            font-size: 0.8rem;
+            opacity: 0.9;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .category-body {
+            padding: 12px;
+        }
+
+        .category-details {
+            margin-bottom: 12px;
+        }
+
+        .category-detail-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+            font-size: 0.8rem;
+        }
+
+        .category-detail-label {
+            font-weight: 600;
+            color: var(--black-color);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .category-detail-value {
+            color: var(--black-color);
+            opacity: 0.8;
+            text-align: left;
+        }
+
+        .category-badges {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+            margin-bottom: 12px;
+        }
+
+        .badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        .badge-active {
+            background: #d4edda;
+            color: var(--success-color);
+        }
+
+        .badge-inactive {
+            background: #f8d7da;
+            color: var(--danger-color);
+        }
+
+        .badge-with-exhibitors {
+            background: #e3f2fd;
+            color: #1565c0;
+        }
+
+        .badge-empty {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .category-description {
+            background: var(--light-gray);
+            padding: 8px 10px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            color: var(--black-color);
+            opacity: 0.8;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+
+        .category-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 6px;
+            margin-bottom: 12px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 6px 4px;
+            background: var(--light-gray);
+            border-radius: 6px;
+            font-size: 0.7rem;
+        }
+
+        .stat-item i {
+            display: block;
+            margin-bottom: 2px;
+            font-size: 0.8rem;
+        }
+
+        .category-actions {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+
+        .category-actions .btn-secondary,
+        .category-actions .btn-success,
+        .category-actions .btn-warning,
+        .category-actions .btn-danger {
+            flex: 1;
+            min-width: 65px;
+            font-size: 0.7rem;
+            padding: 6px 8px;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            position: relative;
+            background-color: var(--white-color);
+            margin: 10px auto;
+            padding: 0;
+            border: 2px solid var(--primary-color);
+            border-radius: var(--border-radius);
+            width: calc(100% - 20px);
+            max-width: 500px;
+            box-shadow: var(--hover-shadow);
+            max-height: calc(100vh - 20px);
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            background: var(--primary-color);
+            color: var(--white-color);
+            padding: 15px;
+            border-radius: var(--border-radius) var(--border-radius) 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-weight: 600;
+            font-size: 1.2rem;
+        }
+
+        .close {
+            color: var(--white-color);
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .close:hover {
+            opacity: 0.7;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            color: var(--black-color);
+            font-size: 0.9rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: var(--border-radius);
+            font-family: 'Cairo', Arial, sans-serif;
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 60px;
+        }
+
+        .form-check {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-check input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: var(--primary-color);
+        }
+
+        .modal-footer {
+            padding: 15px 20px;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            gap: 10px;
+        }
+
+        .modal-footer .btn-secondary,
+        .modal-footer .btn-primary {
+            flex: 1;
+            justify-content: center;
+        }
+
+        /* Alert Messages */
+        .alert {
+            padding: 12px;
+            margin-bottom: 15px;
+            border-radius: var(--border-radius);
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: var(--success-color);
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-danger {
+            background: #f8d7da;
+            color: var(--danger-color);
+            border: 1px solid #f5c6cb;
+        }
+
+        /* Notification */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--success-color);
+            color: white;
+            padding: 15px 20px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--hover-shadow);
+            z-index: 1001;
+            transform: translateX(400px);
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.error {
+            background: var(--danger-color);
+        }
+
+        .notification.warning {
+            background: var(--warning-color);
+            color: var(--black-color);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            background: var(--white-color);
+            border: 2px solid var(--primary-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            color: #ccc;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .empty-state p {
+            color: var(--black-color);
+            opacity: 0.7;
+            font-size: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- شريط التنقل العلوي -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="navbar-brand">
+                <i class="fas fa-utensils"></i>
+                معرض الطعام العربي
+            </div>
+            <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+                <i class="fas fa-bars"></i>
+                القائمة
+            </button>
+        </div>
+    </nav>
+
+    <!-- القائمة المنسدلة للموبايل -->
+    <div class="mobile-menu" id="mobileMenu">
+        <a href="{{ url_for('admin.dashboard') }}" class="mobile-menu-item">
+            <i class="fas fa-tachometer-alt"></i>
+            لوحة التحكم
+        </a>
+        <a href="{{ url_for('admin.home_management') }}" class="mobile-menu-item">
+            <i class="fas fa-home"></i>
+            إدارة الصفحة الرئيسية
+        </a>
+        <a href="{{ url_for('admin.exhibitors') }}" class="mobile-menu-item">
+            <i class="fas fa-store"></i>
+            إدارة العارضين
+        </a>
+        <a href="{{ url_for('admin.visitors') }}" class="mobile-menu-item">
+            <i class="fas fa-users"></i>
+            إدارة الزوار
+        </a>
+        <a href="{{ url_for('admin.categories') }}" class="mobile-menu-item">
+            <i class="fas fa-tags"></i>
+            إدارة الأقسام
+        </a>
+        <a href="{{ url_for('auth.logout') }}" class="mobile-menu-item">
+            <i class="fas fa-sign-out-alt"></i>
+            تسجيل الخروج
+        </a>
+    </div>
+
+    <div class="container">
+        <!-- رأس الصفحة -->
+        <div class="page-header">
+            <h1><i class="fas fa-tags"></i> إدارة الأقسام</h1>
+            <p>إدارة وتنظيم أقسام المعرض الرئيسية</p>
+        </div>
+
+        <!-- الإحصائيات -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <i class="fas fa-tags"></i>
+                <h3>{{ total_categories or 0 }}</h3>
+                <p>إجمالي الأقسام</p>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-check-circle"></i>
+                <h3>{{ active_categories or 0 }}</h3>
+                <p>الأقسام النشطة</p>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-times-circle"></i>
+                <h3>{{ inactive_categories or 0 }}</h3>
+                <p>الأقسام غير النشطة</p>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-store"></i>
+                <h3>{{ categories_with_exhibitors or 0 }}</h3>
+                <p>أقسام بها عارضين</p>
+            </div>
+        </div>
+
+        <!-- شريط الأدوات -->
+        <div class="action-bar">
+            <h3><i class="fas fa-list"></i> قائمة الأقسام</h3>
+            <button class="btn-primary" onclick="openAddModal()">
+                <i class="fas fa-plus"></i>
+                إضافة قسم جديد
+            </button>
+        </div>
+
+        <!-- رسائل التنبيه -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="notification {{ 'error' if category == 'error' else 'success' }} show">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <!-- قائمة الأقسام -->
+        <div class="categories-container">
+            {% if categories %}
+                {% for category in categories %}
+                <div class="category-card">
+                    <div class="category-header">
+                        <div class="category-avatar">
+                            {% if category.icon %}
+                                <i class="fas fa-{{ category.icon }}"></i>
+                            {% else %}
+                                <i class="fas fa-folder"></i>
+                            {% endif %}
+                        </div>
+                        <div class="category-info">
+                            <div class="category-name">{{ category.name_ar }}</div>
+                            <div class="category-name-en">{{ category.name_en }}</div>
+                        </div>
+                    </div>
+                    <div class="category-body">
+                        <!-- الشارات -->
+                        <div class="category-badges">
+                            {% if category.is_active %}
+                                <span class="badge badge-active">نشط</span>
+                            {% else %}
+                                <span class="badge badge-inactive">غير نشط</span>
+                            {% endif %}
+                            
+                            {% if category.exhibitors|length > 0 %}
+                                <span class="badge badge-with-exhibitors">
+                                    {{ category.exhibitors|length }} عارض
+                                </span>
+                            {% else %}
+                                <span class="badge badge-empty">فارغ</span>
+                            {% endif %}
+                        </div>
+
+                        <!-- التفاصيل -->
+                        <div class="category-details">
+                            <div class="category-detail-item">
+                                <span class="category-detail-label">
+                                    <i class="fas fa-store"></i>
+                                    العارضين:
+                                </span>
+                                <span class="category-detail-value">{{ category.exhibitors|length }}</span>
+                            </div>
+                            <div class="category-detail-item">
+                                <span class="category-detail-label">
+                                    <i class="fas fa-box"></i>
+                                    المنتجات:
+                                </span>
+                                <span class="category-detail-value">
+                                    {% set total_products = 0 %}
+                                    {% for exhibitor in category.exhibitors %}
+                                        {% set total_products = total_products + exhibitor.products|length %}
+                                    {% endfor %}
+                                    {{ total_products }}
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- الوصف -->
+                        {% if category.description %}
+                        <div class="category-description">
+                            {{ category.description }}
+                        </div>
+                        {% endif %}
+
+                        <!-- الإحصائيات -->
+                        <div class="category-stats">
+                            <div class="stat-item">
+                                <i class="fas fa-store"></i>
+                                <div>{{ category.exhibitors|length }}</div>
+                                <div>عارض</div>
+                            </div>
+                            <div class="stat-item">
+                                <i class="fas fa-box"></i>
+                                <div>
+                                    {% set total_products = 0 %}
+                                    {% for exhibitor in category.exhibitors %}
+                                        {% set total_products = total_products + exhibitor.products|length %}
+                                    {% endfor %}
+                                    {{ total_products }}
+                                </div>
+                                <div>منتج</div>
+                            </div>
+                            <div class="stat-item">
+                                <i class="fas fa-chart-bar"></i>
+                                <div>
+                                    {% if category.exhibitors|length > 0 %}
+                                        {{ "%.1f"|format((total_products / category.exhibitors|length)) }}
+                                    {% else %}
+                                        0
+                                    {% endif %}
+                                </div>
+                                <div>متوسط</div>
+                            </div>
+                        </div>
+
+                        <!-- الأزرار -->
+                        <div class="category-actions">
+                            <button class="btn-secondary btn-sm" onclick="editCategory({{ category.id }}, '{{ category.name_ar }}', '{{ category.name_en }}', '{{ category.description or '' }}', '{{ category.icon or '' }}', {{ category.is_active|lower }})">
+                                <i class="fas fa-edit"></i>
+                                تعديل
+                            </button>
+                            {% if category.is_active %}
+                                <button class="btn-warning btn-sm" onclick="toggleCategory({{ category.id }}, false)">
+                                    <i class="fas fa-pause"></i>
+                                    إيقاف
+                                </button>
+                            {% else %}
+                                <button class="btn-success btn-sm" onclick="toggleCategory({{ category.id }}, true)">
+                                    <i class="fas fa-play"></i>
+                                    تفعيل
+                                </button>
+                            {% endif %}
+                            {% if category.exhibitors|length == 0 %}
+                                <button class="btn-danger btn-sm" onclick="deleteCategory({{ category.id }}, '{{ category.name_ar }}')">
+                                    <i class="fas fa-trash"></i>
+                                    حذف
+                                </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="empty-state">
+                    <i class="fas fa-folder-open"></i>
+                    <p>لا توجد أقسام مضافة حتى الآن</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- نافذة إضافة/تعديل قسم -->
+    <div id="categoryModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">إضافة قسم جديد</h2>
+                <span class="close" onclick="closeModal()">&times;</span>
+            </div>
+            <form id="categoryForm" method="POST">
+                <div class="modal-body">
+                    <input type="hidden" id="categoryId" name="category_id">
+                    
+                    <div class="form-group">
+                        <label for="name_ar">الاسم بالعربية *</label>
+                        <input type="text" id="name_ar" name="name_ar" class="form-control" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="name_en">الاسم بالإنجليزية *</label>
+                        <input type="text" id="name_en" name="name_en" class="form-control" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="description">الوصف</label>
+                        <textarea id="description" name="description" class="form-control" rows="3"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="icon">أيقونة القسم</label>
+                        <input type="text" id="icon" name="icon" class="form-control" placeholder="مثل: utensils, coffee, pizza-slice">
+                        <small style="color: #666; margin-top: 5px; display: block; font-size: 0.8rem;">
+                            يمكنك البحث عن الأيقونات في FontAwesome
+                        </small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <div class="form-check">
+                            <input type="checkbox" id="is_active" name="is_active" checked>
+                            <label for="is_active">القسم نشط</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary" onclick="closeModal()">إلغاء</button>
+                    <button type="submit" class="btn-primary" id="submitBtn">حفظ</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // تبديل القائمة المنسدلة
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('active');
+        }
+
+        // إغلاق القائمة عند النقر خارجها
+        document.addEventListener('click', function(event) {
+            const menu = document.getElementById('mobileMenu');
+            const button = document.querySelector('.mobile-menu-btn');
+            
+            if (!menu.contains(event.target) && !button.contains(event.target)) {
+                menu.classList.remove('active');
+            }
+        });
+
+        // فتح نافذة إضافة قسم جديد
+        function openAddModal() {
+            document.getElementById('modalTitle').textContent = 'إضافة قسم جديد';
+            document.getElementById('categoryForm').action = '{{ url_for("admin.categories") }}';
+            document.getElementById('categoryForm').reset();
+            document.getElementById('categoryId').value = '';
+            document.getElementById('is_active').checked = true;
+            document.getElementById('submitBtn').textContent = 'إضافة';
+            document.getElementById('categoryModal').style.display = 'block';
+        }
+
+        // تعديل قسم
+        function editCategory(id, nameAr, nameEn, description, icon, isActive) {
+            document.getElementById('modalTitle').textContent = 'تعديل القسم';
+            document.getElementById('categoryForm').action = '{{ url_for("admin.categories") }}';
+            document.getElementById('categoryId').value = id;
+            document.getElementById('name_ar').value = nameAr;
+            document.getElementById('name_en').value = nameEn;
+            document.getElementById('description').value = description;
+            document.getElementById('icon').value = icon;
+            document.getElementById('is_active').checked = isActive;
+            document.getElementById('submitBtn').textContent = 'حفظ التعديل';
+            document.getElementById('categoryModal').style.display = 'block';
+        }
+
+        // إغلاق النافذة
+        function closeModal() {
+            document.getElementById('categoryModal').style.display = 'none';
+        }
+
+        // تفعيل/تعطيل قسم
+        function toggleCategory(id, activate) {
+            const action = activate ? 'تفعيل' : 'تعطيل';
+            if (confirm(`هل تريد ${action} هذا القسم؟`)) {
+                fetch('{{ url_for("admin.categories") }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        action: 'toggle',
+                        category_id: id,
+                        is_active: activate
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        location.reload();
+                    } else {
+                        alert('حدث خطأ: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('حدث خطأ في الاتصال');
+                });
+            }
+        }
+
+        // حذف قسم
+        function deleteCategory(id, name) {
+            if (confirm(`هل تريد حذف القسم "${name}" نهائياً؟\nهذا الإجراء لا يمكن التراجع عنه.`)) {
+                fetch('{{ url_for("admin.categories") }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        action: 'delete',
+                        category_id: id
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        location.reload();
+                    } else {
+                        alert('حدث خطأ: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('حدث خطأ في الاتصال');
+                });
+            }
+        }
+
+        // إغلاق النافذة عند النقر خارجها
+        window.onclick = function(event) {
+            const modal = document.getElementById('categoryModal');
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+
+        // التحقق من صحة النموذج
+        document.getElementById('categoryForm').addEventListener('submit', function(e) {
+            const nameAr = document.getElementById('name_ar').value.trim();
+            const nameEn = document.getElementById('name_en').value.trim();
+            
+            if (!nameAr || !nameEn) {
+                e.preventDefault();
+                alert('يرجى ملء الحقول المطلوبة');
+                return;
+            }
+        });
+
+        // إخفاء الإشعارات تلقائياً
+        document.addEventListener('DOMContentLoaded', function() {
+            const notifications = document.querySelectorAll('.notification');
+            notifications.forEach(notification => {
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                }, 3000);
+            });
+        });
+    </script>
+</body>
+</html>
