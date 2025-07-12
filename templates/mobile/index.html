@@ -124,7 +124,7 @@
                 </div>
             {% elif intro_video.video_file %}
                 <div class="video-box">
-                    <video width="100%" height="200" controls poster="{{ url_for('static', filename='uploads/' + intro_video.main_image) if intro_video.main_image else '' }}">
+                    <video width="100%" height="200" controls poster="{{ url_for('static', filename='uploads/' + intro_video.main_image) if intro_video.main_image else 'homepage/videos/intro_video_IMG_7536.MP4' }}">
                         {% set video_ext = intro_video.video_file.split('.')[-1].lower() %}
                         {% if video_ext == 'mp4' %}
                             <source src="{{ url_for('static', filename='uploads/' + intro_video.video_file) }}" type="video/mp4">
