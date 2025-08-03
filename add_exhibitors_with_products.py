@@ -1,4 +1,10 @@
-# -*- coding: utf-8 -*-
+# -*- coding: u    {
+        'user_info': {
+            'email': 'info@al-noor-dairy.sa',
+            'password': 'AlNoor123!',
+            'full_name': 'Ahmed Al-Noor',
+            'phone': '+966501234567'
+        },
 """
 سكريبت إضافة عارضين جدد مع منتجاتهم
 Script to Add New Exhibitors with Their Products
@@ -12,22 +18,21 @@ import json
 import datetime
 
 # قائمة العارضين الجدد مع معلوماتهم - New Exhibitors Information
-# تشمل رموز الدول: SA (السعودية), AE (الإمارات), EG (مصر), JO (الأردن), KW (الكويت), MA (المغرب)
-# Country codes included: SA (Saudi Arabia), AE (UAE), EG (Egypt), JO (Jordan), KW (Kuwait), MA (Morocco)
 SAMPLE_EXHIBITORS = [
     {
         'user_info': {
-            'email': 'info@al-noor-dairy.sa',
-            'password': 'AlNoor123!',
+            'username': 'al_noor_dairy',
+            'email': 'info@alnoor-dairy.com',
+            'password': 'Alnoor123!',
             'full_name': 'Ahmed Al-Noor',
             'phone': '+966501234567'
         },
         'exhibitor_info': {
             'company_name': 'Al-Noor Dairy Products',
             'company_description': 'Premium dairy products manufacturer specializing in fresh milk, artisanal cheeses, and organic dairy items sourced from local farms across Saudi Arabia.',
-            'country': 'SA',
+            'country': 'Saudi Arabia',
             'city': 'Riyadh',
-            'company_website': 'https://al-noor-dairy.sa',
+            'company_website': 'https://alnoor-dairy.com',
             'category_name': 'Dairy Products',
             'booth_size': 'Large',
             'booth_type': 'Premium'
@@ -36,6 +41,7 @@ SAMPLE_EXHIBITORS = [
     },
     {
         'user_info': {
+            'username': 'emirates_spices',
             'email': 'contact@emirates-spices.ae',
             'password': 'Emirates123!',
             'full_name': 'Fatima Al-Zahra',
@@ -44,7 +50,7 @@ SAMPLE_EXHIBITORS = [
         'exhibitor_info': {
             'company_name': 'Emirates Premium Spices',
             'company_description': 'Leading supplier of authentic Middle Eastern and international spices, herbs, and seasonings. We source the finest quality spices from around the world.',
-            'country': 'AE',
+            'country': 'United Arab Emirates',
             'city': 'Dubai',
             'company_website': 'https://emirates-spices.ae',
             'category_name': 'Spices & Herbs',
@@ -55,6 +61,7 @@ SAMPLE_EXHIBITORS = [
     },
     {
         'user_info': {
+            'username': 'nile_fruits',
             'email': 'sales@nile-fruits.eg',
             'password': 'Nile123!',
             'full_name': 'Mohamed Hassan',
@@ -63,7 +70,7 @@ SAMPLE_EXHIBITORS = [
         'exhibitor_info': {
             'company_name': 'Nile Valley Fresh Fruits',
             'company_description': 'Egypt\'s premier fresh fruit exporter, specializing in citrus fruits, dates, and tropical fruits grown in the fertile Nile Delta region.',
-            'country': 'EG',
+            'country': 'Egypt',
             'city': 'Cairo',
             'company_website': 'https://nile-fruits.eg',
             'category_name': 'Fresh Fruits',
@@ -74,6 +81,7 @@ SAMPLE_EXHIBITORS = [
     },
     {
         'user_info': {
+            'username': 'levant_bakery',
             'email': 'info@levant-bakery.jo',
             'password': 'Levant123!',
             'full_name': 'Omar Al-Rashid',
@@ -82,7 +90,7 @@ SAMPLE_EXHIBITORS = [
         'exhibitor_info': {
             'company_name': 'Levant Traditional Bakery',
             'company_description': 'Authentic Middle Eastern bakery specializing in traditional breads, pastries, and baked goods using time-honored recipes and premium ingredients.',
-            'country': 'JO',
+            'country': 'Jordan',
             'city': 'Amman',
             'company_website': 'https://levant-bakery.jo',
             'category_name': 'Bakery & Pastries',
@@ -93,6 +101,7 @@ SAMPLE_EXHIBITORS = [
     },
     {
         'user_info': {
+            'username': 'gulf_seafood',
             'email': 'orders@gulf-seafood.kw',
             'password': 'Gulf123!',
             'full_name': 'Ali Al-Sabah',
@@ -101,7 +110,7 @@ SAMPLE_EXHIBITORS = [
         'exhibitor_info': {
             'company_name': 'Gulf Premium Seafood',
             'company_description': 'Fresh seafood supplier from the Arabian Gulf, offering the finest selection of fish, shrimp, and other marine products caught from pristine waters.',
-            'country': 'KW',
+            'country': 'Kuwait',
             'city': 'Kuwait City',
             'company_website': 'https://gulf-seafood.kw',
             'category_name': 'Seafood',
@@ -112,6 +121,7 @@ SAMPLE_EXHIBITORS = [
     },
     {
         'user_info': {
+            'username': 'moroccan_olives',
             'email': 'info@moroccan-olives.ma',
             'password': 'Morocco123!',
             'full_name': 'Aicha Benali',
@@ -120,7 +130,7 @@ SAMPLE_EXHIBITORS = [
         'exhibitor_info': {
             'company_name': 'Moroccan Gold Olives',
             'company_description': 'Premium olive oil and olive products from the Atlas Mountains of Morocco. We specialize in extra virgin olive oil and gourmet olive varieties.',
-            'country': 'MA',
+            'country': 'Morocco',
             'city': 'Casablanca',
             'company_website': 'https://moroccan-olives.ma',
             'category_name': 'Oils & Condiments',
@@ -268,7 +278,7 @@ def create_user_and_exhibitor(exhibitor_data):
         category_id=category.id,
         company_name=exhibitor_info['company_name'],
         company_description=exhibitor_info['company_description'],
-        country=f"{exhibitor_info['country']} ({exhibitor_info['country']})",
+        country=exhibitor_info['country'],
         city=exhibitor_info['city'],
         company_website=exhibitor_info['company_website'],
         booth_size=exhibitor_info['booth_size'],
@@ -338,21 +348,8 @@ def add_products_to_exhibitor(exhibitor, category_products):
     
     return products_added
 
-def initialize_database():
-    """تهيئة قاعدة البيانات - Initialize database"""
-    with app.app_context():
-        try:
-            db.create_all()
-            print("تم تهيئة قاعدة البيانات بنجاح!")
-            print("Database initialized successfully!")
-        except Exception as e:
-            print(f"خطأ في تهيئة قاعدة البيانات: {str(e)}")
-            print(f"Database initialization error: {str(e)}")
-
 def main():
     """الدالة الرئيسية - Main function"""
-    initialize_database()
-    
     with app.app_context():
         print("🚀 بدء إضافة العارضين الجدد مع منتجاتهم...")
         print("🚀 Starting to add new exhibitors with their products...")
@@ -404,9 +401,9 @@ def main():
                 print(f"📊 Average products per exhibitor: {total_products_added/total_exhibitors_added:.1f}")
             
         except Exception as e:
+            db.session.rollback()
             print(f"❌ خطأ في حفظ البيانات: {str(e)}")
             print(f"❌ Error saving data: {str(e)}")
-            db.session.rollback()
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
