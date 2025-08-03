@@ -58,6 +58,17 @@ flask db upgrade
 python app.py
 ```
 
+# 1. إضافة جميع الملفات المعدلة إلى قائمة التتبع
+git add .
+
+# 2. عمل commit مع رسالة توضيحية (غيّر الرسالة لما يناسب التحديث)
+git commit -m "v 1.3.1"
+
+# 3. رفع التحديثات إلى الريموت (GitHub)
+git push origin main
+
+
+
 ## Usage
 
 - Visit `http://localhost:5000` to access the application

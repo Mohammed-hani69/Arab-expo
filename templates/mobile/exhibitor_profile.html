@@ -3,235 +3,400 @@
 {% block title %}{{ exhibitor.company_name }} - Arab Expo For Food{% endblock %}
 
 {% block content %}
-<!-- غلاف المعرض -->
-<div style="position: relative; height: 200px; background: linear-gradient(135deg, #205072 0%, #186687 100%); overflow: hidden; margin: -15px -15px 20px -15px;">
-    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; color: white;">
+<style>
+.profile-header {
+    position: relative;
+    height: 220px;
+    background: linear-gradient(135deg, #1a237e 0%, #283593 50%, #3f51b5 100%);
+    overflow: hidden;
+    margin: -15px -15px 25px -15px;
+    border-radius: 0 0 20px 20px;
+}
+
+.profile-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 30% 20%, rgba(255,255,255,0.1) 0%, transparent 50%);
+}
+
+.profile-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    z-index: 2;
+    width: 90%;
+}
+
+.company-logo {
+    width: 90px;
+    height: 90px;
+    border-radius: 20px;
+    border: 4px solid rgba(255,255,255,0.3);
+    margin-bottom: 15px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+    transition: transform 0.3s ease;
+}
+
+.company-logo:hover {
+    transform: scale(1.05);
+}
+
+.logo-placeholder {
+    width: 90px;
+    height: 90px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 15px;
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255,255,255,0.2);
+}
+
+.company-name {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: white;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    letter-spacing: 0.5px;
+}
+
+.company-category {
+    margin: 8px 0 0 0;
+    opacity: 0.9;
+    font-size: 0.95rem;
+    color: rgba(255,255,255,0.9);
+    font-weight: 500;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin: 25px 0;
+}
+
+.stat-card {
+    text-align: center;
+    padding: 20px 15px;
+    border-radius: 16px;
+    color: white;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, rgba(255,255,255,0.1) 0%, transparent 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.stat-card:hover::before {
+    opacity: 1;
+}
+
+.stat-icon {
+    font-size: 1.6rem;
+    margin-bottom: 10px;
+    display: block;
+}
+
+.stat-number {
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+.stat-label {
+    font-size: 0.85rem;
+    opacity: 0.9;
+    font-weight: 500;
+}
+
+.section {
+    background: white;
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+    border: 1px solid rgba(0,0,0,0.05);
+}
+
+.section-title {
+    color: #2c3e50;
+    margin-bottom: 15px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.section-title i {
+    color: #3f51b5;
+}
+</style>
+
+<!-- Company Header -->
+<div class="profile-header">
+    <div class="profile-content">
         {% if exhibitor.logo %}
             <img src="{{ url_for('static', filename='uploads/exhibitors/' + exhibitor.logo) }}" 
-                 style="width: 80px; height: 80px; border-radius: 15px; border: 3px solid white; margin-bottom: 15px;">
+                 class="company-logo" alt="{{ exhibitor.company_name }}">
         {% else %}
-            <div style="width: 80px; height: 80px; background: rgba(255,255,255,0.2); border-radius: 15px; 
-                        display: flex; align-items: center; justify-content: center; margin: 0 auto 15px;">
-                <i class="fas fa-building" style="font-size: 2rem; color: white;"></i>
+            <div class="logo-placeholder">
+                <i class="fas fa-building" style="font-size: 2.2rem; color: white;"></i>
             </div>
         {% endif %}
-        <h1 style="margin: 0; font-size: 1.4rem; font-weight: 700;">{{ exhibitor.company_name }}</h1>
-        <p style="margin: 5px 0 0 0; opacity: 0.9;">{{ exhibitor.category.name if exhibitor.category else 'متنوع' }}</p>
+        <h1 class="company-name">{{ exhibitor.company_name }}</h1>
+        <p class="company-category">{{ exhibitor.category.name if exhibitor.category else 'Various Categories' }}</p>
     </div>
 </div>
 
-<!-- إحصائيات المعرض -->
-<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 20px 0;">
-    <div class="card" style="text-align: center; padding: 15px; background: linear-gradient(135deg, #4caf50 0%, #8bc34a 100%); color: white;">
-        <i class="fas fa-box" style="font-size: 1.5rem; margin-bottom: 8px;"></i>
-        <div style="font-size: 1.2rem; font-weight: 600;">{{ exhibitor.products|length }}</div>
-        <div style="font-size: 0.8rem; opacity: 0.9;">منتج</div>
+<!-- Company Statistics -->
+<div class="stats-grid">
+    <div class="stat-card" style="background: linear-gradient(135deg, #4caf50 0%, #66bb6a 100%);">
+        <i class="fas fa-box stat-icon"></i>
+        <div class="stat-number">{{ exhibitor.products|length }}</div>
+        <div class="stat-label">Products</div>
     </div>
     
-    <div class="card" style="text-align: center; padding: 15px; background: linear-gradient(135deg, #2196f3 0%, #03a9f4 100%); color: white;">
-        <i class="fas fa-eye" style="font-size: 1.5rem; margin-bottom: 8px;"></i>
-        <div style="font-size: 1.2rem; font-weight: 600;">{{ exhibitor.get_total_views() }}</div>
-        <div style="font-size: 0.8rem; opacity: 0.9;">مشاهدة</div>
+    <div class="stat-card" style="background: linear-gradient(135deg, #2196f3 0%, #42a5f5 100%);">
+        <i class="fas fa-eye stat-icon"></i>
+        <div class="stat-number">{{ exhibitor.profile_views if exhibitor.profile_views else 0 }}</div>
+        <div class="stat-label">Views</div>
     </div>
     
-    <div class="card" style="text-align: center; padding: 15px; background: linear-gradient(135deg, #ff9800 0%, #ffc107 100%); color: white;">
-        <i class="fas fa-calendar" style="font-size: 1.5rem; margin-bottom: 8px;"></i>
-        <div style="font-size: 1.2rem; font-weight: 600;">{{ exhibitor.created_at.strftime('%Y') }}</div>
-        <div style="font-size: 0.8rem; opacity: 0.9;">انضم</div>
+    <div class="stat-card" style="background: linear-gradient(135deg, #ff9800 0%, #ffb74d 100%);">
+        <i class="fas fa-calendar stat-icon"></i>
+        <div class="stat-number">{{ exhibitor.created_at.strftime('%Y') }}</div>
+        <div class="stat-label">Joined</div>
     </div>
 </div>
 
-<!-- وصف الشركة -->
+<!-- Company Description -->
 {% if exhibitor.company_description %}
 <div class="section">
-    <h3 style="color: #2c3e50; margin-bottom: 15px;">
-        <i class="fas fa-info-circle"></i> نبذة عن الشركة
+    <h3 class="section-title">
+        <i class="fas fa-info-circle"></i> About Company
     </h3>
-    <p style="line-height: 1.6; color: #555;">{{ exhibitor.company_description }}</p>
+    <p style="line-height: 1.7; color: #555; margin: 0;">{{ exhibitor.company_description }}</p>
 </div>
 {% endif %}
 
-<!-- معلومات الاتصال -->
+<!-- Contact Information -->
 <div class="section">
-    <h3 style="color: #2c3e50; margin-bottom: 15px;">
-        <i class="fas fa-address-card"></i> معلومات الاتصال
+    <h3 class="section-title">
+        <i class="fas fa-address-card"></i> Contact Information
     </h3>
     
-    <div style="display: grid; gap: 10px;">
+    <div style="display: grid; gap: 12px;">
         {% if exhibitor.contact_email %}
-        <div style="display: flex; align-items: center; gap: 10px; padding: 10px; background: #f8f9fa; border-radius: 8px;">
-            <i class="fas fa-envelope" style="color: #205072; width: 20px;"></i>
-            <a href="mailto:{{ exhibitor.contact_email }}" style="color: #205072; text-decoration: none;">{{ exhibitor.contact_email }}</a>
+        <div style="display: flex; align-items: center; gap: 12px; padding: 12px; background: #f8f9fa; border-radius: 12px; border-left: 4px solid #3f51b5;">
+            <i class="fas fa-envelope" style="color: #3f51b5; width: 20px; font-size: 1.1rem;"></i>
+            <a href="mailto:{{ exhibitor.contact_email }}" style="color: #3f51b5; text-decoration: none; font-weight: 500;">{{ exhibitor.contact_email }}</a>
         </div>
         {% endif %}
         
         {% if exhibitor.contact_phone %}
-        <div style="display: flex; align-items: center; gap: 10px; padding: 10px; background: #f8f9fa; border-radius: 8px;">
-            <i class="fas fa-phone" style="color: #205072; width: 20px;"></i>
-            <a href="tel:{{ exhibitor.contact_phone }}" style="color: #205072; text-decoration: none;">{{ exhibitor.contact_phone }}</a>
+        <div style="display: flex; align-items: center; gap: 12px; padding: 12px; background: #f8f9fa; border-radius: 12px; border-left: 4px solid #4caf50;">
+            <i class="fas fa-phone" style="color: #4caf50; width: 20px; font-size: 1.1rem;"></i>
+            <a href="tel:{{ exhibitor.contact_phone }}" style="color: #4caf50; text-decoration: none; font-weight: 500;">{{ exhibitor.contact_phone }}</a>
         </div>
         {% endif %}
         
         {% if exhibitor.website_url %}
-        <div style="display: flex; align-items: center; gap: 10px; padding: 10px; background: #f8f9fa; border-radius: 8px;">
-            <i class="fas fa-globe" style="color: #205072; width: 20px;"></i>
-            <a href="{{ exhibitor.website_url }}" target="_blank" style="color: #205072; text-decoration: none;">{{ exhibitor.website_url }}</a>
+        <div style="display: flex; align-items: center; gap: 12px; padding: 12px; background: #f8f9fa; border-radius: 12px; border-left: 4px solid #ff9800;">
+            <i class="fas fa-globe" style="color: #ff9800; width: 20px; font-size: 1.1rem;"></i>
+            <a href="{{ exhibitor.website_url }}" target="_blank" style="color: #ff9800; text-decoration: none; font-weight: 500;">{{ exhibitor.website_url }}</a>
         </div>
         {% endif %}
         
         {% if exhibitor.address %}
-        <div style="display: flex; align-items: center; gap: 10px; padding: 10px; background: #f8f9fa; border-radius: 8px;">
-            <i class="fas fa-map-marker-alt" style="color: #205072; width: 20px;"></i>
-            <span style="color: #555;">{{ exhibitor.address }}</span>
+        <div style="display: flex; align-items: center; gap: 12px; padding: 12px; background: #f8f9fa; border-radius: 12px; border-left: 4px solid #9c27b0;">
+            <i class="fas fa-map-marker-alt" style="color: #9c27b0; width: 20px; font-size: 1.1rem;"></i>
+            <span style="color: #555; font-weight: 500;">{{ exhibitor.address }}</span>
         </div>
         {% endif %}
     </div>
 </div>
 
-<!-- منتجات الشركة -->
+<!-- Company Products -->
 <div class="section">
-    <h3 style="color: #2c3e50; margin-bottom: 15px;">
-        <i class="fas fa-box-open"></i> منتجات الشركة
+    <h3 class="section-title">
+        <i class="fas fa-box-open"></i> Company Products
     </h3>
     
     {% if exhibitor.products %}
-        <!-- فلتر المنتجات -->
-        <div style="display: flex; gap: 8px; margin-bottom: 15px; overflow-x: auto; padding-bottom: 10px;">
-            <button class="filter-btn active" onclick="filterProducts('all')" style="background: #205072; color: white; border: none; padding: 8px 15px; border-radius: 20px; font-size: 0.85rem; white-space: nowrap;">
-                الكل ({{ exhibitor.products|length }})
+        <!-- Product Filter -->
+        <div style="display: flex; gap: 8px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 10px;">
+            <button class="filter-btn active" onclick="filterProducts('all')" style="background: #3f51b5; color: white; border: none; padding: 10px 18px; border-radius: 25px; font-size: 0.85rem; white-space: nowrap; font-weight: 500;">
+                All ({{ exhibitor.products|length }})
             </button>
             {% for category in exhibitor.products|map(attribute='category')|unique %}
                 {% if category %}
-                <button class="filter-btn" onclick="filterProducts('{{ category }}')" style="background: #f8f9fa; color: #666; border: 1px solid #ddd; padding: 8px 15px; border-radius: 20px; font-size: 0.85rem; white-space: nowrap;">
+                <button class="filter-btn" onclick="filterProducts('{{ category }}')" style="background: #f8f9fa; color: #666; border: 1px solid #ddd; padding: 10px 18px; border-radius: 25px; font-size: 0.85rem; white-space: nowrap; font-weight: 500;">
                     {{ category }}
                 </button>
                 {% endif %}
             {% endfor %}
         </div>
         
-        <!-- قائمة المنتجات -->
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px;">
+        <!-- Products Grid -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 18px;">
             {% for product in exhibitor.products %}
             <div class="product-card" data-category="{{ product.category or 'other' }}" 
-                 style="background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: all 0.3s;">
+                 style="background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.08); transition: all 0.3s ease; border: 1px solid rgba(0,0,0,0.05);">
                 
-                <div style="position: relative; height: 120px; overflow: hidden;">
+                <div style="position: relative; height: 130px; overflow: hidden;">
                     {% if product.image %}
                         <img src="{{ url_for('static', filename='uploads/products/' + product.image) }}" 
-                             style="width: 100%; height: 100%; object-fit: cover;">
+                             style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease;">
                     {% else %}
-                        <div style="width: 100%; height: 100%; background: linear-gradient(135deg, #f0f0f0 0%, #e0e0e0 100%); 
+                        <div style="width: 100%; height: 100%; background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%); 
                                     display: flex; align-items: center; justify-content: center;">
-                            <i class="fas fa-image" style="font-size: 2rem; color: #ccc;"></i>
+                            <i class="fas fa-image" style="font-size: 2.2rem; color: #ccc;"></i>
                         </div>
                     {% endif %}
                     
                     {% if product.is_featured %}
-                    <span style="position: absolute; top: 8px; right: 8px; background: #ff9800; color: white; 
-                                 padding: 4px 8px; border-radius: 12px; font-size: 0.7rem; font-weight: 600;">
-                        مميز
+                    <span style="position: absolute; top: 10px; right: 10px; background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%); color: white; 
+                                 padding: 5px 10px; border-radius: 15px; font-size: 0.7rem; font-weight: 600; box-shadow: 0 2px 8px rgba(255,152,0,0.3);">
+                        Featured
                     </span>
                     {% endif %}
                 </div>
                 
-                <div style="padding: 12px;">
-                    <h4 style="margin: 0 0 5px 0; font-size: 0.9rem; color: #2c3e50; line-height: 1.3;">{{ product.name }}</h4>
+                <div style="padding: 15px;">
+                    <h4 style="margin: 0 0 8px 0; font-size: 0.95rem; color: #2c3e50; line-height: 1.4; font-weight: 600;">{{ product.name }}</h4>
                     
                     {% if product.price %}
-                    <div style="color: #4caf50; font-weight: 600; font-size: 0.9rem; margin-bottom: 8px;">
-                        {{ "%.2f"|format(product.price) }} جنيه
+                    <div style="color: #4caf50; font-weight: 700; font-size: 1rem; margin-bottom: 12px;">
+                        ${{ "%.2f"|format(product.price) }}
                     </div>
                     {% endif %}
                     
-                    <a href="{{ url_for('main.product_detail', id=product.id) }}" 
-                       style="display: inline-block; background: #205072; color: white; padding: 6px 12px; 
-                              border-radius: 6px; text-decoration: none; font-size: 0.8rem; width: 100%; text-align: center;">
-                        عرض التفاصيل
+                    <a href="{{ url_for('main.product_detail', product_id=product.id) }}" 
+                       style="display: inline-block; background: linear-gradient(135deg, #3f51b5 0%, #303f9f 100%); color: white; padding: 8px 16px; 
+                              border-radius: 8px; text-decoration: none; font-size: 0.8rem; width: 100%; text-align: center; font-weight: 600; transition: all 0.3s ease;">
+                        View Details
                     </a>
                 </div>
             </div>
             {% endfor %}
         </div>
     {% else %}
-        <div style="text-align: center; padding: 40px 20px; background: #f8f9fa; border-radius: 12px; border: 2px dashed #ddd;">
-            <i class="fas fa-box-open" style="font-size: 3rem; color: #ccc; margin-bottom: 15px;"></i>
-            <h4 style="color: #666; margin-bottom: 10px;">لا توجد منتجات بعد</h4>
-            <p style="color: #999; margin: 0;">سيتم إضافة المنتجات قريباً</p>
+        <div style="text-align: center; padding: 50px 20px; background: linear-gradient(135deg, #f8f9fa 0%, #f1f3f4 100%); border-radius: 16px; border: 2px dashed #ddd;">
+            <i class="fas fa-box-open" style="font-size: 3.5rem; color: #ccc; margin-bottom: 20px;"></i>
+            <h4 style="color: #666; margin-bottom: 12px; font-size: 1.1rem;">No Products Yet</h4>
+            <p style="color: #999; margin: 0; font-size: 0.9rem;">Products will be added soon</p>
         </div>
     {% endif %}
 </div>
 
-<!-- شهادات ومعارض سابقة -->
+<!-- Certifications and Previous Exhibitions -->
 {% if exhibitor.certifications or exhibitor.previous_exhibitions %}
 <div class="section">
-    <h3 style="color: #2c3e50; margin-bottom: 15px;">
-        <i class="fas fa-award"></i> الشهادات والمعارض
+    <h3 class="section-title">
+        <i class="fas fa-award"></i> Certifications & Exhibitions
     </h3>
     
     {% if exhibitor.certifications %}
-    <div style="margin-bottom: 15px;">
-        <h4 style="color: #555; margin-bottom: 10px; font-size: 1rem;">الشهادات:</h4>
-        <p style="line-height: 1.6; color: #666;">{{ exhibitor.certifications }}</p>
+    <div style="margin-bottom: 20px; padding: 15px; background: linear-gradient(135deg, #fff8e1 0%, #fffde7 100%); border-radius: 12px; border-left: 4px solid #ffc107;">
+        <h4 style="color: #e65100; margin-bottom: 12px; font-size: 1rem; display: flex; align-items: center; gap: 8px;">
+            <i class="fas fa-certificate"></i> Certifications:
+        </h4>
+        <p style="line-height: 1.7; color: #555; margin: 0;">{{ exhibitor.certifications }}</p>
     </div>
     {% endif %}
     
     {% if exhibitor.previous_exhibitions %}
-    <div>
-        <h4 style="color: #555; margin-bottom: 10px; font-size: 1rem;">المعارض السابقة:</h4>
-        <p style="line-height: 1.6; color: #666;">{{ exhibitor.previous_exhibitions }}</p>
+    <div style="padding: 15px; background: linear-gradient(135deg, #e8f5e8 0%, #f1f8e9 100%); border-radius: 12px; border-left: 4px solid #4caf50;">
+        <h4 style="color: #2e7d32; margin-bottom: 12px; font-size: 1rem; display: flex; align-items: center; gap: 8px;">
+            <i class="fas fa-calendar-check"></i> Previous Exhibitions:
+        </h4>
+        <p style="line-height: 1.7; color: #555; margin: 0;">{{ exhibitor.previous_exhibitions }}</p>
     </div>
     {% endif %}
 </div>
 {% endif %}
 
-<!-- دعوة للعمل -->
+<!-- Call to Action -->
 {% if current_user.is_authenticated and not current_user.is_admin() and current_user.user_type == 'visitor' %}
-<div class="section" style="background: linear-gradient(135deg, #e8f5e8 0%, #f1f8e9 100%); border: 1px solid #c8e6c9; text-align: center;">
-    <h3 style="color: #2e7d32; margin-bottom: 15px;">
-        <i class="fas fa-handshake"></i> هل أنت مهتم بالتعاون؟
-    </h3>
-    <p style="color: #555; margin-bottom: 20px;">تواصل مع {{ exhibitor.company_name }} مباشرة</p>
-    
-    <div style="display: flex; gap: 10px; justify-content: center;">
-        {% if exhibitor.contact_phone %}
-        <a href="tel:{{ exhibitor.contact_phone }}" style="background: #4caf50; color: white; padding: 12px 20px; 
-                                                           border-radius: 8px; text-decoration: none; font-weight: 600;">
-            <i class="fas fa-phone"></i> اتصل الآن
-        </a>
-        {% endif %}
+<div class="section" style="background: linear-gradient(135deg, #e8f5e8 0%, #f1f8e9 100%); border: 2px solid #c8e6c9; text-align: center; position: relative; overflow: hidden;">
+    <div style="position: absolute; top: -50%; right: -50%; width: 100%; height: 100%; background: radial-gradient(circle, rgba(76,175,80,0.1) 0%, transparent 70%); transform: rotate(45deg);"></div>
+    <div style="position: relative; z-index: 2;">
+        <h3 style="color: #2e7d32; margin-bottom: 15px; font-size: 1.2rem;">
+            <i class="fas fa-handshake"></i> Interested in Collaboration?
+        </h3>
+        <p style="color: #555; margin-bottom: 25px; font-size: 0.95rem;">Contact {{ exhibitor.company_name }} directly</p>
         
-        {% if exhibitor.contact_email %}
-        <a href="mailto:{{ exhibitor.contact_email }}" style="background: #2196f3; color: white; padding: 12px 20px; 
-                                                             border-radius: 8px; text-decoration: none; font-weight: 600;">
-            <i class="fas fa-envelope"></i> راسل
-        </a>
-        {% endif %}
+        <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+            {% if exhibitor.contact_phone %}
+            <a href="tel:{{ exhibitor.contact_phone }}" style="background: linear-gradient(135deg, #4caf50 0%, #388e3c 100%); color: white; padding: 12px 24px; 
+                                                               border-radius: 10px; text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 8px; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(76,175,80,0.3);">
+                <i class="fas fa-phone"></i> Call Now
+            </a>
+            {% endif %}
+            
+            {% if exhibitor.contact_email %}
+            <a href="mailto:{{ exhibitor.contact_email }}" style="background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%); color: white; padding: 12px 24px; 
+                                                                 border-radius: 10px; text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 8px; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(33,150,243,0.3);">
+                <i class="fas fa-envelope"></i> Send Email
+            </a>
+            {% endif %}
+        </div>
     </div>
 </div>
 {% endif %}
 
-<!-- معلومات إضافية -->
-<div class="section" style="background: #f8f9fa; border: 1px solid #e9ecef;">
-    <h3 style="color: #2c3e50; margin-bottom: 15px;">
-        <i class="fas fa-info"></i> معلومات إضافية
+<!-- Additional Information -->
+<div class="section" style="background: linear-gradient(135deg, #f8f9fa 0%, #f1f3f4 100%); border: 1px solid #e9ecef;">
+    <h3 class="section-title">
+        <i class="fas fa-info"></i> Additional Information
     </h3>
     
-    <div style="display: grid; gap: 10px; font-size: 0.9rem;">
-        <div style="display: flex; justify-content: space-between;">
-            <span style="color: #666;">تاريخ الانضمام:</span>
-            <span style="color: #2c3e50; font-weight: 600;">{{ exhibitor.created_at.strftime('%d/%m/%Y') }}</span>
+    <div style="display: grid; gap: 15px; font-size: 0.95rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: white; border-radius: 10px; border-left: 4px solid #3f51b5;">
+            <span style="color: #666; font-weight: 500;">Registration Date:</span>
+            <span style="color: #2c3e50; font-weight: 700;">{{ exhibitor.created_at.strftime('%d/%m/%Y') }}</span>
         </div>
         
-        <div style="display: flex; justify-content: space-between;">
-            <span style="color: #666;">حالة التسجيل:</span>
-            <span style="color: {{ '#4caf50' if exhibitor.registration_status == 'approved' else '#ff9800' }}; font-weight: 600;">
-                {{ 'معتمد' if exhibitor.registration_status == 'approved' else 'قيد المراجعة' }}
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: white; border-radius: 10px; border-left: 4px solid {{ '#4caf50' if exhibitor.registration_status == 'approved' else '#ff9800' }};">
+            <span style="color: #666; font-weight: 500;">Registration Status:</span>
+            <span style="color: {{ '#4caf50' if exhibitor.registration_status == 'approved' else '#ff9800' }}; font-weight: 700; display: flex; align-items: center; gap: 5px;">
+                <i class="fas fa-{{ 'check-circle' if exhibitor.registration_status == 'approved' else 'clock' }}"></i>
+                {{ 'Approved' if exhibitor.registration_status == 'approved' else 'Under Review' }}
             </span>
         </div>
         
-        <div style="display: flex; justify-content: space-between;">
-            <span style="color: #666;">عدد المنتجات:</span>
-            <span style="color: #2c3e50; font-weight: 600;">{{ exhibitor.products|length }} منتج</span>
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: white; border-radius: 10px; border-left: 4px solid #2196f3;">
+            <span style="color: #666; font-weight: 500;">Total Products:</span>
+            <span style="color: #2c3e50; font-weight: 700; display: flex; align-items: center; gap: 5px;">
+                <i class="fas fa-box"></i>
+                {{ exhibitor.products|length }} Product{{ 's' if exhibitor.products|length != 1 else '' }}
+            </span>
         </div>
     </div>
 </div>
@@ -253,20 +418,35 @@
 
 .filter-btn.active,
 .filter-btn:hover {
-    background: #205072 !important;
+    background: #3f51b5 !important;
     color: white !important;
-    border-color: #205072 !important;
+    border-color: #3f51b5 !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(63,81,181,0.3);
+}
+
+.product-card:hover img {
+    transform: scale(1.05);
+}
+
+.product-card:hover a {
+    background: linear-gradient(135deg, #303f9f 0%, #283593 100%);
 }
 
 @media (max-width: 768px) {
     .product-card {
-        margin-bottom: 10px;
+        margin-bottom: 15px;
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
     }
 }
 </style>
 
 <script>
-// تسجيل زيارة العارض
+// Record exhibitor visit
 function recordVisit() {
     fetch(`/api/exhibitors/{{ exhibitor.id }}/visit`, {
         method: 'POST',
@@ -276,26 +456,29 @@ function recordVisit() {
     });
 }
 
-// فلترة المنتجات
+// Filter products by category
 function filterProducts(category) {
     const products = document.querySelectorAll('.product-card');
     const buttons = document.querySelectorAll('.filter-btn');
     
-    // تحديث الأزرار
+    // Update active button
     buttons.forEach(btn => btn.classList.remove('active'));
     event.target.classList.add('active');
     
-    // فلترة المنتجات
-    products.forEach(product => {
+    // Filter products with animation
+    products.forEach((product, index) => {
         if (category === 'all' || product.dataset.category === category) {
-            product.style.display = 'block';
+            setTimeout(() => {
+                product.style.display = 'block';
+                product.style.animation = 'fadeInUp 0.4s ease forwards';
+            }, index * 50);
         } else {
             product.style.display = 'none';
         }
     });
 }
 
-// إظهار الإشعارات
+// Show notification messages
 function showNotification(message, type = 'success') {
     const notification = document.getElementById('notification');
     if (notification) {
@@ -309,34 +492,64 @@ function showNotification(message, type = 'success') {
     }
 }
 
-// تحديث عدد المشاهدات
+// Initialize page effects
 document.addEventListener('DOMContentLoaded', function() {
     recordVisit();
     
-    // إضافة تأثيرات CSS
+    // Add enhanced animations and effects
     const style = document.createElement('style');
     style.textContent = `
-        .card:hover {
-            transform: scale(1.02);
+        .stat-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
+        .contact-item:hover {
+            transform: translateX(5px);
             transition: transform 0.3s ease;
         }
         
         .section {
-            animation: fadeInUp 0.6s ease forwards;
+            animation: fadeInUp 0.8s ease forwards;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        
+        .section:nth-child(even) {
+            animation-delay: 0.1s;
+        }
+        
+        .section:nth-child(odd) {
+            animation-delay: 0.2s;
         }
         
         @keyframes fadeInUp {
             from {
                 opacity: 0;
-                transform: translateY(20px);
+                transform: translateY(30px);
             }
             to {
                 opacity: 1;
                 transform: translateY(0);
             }
         }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .stat-icon {
+            animation: pulse 2s infinite;
+        }
     `;
     document.head.appendChild(style);
+    
+    // Stagger section animations
+    const sections = document.querySelectorAll('.section');
+    sections.forEach((section, index) => {
+        section.style.animationDelay = `${index * 0.1}s`;
+    });
 });
 </script>
 

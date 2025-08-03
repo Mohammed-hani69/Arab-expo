@@ -126,6 +126,10 @@ class Exhibitor(db.Model):
         completed = sum(1 for field in fields if field)
         return int((completed / len(fields)) * 100)
     
+    def get_total_views(self):
+        """حساب إجمالي مشاهدات العارض - Calculate total exhibitor views"""
+        return self.profile_views
+    
     def __repr__(self):
         return f'<Exhibitor {self.company_name}'
 

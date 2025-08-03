@@ -625,7 +625,9 @@
     <div class="section fade-in-up">
         <h2>Exhibition Pavilions</h2>
         <div class="images">
-            <img src="{{ url_for('static', filename='2.jpg') }}" alt="Exhibition Pavilions">
+            <a href="{{ url_for('main.pavilions_flags') }}" style="display: block;">
+                <img src="{{ url_for('static', filename='2.jpg') }}" alt="Exhibition Pavilions">
+            </a>
         </div>
         <button class="button">Download Brochure</button>
     </div>
