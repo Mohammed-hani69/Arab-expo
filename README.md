@@ -62,7 +62,7 @@ python app.py
 git add .
 
 # 2. عمل commit مع رسالة توضيحية (غيّر الرسالة لما يناسب التحديث)
-git commit -m "v 1.3.2"
+git commit -m "v 1.3.3"
 
 # 3. رفع التحديثات إلى الريموت (GitHub)
 git push origin main

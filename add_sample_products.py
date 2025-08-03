@@ -1,13 +1,17 @@
 # -*- coding: utf-8 -*-
 """
-سكريبت إضافة منتجات عينة للعارضين
-Script to Add Sample Products for Exhibitors
+سكريبت إضافة منتجات عينة للعارضين الموجودين
+Script to Add Sample Products for Existing Exhibitors
 """
 
 from app import app
 from models import db, Exhibitor, Product, Category
 import random
 import json
+
+# إعدادات المنتجات - Product Settings
+PRODUCTS_PER_EXHIBITOR_MIN = 5  # الحد الأدنى للمنتجات لكل عارض
+PRODUCTS_PER_EXHIBITOR_MAX = 15  # الحد الأقصى للمنتجات لكل عارض
 
 # قائمة أسماء المنتجات العربية والإنجليزية - Arabic and English Product Names
 SAMPLE_PRODUCTS = {
@@ -38,6 +42,9 @@ SAMPLE_PRODUCTS = {
         {'name': 'Pomegranates', 'name_ar': 'رمان طازج', 'description': 'Sweet and tangy pomegranates', 'description_ar': 'رمان حلو وحامض', 'price_range': (4.0, 8.0)},
         {'name': 'Mangoes', 'name_ar': 'مانجو استوائية', 'description': 'Tropical mangoes with rich flavor', 'description_ar': 'مانجو استوائية بنكهة غنية', 'price_range': (3.0, 10.0)},
         {'name': 'Grapes', 'name_ar': 'عنب طازج', 'description': 'Sweet seedless grapes', 'description_ar': 'عنب حلو بدون بذور', 'price_range': (3.5, 7.0)},
+        {'name': 'Figs', 'name_ar': 'تين طازج', 'description': 'Fresh Mediterranean figs', 'description_ar': 'تين البحر المتوسط الطازج', 'price_range': (5.0, 12.0)},
+        {'name': 'Lemons', 'name_ar': 'ليمون حامض', 'description': 'Fresh lemons with intense flavor', 'description_ar': 'ليمون حامض بنكهة قوية', 'price_range': (1.5, 4.0)},
+        {'name': 'Bananas', 'name_ar': 'موز طازج', 'description': 'Fresh tropical bananas', 'description_ar': 'موز استوائي طازج', 'price_range': (1.8, 4.5)},
     ],
     'vegetables': [
         {'name': 'Organic Tomatoes', 'name_ar': 'طماطم عضوية', 'description': 'Vine-ripened organic tomatoes', 'description_ar': 'طماطم عضوية نضجت على الشجرة', 'price_range': (2.5, 5.0)},
@@ -73,6 +80,10 @@ SAMPLE_PRODUCTS = {
         {'name': 'Cinnamon', 'name_ar': 'قرفة سيلانية', 'description': 'Ceylon cinnamon sticks', 'description_ar': 'أعواد قرفة سيلانية', 'price_range': (8.0, 18.0)},
         {'name': 'Black Pepper', 'name_ar': 'فلفل أسود مطحون', 'description': 'Freshly ground black pepper', 'description_ar': 'فلفل أسود مطحون طازج', 'price_range': (5.0, 12.0)},
         {'name': 'Turmeric', 'name_ar': 'كركم طبيعي', 'description': 'Organic turmeric powder', 'description_ar': 'مسحوق كركم عضوي', 'price_range': (3.0, 8.0)},
+        {'name': 'Sumac', 'name_ar': 'سماق حامض', 'description': 'Tangy sumac spice', 'description_ar': 'سماق حامض طبيعي', 'price_range': (6.0, 12.0)},
+        {'name': 'Za\'atar', 'name_ar': 'زعتر بلدي', 'description': 'Traditional Middle Eastern herb blend', 'description_ar': 'خلطة زعتر شرق أوسطية تقليدية', 'price_range': (4.0, 10.0)},
+        {'name': 'Cumin', 'name_ar': 'كمون مطحون', 'description': 'Ground cumin seeds', 'description_ar': 'بذور كمون مطحونة', 'price_range': (4.0, 9.0)},
+        {'name': 'Paprika', 'name_ar': 'بابريكا حلوة', 'description': 'Sweet paprika powder', 'description_ar': 'مسحوق بابريكا حلوة', 'price_range': (3.5, 8.0)},
     ]
 }
 
@@ -95,8 +106,16 @@ def get_random_tags():
 
 def add_products_to_exhibitor(exhibitor, category_products):
     """إضافة منتجات للعارض - Add products to exhibitor"""
-    # عدد المنتجات العشوائي بين 5 و 10 - Random number of products between 5 and 10
-    num_products = random.randint(5, 10)
+    # التحقق من وجود منتجات للعارض
+    existing_products_count = Product.query.filter_by(exhibitor_id=exhibitor.id).count()
+    
+    if existing_products_count > 0:
+        print(f"   ⚠️ العارض لديه {existing_products_count} منتج بالفعل - سيتم تخطيه")
+        print(f"   ⚠️ Exhibitor already has {existing_products_count} products - skipping")
+        return 0
+    
+    # عدد المنتجات العشوائي - Random number of products
+    num_products = random.randint(PRODUCTS_PER_EXHIBITOR_MIN, PRODUCTS_PER_EXHIBITOR_MAX)
     
     # اختيار منتجات عشوائية - Select random products
     if len(category_products) >= num_products:
@@ -112,8 +131,8 @@ def add_products_to_exhibitor(exhibitor, category_products):
         try:
             # إنشاء اسم فريد للمنتج
             base_name = product_data['name']
-            if i > 0:
-                base_name += f" - {i+1}"
+            if i > 0 and len(category_products) < num_products:
+                base_name += f" - Grade {chr(65 + (i % 26))}"  # A, B, C, etc.
             
             # حساب السعر العشوائي ضمن النطاق
             min_price, max_price = product_data['price_range']
@@ -129,7 +148,7 @@ def add_products_to_exhibitor(exhibitor, category_products):
                 category=exhibitor.category.name_en if exhibitor.category else 'Other',
                 tags=get_random_tags(),
                 is_active=True,
-                is_featured=random.choice([True, False]) if random.random() < 0.3 else False,  # 30% chance to be featured
+                is_featured=random.choice([True, False]) if random.random() < 0.25 else False,  # 25% chance to be featured
                 views_count=random.randint(0, 500),
                 inquiries_count=random.randint(0, 50)
             )
@@ -138,8 +157,13 @@ def add_products_to_exhibitor(exhibitor, category_products):
             products_added += 1
             
         except Exception as e:
-            print(f"Error adding product {product_data['name']} to {exhibitor.company_name}: {str(e)}")
+            print(f"❌ خطأ في إضافة المنتج {product_data['name']} للعارض {exhibitor.company_name}: {str(e)}")
+            print(f"❌ Error adding product {product_data['name']} to {exhibitor.company_name}: {str(e)}")
             continue
+    
+    # تحديث عدد المنتجات الكلي للعارض
+    if products_added > 0:
+        exhibitor.total_products = exhibitor.get_total_products() + products_added
     
     return products_added
 
@@ -161,6 +185,8 @@ def main():
         print(f"📊 Found {len(exhibitors)} exhibitors")
         
         total_products_added = 0
+        exhibitors_processed = 0
+        exhibitors_skipped = 0
         
         for exhibitor in exhibitors:
             print(f"\n🏢 معالجة العارض: {exhibitor.company_name}")
@@ -196,10 +222,14 @@ def main():
             
             # إضافة المنتجات
             products_added = add_products_to_exhibitor(exhibitor, SAMPLE_PRODUCTS[category_key])
-            total_products_added += products_added
             
-            print(f"   ✅ تم إضافة {products_added} منتج")
-            print(f"   ✅ Added {products_added} products")
+            if products_added > 0:
+                total_products_added += products_added
+                exhibitors_processed += 1
+                print(f"   ✅ تم إضافة {products_added} منتج")
+                print(f"   ✅ Added {products_added} products")
+            else:
+                exhibitors_skipped += 1
         
         # حفظ التغييرات
         try:
@@ -208,8 +238,13 @@ def main():
             print(f"🎉 Successfully completed!")
             print(f"📈 إجمالي المنتجات المضافة: {total_products_added}")
             print(f"📈 Total products added: {total_products_added}")
-            print(f"📊 معدل المنتجات لكل عارض: {total_products_added/len(exhibitors):.1f}")
-            print(f"📊 Average products per exhibitor: {total_products_added/len(exhibitors):.1f}")
+            print(f"� عدد العارضين المعالجين: {exhibitors_processed}")
+            print(f"👥 Exhibitors processed: {exhibitors_processed}")
+            print(f"⏭️ عدد العارضين المتخطين: {exhibitors_skipped}")
+            print(f"⏭️ Exhibitors skipped: {exhibitors_skipped}")
+            if exhibitors_processed > 0:
+                print(f"�📊 معدل المنتجات لكل عارض: {total_products_added/exhibitors_processed:.1f}")
+                print(f"📊 Average products per exhibitor: {total_products_added/exhibitors_processed:.1f}")
             
         except Exception as e:
             db.session.rollback()
