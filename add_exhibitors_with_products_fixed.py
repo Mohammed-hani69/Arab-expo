@@ -15,9 +15,8 @@ import datetime
 SAMPLE_EXHIBITORS = [
     {
         'user_info': {
-            'username': 'al_noor_dairy',
-            'email': 'info@alnoor-dairy.com',
-            'password': 'Alnoor123!',
+            'email': 'info@al-noor-dairy.sa',
+            'password': 'AlNoor123!',
             'full_name': 'Ahmed Al-Noor',
             'phone': '+966501234567'
         },
@@ -26,7 +25,7 @@ SAMPLE_EXHIBITORS = [
             'company_description': 'Premium dairy products manufacturer specializing in fresh milk, artisanal cheeses, and organic dairy items sourced from local farms across Saudi Arabia.',
             'country': 'Saudi Arabia',
             'city': 'Riyadh',
-            'company_website': 'https://alnoor-dairy.com',
+            'company_website': 'https://al-noor-dairy.sa',
             'category_name': 'Dairy Products',
             'booth_size': 'Large',
             'booth_type': 'Premium'
@@ -35,7 +34,6 @@ SAMPLE_EXHIBITORS = [
     },
     {
         'user_info': {
-            'username': 'emirates_spices',
             'email': 'contact@emirates-spices.ae',
             'password': 'Emirates123!',
             'full_name': 'Fatima Al-Zahra',
@@ -55,7 +53,6 @@ SAMPLE_EXHIBITORS = [
     },
     {
         'user_info': {
-            'username': 'nile_fruits',
             'email': 'sales@nile-fruits.eg',
             'password': 'Nile123!',
             'full_name': 'Mohamed Hassan',
@@ -75,7 +72,6 @@ SAMPLE_EXHIBITORS = [
     },
     {
         'user_info': {
-            'username': 'levant_bakery',
             'email': 'info@levant-bakery.jo',
             'password': 'Levant123!',
             'full_name': 'Omar Al-Rashid',
@@ -95,7 +91,6 @@ SAMPLE_EXHIBITORS = [
     },
     {
         'user_info': {
-            'username': 'gulf_seafood',
             'email': 'orders@gulf-seafood.kw',
             'password': 'Gulf123!',
             'full_name': 'Ali Al-Sabah',
@@ -115,7 +110,6 @@ SAMPLE_EXHIBITORS = [
     },
     {
         'user_info': {
-            'username': 'moroccan_olives',
             'email': 'info@moroccan-olives.ma',
             'password': 'Morocco123!',
             'full_name': 'Aicha Benali',
@@ -243,27 +237,22 @@ def create_user_and_exhibitor(exhibitor_data):
     exhibitor_info = exhibitor_data['exhibitor_info']
     
     # التحقق من وجود المستخدم
-    existing_user = User.query.filter(
-        (User.username == user_info['username']) | 
-        (User.email == user_info['email'])
-    ).first()
+    existing_user = User.query.filter_by(email=user_info['email']).first()
     
     if existing_user:
-        print(f"⚠️ المستخدم {user_info['username']} موجود بالفعل")
-        print(f"⚠️ User {user_info['username']} already exists")
+        print(f"⚠️ المستخدم {user_info['email']} موجود بالفعل")
+        print(f"⚠️ User {user_info['email']} already exists")
         return None
     
     # إنشاء المستخدم
     user = User(
-        username=user_info['username'],
         email=user_info['email'],
-        password_hash=generate_password_hash(user_info['password']),
         full_name=user_info['full_name'],
         phone=user_info['phone'],
         user_type='exhibitor',
-        is_active=True,
-        registration_date=datetime.datetime.utcnow()
+        is_active=True
     )
+    user.set_password(user_info['password'])
     
     db.session.add(user)
     db.session.flush()  # للحصول على ID المستخدم
@@ -347,8 +336,21 @@ def add_products_to_exhibitor(exhibitor, category_products):
     
     return products_added
 
+def initialize_database():
+    """تهيئة قاعدة البيانات - Initialize database"""
+    with app.app_context():
+        try:
+            db.create_all()
+            print("تم تهيئة قاعدة البيانات بنجاح!")
+            print("Database initialized successfully!")
+        except Exception as e:
+            print(f"خطأ في تهيئة قاعدة البيانات: {str(e)}")
+            print(f"Database initialization error: {str(e)}")
+
 def main():
     """الدالة الرئيسية - Main function"""
+    initialize_database()
+    
     with app.app_context():
         print("🚀 بدء إضافة العارضين الجدد مع منتجاتهم...")
         print("🚀 Starting to add new exhibitors with their products...")
@@ -400,9 +402,9 @@ def main():
                 print(f"📊 Average products per exhibitor: {total_products_added/total_exhibitors_added:.1f}")
             
         except Exception as e:
-            db.session.rollback()
             print(f"❌ خطأ في حفظ البيانات: {str(e)}")
             print(f"❌ Error saving data: {str(e)}")
+            db.session.rollback()
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
